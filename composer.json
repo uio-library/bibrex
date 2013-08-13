@@ -3,8 +3,18 @@
 	"description": "The Laravel Framework.",
 	"keywords": ["framework", "laravel"],
 	"require": {
-		"laravel/framework": "4.0.*"
+		"laravel/framework": "4.0.*",
+        "way/generators": "dev-master",
+        "scriptotek/customxmlelement": "dev-master",
+        "laravel/curl": "dev-master",
+        "loic-sharma/profiler": "dev-master"
 	},
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "https://github.com/scriptotek/customxmlelement.git"
+        }
+    ],
 	"autoload": {
 		"classmap": [
 			"app/commands",

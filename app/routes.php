@@ -13,5 +13,13 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+	return Redirect::action('LoansController@getIndex');
 });
+
+Route::controller('users', 'UsersController');
+
+Route::controller('loans', 'LoansController');
+
+Route::controller('documents', 'DocumentsController');
+
+Route::controller('things', 'ThingsController');

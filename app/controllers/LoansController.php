@@ -1,0 +1,232 @@
+<?php
+
+class LoansController extends BaseController {
+
+	/**
+	 * The layout that should be used for responses.
+	 */
+	protected $layout = 'layouts.master';
+
+	private $rules = array(
+		'ltid' => array('required', 'regex:/^[0-9a-zA-Z]{10}$/'),
+		'dokid' => array('regex:/^[0-9a-zA-Z]{9}$/')
+	);
+
+	private $messages = array(
+		'ltid.required' => 'ltid må fylles ut',
+		'ltid.regex' => 'ltid er ikke et ltid',
+		'dokid.required' => 'dokid må fylles ut',
+		'dokid.regex' => 'dokid er ikke et dokid'
+	);
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function getIndex()
+	{
+		$loans = Loan::with('document.thing','user')->orderBy('created_at','desc')->get();
+		$things = array();
+		foreach (Thing::all() as $thing) {
+			$things[$thing->id] = $thing->name;
+		};
+		$this->layout->content = View::make('loans.index', array(
+			'loans' => $loans,
+			'things' => $things,
+			'loan_ids' => Session::get('loan_ids', array())
+		));
+	}
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function getShow($id)
+	{
+		$loan = Loan::find($id);
+		if ($loan) {
+			$this->layout->content = View::make('loans.show')
+				->with('loan', $loan);
+		} else {
+			return Response::view('errors.missing', array('what' => 'Lånet'), 404);
+		}
+	}
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function postStore()
+	{
+		$validator = Validator::make(Input::all(), $this->rules, $this->messages);
+
+		if ($validator->fails())
+		{
+			return Redirect::action('LoansController@getIndex')
+				->withErrors($validator)
+				->withInput();
+		}
+
+		// Check if Document exists, create if not
+		$thing = Thing::where('id','=',Input::get('thing'))->first();
+		if (!$thing) {
+			return Redirect::action('LoansController@getIndex')
+				->with('status', 'Tingen finnes ikke!');
+		}
+
+		if ($thing->id == 1) {
+
+			// Hent DOKID fra DOKID/KNYTTID
+			$unknown_id = Input::get('dokid');
+			$curl = New Curl;
+			$ids = $curl->simple_get('http://linode.biblionaut.net/services/getids.php?id=' . $unknown_id);
+			$ids = json_decode($ids);
+
+			if (empty($ids->dokid)) {
+				return Redirect::action('LoansController@getIndex')
+					->with('status', 'Dokumentet finnes ikke');
+			}
+
+			// Sjekk om dokumentet finnes lokalt
+			$dok = Document::where('dokid','=',$ids->dokid)->first();
+			if (!$dok) {
+				$dok = new Document();
+				$dok->thing_id = $thing->id;
+				$dok->dokid = $ids->dokid;
+				$dok->objektid = $ids->objektid;
+				if ($unknown_id != $ids->dokid) {
+					$dok->knyttid = $unknown_id;
+				}
+				$dok->save();
+			}
+
+			// Check if already on loan
+			$loan = $dok->loans()->first();
+			if ($loan) {
+				return Redirect::action('LoansController@getIndex')
+					->with('status', 'Dokumentet er allerede utlånt');
+			}
+
+		} else {
+
+			$dok = Document::where('thing_id','=',$thing->id)->first();
+			if (!$dok) {
+				$dok = new Document();
+				$dok->thing_id = $thing->id;
+				$dok->save();
+			}
+
+		}
+
+		// Check if User exists, create if not
+		$ltid = Input::get('ltid');
+		$new_user = false;
+		$user = User::where('ltid','=',$ltid)->first();
+		if (!$user) {
+			$new_user = true;
+			$user = new User();
+			$user->ltid = $ltid;
+			$user->save();
+		}
+
+		if ($thing->id == 1) {
+			$count = 1;
+		} else {
+			$count = Input::get('count', 1);
+		}
+		$count = intval($count);
+
+		// Create new loan(s)	
+		$loan_ids = array();	
+		for ($i=0; $i < $count; $i++) { 
+			$loan = new Loan();
+			$loan->user_id = $user->id;
+			$loan->document_id = $dok->id;
+			$loan->save();
+			$loan_ids[] = $loan->id;
+		}
+
+		if ($new_user) {
+			if ($user->in_bibsys) {
+				return Redirect::action('UsersController@getEdit', $user->id)
+					->with('status', 'Dokumentet ble lånt ut. Brukeren ble funnet i BIBSYS.');				
+			} else {
+				return Redirect::action('UsersController@getEdit', $user->id)
+					->with('status', 'Dokumentet ble lånt ut. Siden dette er første gang dette kortet brukes må du registrere litt informasjon om låneren.');				
+			}
+		} else {
+			return Redirect::action('LoansController@getIndex')
+				->with('status', ($count == 1 ? 'Dokumentet' : 'Dokumentene') . ' ble lånt ut')
+				->with('loan_ids', $loan_ids);
+		}
+
+	}
+
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function getEdit($id)
+	{
+		//
+	}
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function postUpdate($id)
+	{
+		//
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function getDestroy($id)
+	{
+		$loan = Loan::find($id);
+		$repr = $loan->representation();
+		$docid = $loan->document->id;
+		$user = $loan->user->name();
+		$loan->delete();
+
+		$returnTo = Input::get('returnTo', 'documents.show');
+
+		switch ($returnTo) {
+			case 'loans.index':
+				$redir = Redirect::action('LoansController@getIndex');
+				break;
+			default:
+				$redir = Redirect::action('DocumentsController@getShow', $docid);
+		}
+		return $redir->with('status', $repr .' ble levert inn for ' . $user . '. <a href="' . URL::action('LoansController@getRestore', $id) . '" class="alert-link">Angre</a>');	    	
+	}
+
+	/**
+	 * Restores the specified resource into storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function getRestore($id)
+	{
+		$loan = Loan::withTrashed()->find($id);
+		$docid = $loan->document->id;
+		$loan->restore();
+		return Redirect::action('DocumentsController@getShow', $docid)
+			->with('status', 'Innleveringen ble angret.');	    	
+	}
+
+}

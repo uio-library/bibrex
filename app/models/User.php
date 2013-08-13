@@ -1,9 +1,6 @@
 <?php
 
-use Illuminate\Auth\UserInterface;
-use Illuminate\Auth\Reminders\RemindableInterface;
-
-class User extends Eloquent implements UserInterface, RemindableInterface {
+class User extends Eloquent {
 
 	/**
 	 * The database table used by the model.
@@ -12,41 +9,56 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	protected $table = 'users';
 
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = array('password');
-
-	/**
-	 * Get the unique identifier for the user.
-	 *
-	 * @return mixed
-	 */
-	public function getAuthIdentifier()
+	public function loans()
 	{
-		return $this->getKey();
+		return $this->hasMany('Loan');
+	}
+
+	public function deliveredLoans()
+	{
+		return $this->hasMany('Loan')
+			->whereNotNull('deleted_at')
+			->with('document.thing')
+			->withTrashed()
+			->orderBy('created_at', 'desc');
+	}
+
+	public function name()
+	{
+		return $this->firstname . ' ' . $this->lastname;
 	}
 
 	/**
-	 * Get the password for the user.
+	 * Mutuator for the ltid field
 	 *
-	 * @return string
+	 * @param  string  $value
+	 * @return void
 	 */
-	public function getAuthPassword()
+	public function setLtidAttribute($value)
 	{
-		return $this->password;
+		$this->attributes['ltid'] = strtolower($value);
 	}
 
 	/**
-	 * Get the e-mail address where password reminders are sent.
+	 * Save the model to the database.
 	 *
-	 * @return string
+	 * @param  array  $options
+	 * @return bool
 	 */
-	public function getReminderEmail()
+	public function save(array $options = array())
 	{
-		return $this->email;
+
+		$ncip = new Ncip('http://ncip.bibsys.no/ncip/NCIPResponder');
+		$response = $ncip->lookupUser($this->ltid);
+		$this->in_bibsys = $response['exists'];
+		if ($response['exists']) {
+			$this['lastname'] = $response['lastname'];
+			$this['firstname'] = $response['firstname'];
+			$this['email'] = $response['email'];
+			$this['phone'] = $response['phone'];
+		}
+
+		parent::save($options);
 	}
 
 }
