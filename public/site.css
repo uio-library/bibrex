@@ -17,6 +17,13 @@
   */
 }
 
+
+
+
+.tt-hint {
+  padding:7px 11px;
+  width: 300px;
+}
 .twitter-typeahead .tt-query,
 .twitter-typeahead .tt-hint {
   margin-bottom: 0;
@@ -45,6 +52,7 @@
 .tt-suggestion {
   display: block;
   padding: 3px 20px;
+  width: 400px;
 }
 
 .tt-suggestion.tt-is-under-cursor {
@@ -65,4 +73,12 @@
 
 .tt-suggestion p {
   margin: 0;
+}
+
+.repo-ltid {
+  float: right;
+  font-style: italic;
+}
+.repo-name {
+  font-weight: bold;
 }

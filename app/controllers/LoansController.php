@@ -8,7 +8,7 @@ class LoansController extends BaseController {
 	protected $layout = 'layouts.master';
 
 	private $rules = array(
-		'ltid' => array('required', 'regex:/^[0-9a-zA-Z]{10}$/'),
+		'ltid' => array('required'),
 		'dokid' => array('regex:/^[0-9a-zA-Z]{9}$/')
 	);
 
@@ -30,8 +30,9 @@ class LoansController extends BaseController {
 		$things = array();
 		foreach (Thing::all() as $thing) {
 			$things[$thing->id] = $thing->name;
-		};
-		$this->layout->content = View::make('loans.index', array(
+		}
+
+		return Response::view('loans.index', array(
 			'loans' => $loans,
 			'things' => $things,
 			'loan_ids' => Session::get('loan_ids', array())
@@ -123,13 +124,37 @@ class LoansController extends BaseController {
 		}
 
 		// Check if User exists, create if not
-		$ltid = Input::get('ltid');
+		$user_input = Input::get('ltid');
+		$ltid = false;
+		$user = false;
+		$name = false;
+		if (preg_match('/^[0-9a-zA-Z]{10}$/', $user_input)) {
+			$ltid = $user_input;
+			$user = User::where('ltid','=',$user_input)->first();
+		} else {
+			$user_id = Input::get('user_id');
+			if (!empty($user_id)) {
+				$user = User::find($user_id);
+			} else {
+				if (strpos($user_input, ',') === false) {
+					return Redirect::action('LoansController@getIndex')
+						->with('status', 'Navnet må skrives på formen "Etternavn, Fornavn".');
+				} else {
+					$name = explode(',', $user_input);
+					$user = User::where('lastname','=',$name[0])->where('firstname','=',$name[1])->first();
+				}
+			}
+		}
+
 		$new_user = false;
-		$user = User::where('ltid','=',$ltid)->first();
 		if (!$user) {
 			$new_user = true;
 			$user = new User();
-			$user->ltid = $ltid;
+			if ($ltid !== false) $user->ltid = $ltid;
+			if ($name !== false) {
+				$user->lastname = $name[0];
+				$user->firstname = $name[1];
+			}
 			$user->save();
 		}
 
@@ -156,7 +181,7 @@ class LoansController extends BaseController {
 					->with('status', 'Dokumentet ble lånt ut. Brukeren ble funnet i BIBSYS.');				
 			} else {
 				return Redirect::action('UsersController@getEdit', $user->id)
-					->with('status', 'Dokumentet ble lånt ut. Siden dette er første gang dette kortet brukes må du registrere litt informasjon om låneren.');				
+					->with('status', 'Dokumentet ble lånt ut. Siden dette er en ny låner må du registrere litt informasjon om vedkommende.');				
 			}
 		} else {
 			return Redirect::action('LoansController@getIndex')

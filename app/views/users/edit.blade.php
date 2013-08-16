@@ -24,7 +24,7 @@
     </div>
 
     <div class="form-group">
-      {{ Form::label('ltid', 'LTID: ') }}
+      {{ Form::label('ltid', 'LTID: ') }} (kan stå blankt hvis personen f.eks. ikke fått studiekort enda)
       {{ Form::text('ltid', $user->ltid, array('class' => 'form-control')) }}
     </div>
 

@@ -14,7 +14,7 @@
         <strong>LTID:</strong>
       </div>
       <div class="col-6" id="ltid">
-        {{ $user->ltid }}
+        {{ $user->ltid ? $user->ltid : '<em>Intet LTID</em>' }}
         : <span>{{ $user->in_bibsys ? 'finnes i BIBSYS' : 'finnes ikke i BIBSYS' }}</span>
         (<a href="#">Sjekk på nytt</a>)
       </div>

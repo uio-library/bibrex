@@ -8,14 +8,13 @@ class UsersController extends BaseController {
 	protected $layout = 'layouts.master';
 
 	private $rules = array(
-		'ltid' => array('required', 'regex:/^[0-9a-zA-Z]{10}$/'),
+		'ltid' => array('regex:/^[0-9a-zA-Z]{10}$/'),
 		'lastname' => array('required'),
 		'firstname' => array('required'),
 		'lang' => array('required')
 	);
 
 	private $messages = array(
-		'ltid.required' => 'ltid må fylles ut',
 		'ltid.regex' => 'ltid er ikke et ltid',
 		'lastname.required' => 'etternavn må fylles ut',
 		'firstname.required' => 'fornavn må fylles ut',
@@ -28,9 +27,24 @@ class UsersController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		$users = User::with('loans')->get();
-		$this->layout->content = View::make('users.index')
-			->with('users', $users);
+		if (Request::ajax()) {
+			$users = array();
+			foreach (User::all() as $user) {
+				$users[] = array(
+					'id' => $user->id,
+					'value' => $user->lastname . ', ' . $user->firstname,
+					'lastname' => $user->lastname,
+					'firstname' => $user->firstname,
+					'ltid' => $user->ltid
+				);
+			}
+			return Response::json($users);
+
+		} else {
+			$users = User::with('loans')->get();
+			$this->layout->content = View::make('users.index')
+				->with('users', $users);			
+		}
 	}
 
 	/**

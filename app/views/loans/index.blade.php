@@ -1,3 +1,4 @@
+@extends('layouts.master')
 
 @section('content')
 
@@ -25,12 +26,18 @@
         'class' => 'form-inline'
         )) }}
 
-      LTID:
-      {{ Form::text('ltid', null, array(
-          'placeholder' => 'LTID', 
-          'class' => 'form-control',
-          'style' => 'width:120px'
-      )) }}
+      Til hvem?
+
+        <div class="user">
+          {{ Form::text('ltid', null, array(
+            'placeholder' => 'LTID eller navn', 
+            'class' => 'form-control typeahead',
+            'style' => 'width:300px'
+          )) }}
+          {{ Form::hidden('user_id') }}
+        </div>
+
+      
       <!--
       eller navn
       {{ Form::text('navn', null, array(
@@ -71,6 +78,11 @@
       )) }}
 
       <img src="/img/spinner2.gif" class="spinner" />
+
+      <p style="padding-top:1.4em;">
+        For bøker med RFID-brikker må du manuelt sette RFID-programmet i utlåns-modus for at boka skal bli avalarmisert.
+        BIBREX snakker dessverre ikke med RFID-programmet (enda). 
+      </p>
 
     {{ Form::close() }}
 
@@ -117,13 +129,46 @@
 
 @section('scripts')
 
-<script type='text/javascript'>     
+<script type='text/javascript'>
+
+  var supports_html5_storage = (function () {
+      try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+      } catch (e) {
+        return false;
+      }
+    })();
+
   $(document).ready(function() {
     var $ltid = $('input[name="ltid"]'),
       $dokid = $('input[name="dokid"]');
 
     $ltid.focus();
     $('.spinner').hide();
+
+    //console.info("Clearing localStorage");
+    if (supports_html5_storage) {
+      localStorage.clear(); // to get a fresh list of names
+    }
+
+    $('.user .typeahead')
+    .typeahead([{
+        name: 'brukere',
+        prefetch: '/users',
+         template: [
+            '<p class="repo-ltid">{'+'{ltid}'+'}</p><p class="repo-name">{'+'{lastname}'+'}, {'+'{firstname}'+'}</p>',
+          ].join(''),
+          engine: Hogan 
+      }])
+    .on('typeahead:autocompleted', function(evt, datum) {
+      $('input[name="user_id"]').val(datum.id);
+    })
+    .on('typeahead:selected', function(evt, datum) {
+      $('input[name="user_id"]').val(datum.id);
+    })
+
+    
+
         
     var ltidLength = 0;
     function ltidChanged(e) {
