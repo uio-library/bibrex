@@ -26,52 +26,50 @@
         'class' => 'form-inline'
         )) }}
 
-      Til hvem?
-
+      <div style="float:left; width: 310px;">
+        {{ Form::label('ltid', 'Til hvem?') }}
+        Etternavn, fornavn eller LTID:
         <div class="user">
-          {{ Form::text('ltid', null, array(
-            'placeholder' => 'LTID eller navn', 
-            'class' => 'form-control typeahead',
-            'style' => 'width:300px'
-          )) }}
-          {{ Form::hidden('user_id') }}
+            {{ Form::text('ltid', null, array(
+              'placeholder' => 'Etternavn, fornavn eller LTID', 
+              'class' => 'form-control typeahead',
+              'style' => 'width:300px'
+            )) }}
+            {{ Form::hidden('user_id') }}
         </div>
+      </div>
 
-      
-      <!--
-      eller navn
-      {{ Form::text('navn', null, array(
-          'placeholder' => 'Navn', 
-          'class' => 'form-control',
-          'style' => 'width:120px'
-      )) }}
-      -->
+      <div style="float:left; width: 210px;">
+        {{ Form::label('thing', 'Hva?') }}<br />
+        {{ Form::select('thing', $things, null, array(
+            'class' => 'form-control',
+            'style' => 'width:180px'
+        )) }}
+      </div>
 
-      <br />
-
-      Hva? 
-      {{ Form::select('thing', $things, null, array(
-          'class' => 'form-control',
-          'style' => 'width:180px'
-      )) }}
-
-      <span id="bibsysdok_extras">
-        med DOKID:
+      <div id="bibsysdok_extras" class="float:left; width: 310px;">
+        {{ Form::label('dokid', 'DOKID:') }}<br />
         {{ Form::text('dokid', null, array(
             'placeholder' => 'DOKID',
             'class' => 'form-control',
             'style' => 'width:180px'
         )) }}
-      </span>
+      </div>
 
-      <span id="other_extras" style="display:none;">
-        Antall:
+      <div id="other_extras" style="display:none; float:left; width: 90px;">
+        {{ Form::label('count', 'Antall:') }}<br />
         {{ Form::text('count', '1', array(
             'placeholder' => 'Antall',
             'class' => 'form-control',
             'style' => 'width:80px'
         )) }}
-      </span>
+      </div>
+
+
+      <p style="padding-top:1.4em; clear:both;">
+        For bøker med RFID-brikker må du manuelt sette RFID-programmet i utlåns-modus for at boka skal bli avalarmisert.
+        BIBREX snakker dessverre ikke med RFID-programmet (enda). 
+      </p>
 
       {{ Form::submit('Lån ut!', array(
           'class' => 'btn btn-success'
@@ -79,10 +77,6 @@
 
       <img src="/img/spinner2.gif" class="spinner" />
 
-      <p style="padding-top:1.4em;">
-        For bøker med RFID-brikker må du manuelt sette RFID-programmet i utlåns-modus for at boka skal bli avalarmisert.
-        BIBREX snakker dessverre ikke med RFID-programmet (enda). 
-      </p>
 
     {{ Form::close() }}
 
@@ -167,14 +161,12 @@
       $('input[name="user_id"]').val(datum.id);
     })
 
-    
-
-        
     var ltidLength = 0;
     function ltidChanged(e) {
-      if ($ltid.val().length !== ltidLength) {
-        ltidLength = $ltid.val().length;
-        if (ltidLength == 10) {
+      var v = $ltid.val();
+      if (v.length !== ltidLength) {
+        ltidLength = v.length;
+        if (ltidLength == 10 && v.match('[0-9]')) {
           if ($('select[name="thing"]').val() === '1') {
             $dokid.focus();
           }
@@ -200,7 +192,7 @@
     $('select[name="thing"]').on('change', function(e) {
       if ($(e.target).val() === '1') {
         $('#bibsysdok_extras').show();
-        $('#other_extras').show();
+        $('#other_extras').hide();
       } else {
         $('#bibsysdok_extras').hide();
         $('#other_extras').show();       
