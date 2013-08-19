@@ -135,6 +135,7 @@ class LoansController extends BaseController {
 						->with('status', 'Navnet må skrives på formen "Etternavn, Fornavn".');
 				} else {
 					$name = explode(',', $user_input);
+					$name = aray_map('trim', $name);
 					$user = User::where('lastname','=',$name[0])->where('firstname','=',$name[1])->first();
 				}
 			}
