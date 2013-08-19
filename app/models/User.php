@@ -36,7 +36,11 @@ class User extends Eloquent {
 	 */
 	public function setLtidAttribute($value)
 	{
-		$this->attributes['ltid'] = strtolower($value);
+		if (is_null($value)) {
+			$this->attributes['ltid'] = null;
+		} else {
+			$this->attributes['ltid'] = strtolower($value);
+		}
 	}
 
 	/**

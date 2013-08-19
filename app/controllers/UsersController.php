@@ -105,7 +105,12 @@ class UsersController extends BaseController {
 		}
 
 		$user = User::find($id);
-		$user->ltid = Input::get('ltid');
+		$ltid = Input::get('ltid');
+		if (empty($ltid)) {
+			$user->ltid = null;
+		} else {
+			$user->ltid = $ltid;
+		}
 		$user->lastname = Input::get('lastname');
 		$user->firstname = Input::get('firstname');
 		$user->phone = Input::get('phone') ? Input::get('phone') : null;
