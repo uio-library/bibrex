@@ -5,7 +5,7 @@ class Loan extends Eloquent {
 	protected $softDelete = true;
 	public static $rules = array();
 
-	private $guestNumber = 'umn1002157';
+	public $guestNumber = 'umn1002157';
 
 	public function user()
 	{

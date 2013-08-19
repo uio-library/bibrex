@@ -248,4 +248,43 @@ class LoansController extends BaseController {
 			->with('status', 'Innleveringen ble angret.');	    	
 	}
 
+	/**
+	 * Checks if loans has been returned in BIBSYS
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function getSync()
+	{
+		$user_loans = array();
+		$ncip = new Ncip();
+		foreach (Loan::with('document','user')->get() as $loan) {
+			if ($loan->document->thing_id == 1) {
+				$dokid = $loan->document->dokid;
+				echo "Sjekker: " . $loan->representation() . " : ";
+				if ($loan->user->in_bibsys) {
+					$nr = $loan->user->ltid;
+				} else {
+					$nr = $loan->guestNumber;
+				}
+				echo " $nr : ";
+				if (!isset($user_loans[$nr])) {
+					$response = $ncip->lookupUser($nr);
+					$user_loans[$nr] = array();
+					foreach ($response['loanedItems'] as $item) {
+						$user_loans[$nr][] = $item['id'];
+					}
+				}
+				if (in_array($dokid, $user_loans[$nr])) {
+					echo " fortsatt utlånt";
+				} else {
+					echo " returnert i BIBSYS";
+					$loan->delete();
+				}
+				echo "\n";
+			}
+		}
+		exit();
+	}
+
 }
