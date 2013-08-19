@@ -68,6 +68,18 @@
       $('.navbar li:nth-child(4)').addClass('active');
     }
   </script>
+
+  <script type="text/javascript">
+
+    $(document).ready(function() {
+    
+      if ($('.alert').length != 0) {
+
+        $('.alert').hide().slideDown();
+      }
+
+    });
+  </script>
  
 </body> 
 </html>

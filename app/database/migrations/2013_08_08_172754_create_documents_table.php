@@ -20,6 +20,7 @@ class CreateDocumentsTable extends Migration {
 			$table->string('knyttid')->unique()->nullable();
 			$table->string('objektid')->nullable();
 			$table->string('title')->nullable();
+			$table->string('subtitle')->nullable();
 			$table->string('authors')->nullable();
 			$table->string('year')->nullable();
 			$table->string('cover_image')->nullable();

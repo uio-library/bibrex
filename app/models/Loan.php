@@ -20,7 +20,10 @@ class Loan extends Eloquent {
 	public function representation()
 	{
 		if ($this->document->thing->id == 1) {
-			return rtrim($this->document->title,' :') . ' <small>(' . $this->document->dokid . ')</small>';
+			$s = rtrim($this->document->title,' :') 
+				. ($this->document->subtitle ? ' : ' . $this->document->subtitle : '');
+			$s .= ' <small>(' . $this->document->dokid . ')</small>';
+			return $s;
 		} else {
 			return $this->document->thing->name;
 		}
@@ -57,12 +60,14 @@ class Loan extends Eloquent {
 			$response = $ncip->checkOutItem($ltid, $dokid);
 
 			if (!$response['success']) {
-				dd("Dokumentet kunne ikke lånes ut i BIBSYS: " . $response['error']);
+				$this->error = "Dokumentet kunne ikke lånes ut i BIBSYS: " . $response['error'];
+				return false;
 			}
 
 		}
 
 		parent::save($options);
+		return true;
 	}
 
 	/**

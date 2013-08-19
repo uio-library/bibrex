@@ -44,6 +44,8 @@ class Document extends Eloquent {
 
 			if (isset($data->title))
 				$this->title = $data->title;
+			if (isset($data->subtitle))
+				$this->subtitle = $data->subtitle;
 			if (isset($data->cover_image))
 				$this->cover_image = $data->cover_image;
 			if (isset($data->year))

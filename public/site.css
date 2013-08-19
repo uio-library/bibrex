@@ -22,7 +22,7 @@
 
 .tt-hint {
   padding:7px 11px;
-  width: 300px;
+  width: 250px;
 }
 .twitter-typeahead .tt-query,
 .twitter-typeahead .tt-hint {
@@ -81,4 +81,10 @@
 }
 .repo-name {
   font-weight: bold;
+}
+
+.alert {
+  margin: 1em 3em;
+  border-width:3px;
+  box-shadow: 2px 2px 5px #888888;
 }

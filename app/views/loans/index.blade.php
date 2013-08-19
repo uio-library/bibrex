@@ -8,7 +8,6 @@
       <h3 class="panel-title">Nytt utlån</h3>
     </div>
 
-
     @if ($e = $errors->all('<li>:message</li>'))
       <div class="alert alert-danger">
         <button type="button" class="close" data-dismiss="alert">&times;</button>  
@@ -26,20 +25,20 @@
         'class' => 'form-inline'
         )) }}
 
-      <div style="float:left; width: 310px;">
+      <div style="float:left; width: 260px;">
         {{ Form::label('ltid', 'Til hvem?') }}
-        Etternavn, fornavn eller LTID:
+        <small>Etternavn, fornavn eller LTID</small>
         <div class="user">
             {{ Form::text('ltid', null, array(
               'placeholder' => 'Etternavn, fornavn eller LTID', 
               'class' => 'form-control typeahead',
-              'style' => 'width:300px'
+              'style' => 'width:250px'
             )) }}
             {{ Form::hidden('user_id') }}
         </div>
       </div>
 
-      <div style="float:left; width: 210px;">
+      <div style="float:left; width: 200px;">
         {{ Form::label('thing', 'Hva?') }}<br />
         {{ Form::select('thing', $things, null, array(
             'class' => 'form-control',
@@ -208,8 +207,6 @@
     //   local: [ "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune" ]
     //   }
     //   ]);
-
-    $('')
 
   });
 </script>

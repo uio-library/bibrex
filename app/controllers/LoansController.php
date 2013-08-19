@@ -8,10 +8,9 @@ class LoansController extends BaseController {
 	);
 
 	private $messages = array(
-		'ltid.required' => 'ltid må fylles ut',
-		'ltid.regex' => 'ltid er ikke et ltid',
-		'dokid.required' => 'dokid må fylles ut',
-		'dokid.regex' => 'dokid er ikke et dokid'
+		'ltid.required' => 'Trenger enten navn eller LTID.',
+		'dokid.required' => 'Dokid må fylles ut.',
+		'dokid.regex' => 'Dokid er ikke et dokid.'
 	);
 
 	/**
@@ -58,6 +57,7 @@ class LoansController extends BaseController {
 	public function postStore()
 	{
 		$validator = Validator::make(Input::all(), $this->rules, $this->messages);
+		$messagebag = $validator->getMessageBag();
 
 		if ($validator->fails())
 		{
@@ -69,8 +69,10 @@ class LoansController extends BaseController {
 		// Check if Document exists, create if not
 		$thing = Thing::where('id','=',Input::get('thing'))->first();
 		if (!$thing) {
+			$messagebag->add('thing_not_found', 'Tingen finnes ikke');
 			return Redirect::action('LoansController@getIndex')
-				->with('status', 'Tingen finnes ikke!');
+				->withErrors($validator);
+
 		}
 
 		if ($thing->id == 1) {
@@ -82,8 +84,9 @@ class LoansController extends BaseController {
 			$ids = json_decode($ids);
 
 			if (empty($ids->dokid)) {
+				$messagebag->add('document_not_found', 'Dokumentet finnes ikke');
 				return Redirect::action('LoansController@getIndex')
-					->with('status', 'Dokumentet finnes ikke');
+					->withErrors($validator);
 			}
 
 			// Sjekk om dokumentet finnes lokalt
@@ -102,8 +105,9 @@ class LoansController extends BaseController {
 			// Check if already on loan
 			$loan = $dok->loans()->first();
 			if ($loan) {
+				$messagebag->add('already_on_loan', 'Dokumentet er allerede utlånt');
 				return Redirect::action('LoansController@getIndex')
-					->with('status', 'Dokumentet er allerede utlånt');
+					->withErrors($validator);
 			}
 
 		} else {
@@ -131,12 +135,18 @@ class LoansController extends BaseController {
 				$user = User::find($user_id);
 			} else {
 				if (strpos($user_input, ',') === false) {
+
+					$messagebag->add('invalid_name_format', 'Navnet må skrives på formen "Etternavn, Fornavn".');
 					return Redirect::action('LoansController@getIndex')
-						->with('status', 'Navnet må skrives på formen "Etternavn, Fornavn".');
+						->withErrors($validator);
+
 				} else {
+
 					$name = explode(',', $user_input);
 					$name = array_map('trim', $name);
-					$user = User::where('lastname','=',$name[0])->where('firstname','=',$name[1])->first();
+					$user = User::where('lastname','=',$name[0])
+						->where('firstname','=',$name[1])->first();
+
 				}
 			}
 		}
@@ -160,13 +170,19 @@ class LoansController extends BaseController {
 		}
 		$count = intval($count);
 
-		// Create new loan(s)	
-		$loan_ids = array();	
-		for ($i=0; $i < $count; $i++) { 
+		// Create new loan(s)
+		$loan_ids = array();
+		for ($i=0; $i < $count; $i++) {
 			$loan = new Loan();
 			$loan->user_id = $user->id;
 			$loan->document_id = $dok->id;
-			$loan->save();
+			if (!$loan->save()) {
+
+				$messagebag->add('loan_save_error', $loan->error);
+				return Redirect::action('LoansController@getIndex')
+					->withErrors($validator);
+
+			}
 			$loan_ids[] = $loan->id;
 		}
 
