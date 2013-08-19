@@ -2,11 +2,6 @@
 
 class LoansController extends BaseController {
 
-	/**
-	 * The layout that should be used for responses.
-	 */
-	protected $layout = 'layouts.master';
-
 	private $rules = array(
 		'ltid' => array('required'),
 		'dokid' => array('regex:/^[0-9a-zA-Z]{9}$/')
@@ -49,8 +44,7 @@ class LoansController extends BaseController {
 	{
 		$loan = Loan::find($id);
 		if ($loan) {
-			$this->layout->content = View::make('loans.show')
-				->with('loan', $loan);
+			return Response::view('loans.show', array('loan' => $loan));
 		} else {
 			return Response::view('errors.missing', array('what' => 'Lånet'), 404);
 		}

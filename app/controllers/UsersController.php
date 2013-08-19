@@ -2,11 +2,6 @@
 
 class UsersController extends BaseController {
 
-	/**
-	 * The layout that should be used for responses.
-	 */
-	protected $layout = 'layouts.master';
-
 	private $rules = array(
 		'ltid' => array('regex:/^[0-9a-zA-Z]{10}$/'),
 		'lastname' => array('required'),
@@ -42,8 +37,9 @@ class UsersController extends BaseController {
 
 		} else {
 			$users = User::with('loans')->get();
-			$this->layout->content = View::make('users.index')
-				->with('users', $users);			
+			return Response::view('users.index', array(
+				'users' => $users
+			));
 		}
 	}
 
@@ -57,8 +53,9 @@ class UsersController extends BaseController {
 	{
 		# with('loans')->
 		$user = User::find($id);
-		$this->layout->content = View::make('users.show')
-			->with('user', $user);
+		return Response::view('users.show', array(
+				'user' => $user
+			));
 	}
 
 	/**
@@ -70,7 +67,7 @@ class UsersController extends BaseController {
 	public function getNcipLookup($id)
 	{
 		$user = User::find($id);
-		$ncip = new Ncip('http://ncip.bibsys.no/ncip/NCIPResponder');
+		$ncip = new Ncip();
 		$data = $ncip->lookupUser($user->ltid);
 
 		return Response::json($data);
@@ -84,8 +81,10 @@ class UsersController extends BaseController {
 	public function getEdit($id)
 	{
 		$user = User::find($id);
-		$this->layout->content = View::make('users.edit')
-			->with('user', $user);
+		return Response::view('users.edit', array(
+				'user' => $user
+			));
+
 	}
 
 	/**

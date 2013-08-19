@@ -53,7 +53,7 @@ class Loan extends Eloquent {
 
 		if ($thing->id == 1) {
 
-			$ncip = new Ncip('http://ncip.bibsys.no/ncip/NCIPResponder');
+			$ncip = new Ncip();
 			$response = $ncip->checkOutItem($ltid, $dokid);
 
 			if (!$response['success']) {
@@ -77,7 +77,7 @@ class Loan extends Eloquent {
 
 			$dokid = $this->document->dokid;
 
-			$ncip = new Ncip('http://ncip.bibsys.no/ncip/NCIPResponder');
+			$ncip = new Ncip();
 			$response = $ncip->checkInItem($dokid);
 
 			if (!$response['success']) {

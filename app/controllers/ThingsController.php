@@ -3,11 +3,6 @@
 class ThingsController extends BaseController {
 
 	/**
-	 * The layout that should be used for responses.
-	 */
-	protected $layout = 'layouts.master';
-
-	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
@@ -15,8 +10,10 @@ class ThingsController extends BaseController {
 	public function getIndex()
 	{
 		$things = Thing::all();
-		$this->layout->content = View::make('things.index')
-			->with('things', $things);
+		return Response::view('things.index', array(
+				'things' => $things
+			));
+
 	}
 
 	/**

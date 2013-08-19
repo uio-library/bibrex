@@ -48,7 +48,7 @@ class User extends Eloquent {
 	public function save(array $options = array())
 	{
 		if ($this->ltid) {
-			$ncip = new Ncip('http://ncip.bibsys.no/ncip/NCIPResponder');
+			$ncip = new Ncip();
 			$response = $ncip->lookupUser($this->ltid);
 			$this->in_bibsys = $response['exists'];
 			if ($response['exists']) {

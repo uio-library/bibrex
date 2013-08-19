@@ -3,11 +3,6 @@
 class DocumentsController extends BaseController {
 
 	/**
-	 * The layout that should be used for responses.
-	 */
-	protected $layout = 'layouts.master';
-
-	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
@@ -15,8 +10,9 @@ class DocumentsController extends BaseController {
 	public function getIndex()
 	{
 		$docs = Document::with('loans', 'thing')->get();
-		$this->layout->content = View::make('documents.index')
-			->with('documents', $docs);
+		return Response::view('documents.index', array(
+			'documents' => $docs
+		));
 	}
 
 	/**
@@ -27,13 +23,11 @@ class DocumentsController extends BaseController {
 	 */
 	public function getShow($id)
 	{
-		View::composer('layouts.master', function($view){
-			$view->with('status', Session::get('status'));
-		});
 
 		$document = Document::with('thing')->find($id);
-		return View::make('documents.show')
-			->with('document', $document);
+		return Response::view('documents.show', array(
+			'document' => $document
+		));
 	}
 
 }

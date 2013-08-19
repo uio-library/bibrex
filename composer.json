@@ -5,14 +5,15 @@
 	"require": {
 		"laravel/framework": "4.0.*",
         "way/generators": "dev-master",
-        "scriptotek/customxmlelement": "dev-master",
+        "danmichaelo/customxmlelement": "dev-master",
+        "danmichaelo/ncip": "dev-master",
         "laravel/curl": "dev-master",
         "loic-sharma/profiler": "dev-master"
 	},
     "repositories": [
         {
             "type": "vcs",
-            "url":  "https://github.com/scriptotek/customxmlelement.git"
+            "url":  "https://github.com/danmichaelo/ncip.git"
         }
     ],
 	"autoload": {

@@ -114,7 +114,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
-		'Profiler\ProfilerServiceProvider'
+		'Profiler\ProfilerServiceProvider',
+		'Danmichaelo\Ncip\NcipServiceProvider',
 	),
 
 	/*
@@ -179,7 +180,8 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
-		'CustomXMLElement'=> 'Scriptotek\CustomXMLElement\CustomXMLElement',
+		'CustomXMLElement'=> 'Danmichaelo\CustomXMLElement\CustomXMLElement',
+		'Ncip'			  => 'Danmichaelo\Ncip\Ncip',
 		'Profiler' 		  => 'Profiler\Facades\Profiler',
 
 	),
