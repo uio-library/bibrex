@@ -178,7 +178,10 @@
     $ltid.on('paste', ltidChanged);   // IE, FF3  (http://stackoverflow.com/a/574971)
     $ltid.on('input', ltidChanged);   // FF, Opera, Chrome, Safari
 
+    var isWorking = false;
     $('form').on('submit', function(e) {
+      if (isWorking) return false;
+      isWorking = true;
       $('.spinner').show();
       $('input[type="button"]').prop('disabled', true);
       return true;
