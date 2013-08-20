@@ -29,7 +29,7 @@
         <li><a href="{{ URL::action('DocumentsController@getIndex') }}">Dokumenter</a></li>
         <li><a href="{{ URL::action('ThingsController@getIndex') }}">Ting</a></li>
       </ul>
-      <p class="navbar-text pull-right">BIBREX</p>
+      <p class="navbar-text pull-right"><a href="/about">Hjelp</a></p>
      </div>
     
     @show

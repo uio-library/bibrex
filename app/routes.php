@@ -11,6 +11,11 @@
 |
 */
 
+Route::get('/about', function()
+{
+	return Response::view('hello');
+});
+
 Route::get('/', function()
 {
 	return Redirect::action('LoansController@getIndex');
