@@ -73,14 +73,21 @@ class LoansController extends BaseController {
 		if (!$thing) {
 			$messagebag->add('thing_not_found', 'Tingen finnes ikke');
 			return Redirect::action('LoansController@getIndex')
-				->withErrors($validator);
-
+				->withErrors($validator)
+				->withInput();
 		}
 
 		if ($thing->id == 1) {
 
 			// Hent DOKID fra DOKID/KNYTTID
 			$unknown_id = Input::get('dokid');
+
+			if (empty($unknown_id)) {
+				$messagebag->add('dokid_empty', 'Intet dokument oppgitt');
+				return Redirect::action('LoansController@getIndex')
+					->withErrors($validator)
+					->withInput();
+			}
 			$curl = New Curl;
 			$ids = $curl->simple_get('http://linode.biblionaut.net/services/getids.php?id=' . $unknown_id);
 			$ids = json_decode($ids);
@@ -140,7 +147,8 @@ class LoansController extends BaseController {
 
 					$messagebag->add('invalid_name_format', 'Navnet må skrives på formen "Etternavn, Fornavn".');
 					return Redirect::action('LoansController@getIndex')
-						->withErrors($validator);
+						->withErrors($validator)
+						->withInput();
 
 				} else {
 

@@ -1,0 +1,11 @@
+# http://about.travis-ci.org/docs/user/languages/php/
+
+language: php
+python:
+  - 5.3
+
+install: 
+  - composer install
+
+script: 
+  - phpunit
