@@ -4,7 +4,7 @@ Simple lending system using NCIP to connect to a library system.
 
 ### Install
 
-1. `composer update` to update server-side deps. 
+1. `composer install` to update server-side deps. 
    If you get some `PHP Fatal error:  Class '...' not found`, comment out the 
    relevant lines under "Autoloaded Service Providers", do `composer update` 
    and then uncomment the lines.
