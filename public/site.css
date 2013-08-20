@@ -17,6 +17,10 @@
   */
 }
 
+body > .container {
+  padding-bottom:80px;
+}
+
 
 
 
@@ -87,4 +91,8 @@
   margin: 1em 3em;
   border-width:3px;
   box-shadow: 2px 2px 5px #888888;
+}
+
+.form-inline label {
+  width: 100%;
 }

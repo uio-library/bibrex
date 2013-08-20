@@ -57,7 +57,6 @@ class LoansController extends BaseController {
 	public function postStore()
 	{
 		$validator = Validator::make(Input::all(), $this->rules, $this->messages);
-		$messagebag = $validator->getMessageBag();
 
 		if ($validator->fails())
 		{
@@ -65,6 +64,9 @@ class LoansController extends BaseController {
 				->withErrors($validator)
 				->withInput();
 		}
+
+		// Must be called after $validator->fails() ?
+		$messagebag = $validator->getMessageBag();
 
 		// Check if Document exists, create if not
 		$thing = Thing::where('id','=',Input::get('thing'))->first();
