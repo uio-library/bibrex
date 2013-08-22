@@ -45,6 +45,11 @@ class Loan extends Eloquent {
 			dd("user not found");
 		}
 		$user = $results[0];
+		
+		if ($user->ltid == $guestNumber) {
+			$this->error = "Det midlertidige lånekortet skal aldri skannes i Bibrex. Hvis bruker ikke har lånekort skal man istedet oppgi personens navn.";
+			return false;			
+		}
 		$ltid = $user->in_bibsys ? $user->ltid : $guestNumber;
 
 		$results = DB::select('SELECT things.id, documents.dokid FROM things,documents WHERE things.id = documents.thing_id AND documents.id = ?', array($this->document_id));

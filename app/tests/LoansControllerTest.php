@@ -13,7 +13,7 @@ class LoansControllerTest extends TestCase {
 		$this->assertViewHas('loan_ids');
     }
 
-	public function testStoreEmpty()
+	public function testStoreBlankLoan()
 	{
 		$this->call('POST', 'loans/store');
 
@@ -21,7 +21,18 @@ class LoansControllerTest extends TestCase {
 		$this->assertSessionHasErrors('ltid');
     }
 
-	public function testStoreEmptyDokid()
+	public function testStoreLoanWithInvalidThing()
+	{
+		$this->call('POST', 'loans/store', array(
+			'ltid' => 'Duck, Donald', 
+			'thing' => '999'
+		));
+
+		$this->assertResponseStatus(302);
+		$this->assertSessionHasErrors('thing_not_found');
+    }
+
+	public function testStoreBibsysLoanWithoutDokid()
 	{
 		$this->call('POST', 'loans/store', array(
 			'ltid' => 'Duck, Donald', 
@@ -32,4 +43,30 @@ class LoansControllerTest extends TestCase {
 		$this->assertResponseStatus(302);
 		$this->assertSessionHasErrors('dokid_empty');
     }
+
+    public function testStoreLoanWithUnknownDokid()
+	{
+		$this->call('POST', 'loans/store', array(
+			'ltid' => 'Duck, Donald', 
+			'thing' => '1',
+			'dokid' => '99ns00000'
+		));
+
+		$this->assertResponseStatus(302);
+		$this->assertSessionHasErrors('document_not_found');
+    }
+
+    public function testStoreLoanUsingGuestNumber()
+	{
+		$this->call('POST', 'loans/store', array(
+			'ltid' => 'Duck, Donald', 
+			'thing' => '1',
+			'ltid' => 'umn1002157',
+			'dokid' => '12k211446'
+		));
+
+		$this->assertResponseStatus(302);
+		$this->assertSessionHasErrors('loan_save_error');
+    }
+
 }
