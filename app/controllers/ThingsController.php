@@ -68,7 +68,10 @@ class ThingsController extends BaseController {
 	 */
 	public function getEdit($id)
 	{
-		//
+		$thing = Thing::find($id);
+		return Response::view('things.edit', array(
+				'thing' => $thing
+			));
 	}
 
 	/**
@@ -79,7 +82,29 @@ class ThingsController extends BaseController {
 	 */
 	public function postUpdate($id)
 	{
-		//
+
+		$validator = Validator::make(Input::all(), array(
+			'name' => array('required')
+		), array(
+			'name.required' => 'Navnet kan ikke være blankt',
+		));
+		if ($validator->fails())
+		{
+			return Redirect::action('ThingsController@getEdit', $id)
+				->withErrors($validator)
+				->withInput();
+		}
+
+		$thing = Thing::find($id);
+		if (!$thing) {
+			return Redirect::action('ThingsController@getIndex')
+				->with('status', 'Tingen finnes ikke!');
+		}
+
+		$thing->name = Input::get('name');
+		$thing->save();
+			return Redirect::action('ThingsController@getIndex')
+				->with('status', 'Tingen ble lagret!');
 	}
 
 	/**

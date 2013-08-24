@@ -32,9 +32,9 @@
           'style' => 'width:120px'
       )) }}
 
-      {{ Form::submit('Lagre ny ting', array(
-          'class' => 'btn btn-success'
-      )) }}
+      <button type="submit" class="btn btn-success">
+        Lagre ny ting
+      </button>
 
       <img src="/img/spinner2.gif" class="spinner" />
 
@@ -57,6 +57,10 @@
       @foreach ($things as $thing)
         <li class="list-group-item">
           {{ $thing->name }}
+          &nbsp;&nbsp;
+          <a href="{{ URL::action('ThingsController@getEdit', $thing->id) }}"  class="halflings pencil">
+            <i></i>Rediger
+          </a>
         </li>
       @endforeach
     </ul>
