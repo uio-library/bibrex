@@ -41,7 +41,7 @@ class LoansController extends BaseController {
 	 */
 	public function getShow($id)
 	{
-		$loan = Loan::find($id);
+		$loan = Loan::withTrashed()->find($id);
 		if ($loan) {
 			return Response::view('loans.show', array('loan' => $loan));
 		} else {
