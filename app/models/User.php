@@ -52,14 +52,14 @@ class User extends Eloquent {
 	public function save(array $options = array())
 	{
 		if ($this->ltid) {
-			$ncip = new Ncip();
+			$ncip = new NcipClient();
 			$response = $ncip->lookupUser($this->ltid);
-			$this->in_bibsys = $response['exists'];
-			if ($response['exists']) {
-				$this['lastname'] = $response['lastname'];
-				$this['firstname'] = $response['firstname'];
-				$this['email'] = $response['email'];
-				$this['phone'] = $response['phone'];
+			$this->in_bibsys = $response->exists;
+			if ($response->exists) {
+				$this['lastname'] = $response->lastname;
+				$this['firstname'] = $response->firstname;
+				$this['email'] = $response->email;
+				$this['phone'] = $response->phone;
 			}
 		} else {
 			$this->in_bibsys = false;
