@@ -89,6 +89,8 @@
         etterslep.
     </li>
     <li>
+        Det er ikke mulig å sende ut purringer (enda).
+    <li>
         Andre ting? Spør Dan Michael
     </li>
 </ul>
