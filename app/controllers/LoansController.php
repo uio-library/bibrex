@@ -284,7 +284,7 @@ class LoansController extends BaseController {
 	public function getSync()
 	{
 		$user_loans = array();
-		$ncip = new Ncip();
+		$ncip = new NcipClient();
 		foreach (Loan::with('document','user')->get() as $loan) {
 			if ($loan->document->thing_id == 1) {
 				$dokid = $loan->document->dokid;
@@ -298,7 +298,7 @@ class LoansController extends BaseController {
 				if (!isset($user_loans[$nr])) {
 					$response = $ncip->lookupUser($nr);
 					$user_loans[$nr] = array();
-					foreach ($response['loanedItems'] as $item) {
+					foreach ($response->loanedItems as $item) {
 						$user_loans[$nr][] = $item['id'];
 					}
 				}

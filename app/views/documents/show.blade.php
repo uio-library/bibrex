@@ -94,6 +94,15 @@
 
       <div class="row">
         <div class="col-2">
+          <strong>Forfall:</strong>
+        </div>
+        <div class="col-6">
+          {{ $loan->due_at }}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-2">
           <strong>Returnert:</strong>
         </div>
         <div class="col-6">

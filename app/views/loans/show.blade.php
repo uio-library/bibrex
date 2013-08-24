@@ -14,14 +14,25 @@
 
     <div class="row">
       <div class="col-2">
-        <strong>Dokid:</strong>
+        <strong>Ting:</strong>
       </div>
       <div class="col-6">
-        <a href="{{ URL::action('DocumentsController@getShow', $loan->document->id) }}">
-          {{ $loan->document->dokid }}
-        </a>
+        {{ $loan->document->thing->name }}
       </div>
     </div>
+
+    @if ($loan->document->thing->id == 1)
+      <div class="row">
+        <div class="col-2">
+          <strong style="padding-left:10px;">Dokid:</strong>
+        </div>
+        <div class="col-6">
+          <a href="{{ URL::action('DocumentsController@getShow', $loan->document->id) }}" style="padding-left:10px;">
+            {{ $loan->document->dokid }}
+          </a>
+        </div>
+      </div>
+    @endif
 
     <div class="row">
       <div class="col-2">
@@ -41,6 +52,15 @@
       </div>
       <div class="col-6">
         {{ $loan->created_at }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-2">
+        <strong>Forfall:</strong>
+      </div>
+      <div class="col-6">
+        {{ $loan->due_at }}
       </div>
     </div>
 

@@ -61,11 +61,13 @@ class Loan extends Eloquent {
 
 		if ($thing->id == 1) {
 
-			$ncip = new Ncip();
+			$ncip = new NcipClient();
 			$response = $ncip->checkOutItem($ltid, $dokid);
 
-			if (!$response['success']) {
-				$this->error = "Dokumentet kunne ikke lånes ut i BIBSYS: " . $response['error'];
+			if ($response->success) {
+				$this->due_at = $response->dueDate;
+			} else {
+				$this->error = "Dokumentet kunne ikke lånes ut i BIBSYS: " . $response->error;
 				return false;
 			}
 
@@ -87,7 +89,7 @@ class Loan extends Eloquent {
 
 			$dokid = $this->document->dokid;
 
-			$ncip = new Ncip();
+			$ncip = new NcipClient();
 			$response = $ncip->checkInItem($dokid);
 
 			if (!$response['success']) {

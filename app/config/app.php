@@ -181,7 +181,7 @@ return array(
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
 		'CustomXMLElement'=> 'Danmichaelo\CustomXMLElement\CustomXMLElement',
-		'Ncip'			  => 'Danmichaelo\Ncip\Ncip',
+		'NcipClient'	  => 'Danmichaelo\Ncip\NcipClient',
 		'Profiler' 		  => 'Profiler\Facades\Profiler',
 
 	),
