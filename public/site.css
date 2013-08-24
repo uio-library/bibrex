@@ -1,3 +1,6 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+}
 .list-group li {
  -webkit-transition: all 0.5s ease-in-out;
   -moz-transition: all 0.5s ease-in-out;
@@ -22,7 +25,16 @@ body > .container {
 }
 
 
+a * {
+  color: #428bca;
+}
 
+a:hover, a:focus {
+
+}
+a:hover *, a:focus * {
+  color: #2A6496;
+}
 
 .tt-hint {
   border: 1px solid rgba(0,0,0,0);
