@@ -74,7 +74,7 @@
           'class' => 'btn btn-success'
       )) }}
 
-      <img src="/img/spinner2.gif" class="spinner" />
+      <span class="spinner" style="padding-left:10px; font-style:italic;">Et øyeblikk...</span>
 
 
     {{ Form::close() }}
