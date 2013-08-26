@@ -40,6 +40,18 @@
 
     {{ Form::close() }}
 
+    <h3>Hva med klikkere?</h3>
+
+    <p style="margin:10px 0;">
+      Klikkere skal ikke legges til. Klikkere har HEFTID festet 
+      på baksiden og lånes ut som normalt i BIBSYS. Det er per i dag 
+      ikke teknisk mulig for BIBREX å låne ut dokumenter med HEFTID, 
+      så hvis bruker ikke har gyldig LTID har man et problem. En 
+      løsning kan være å låne ut på «Midlertid låner» (umn1002157) 
+      i BIBSYS og skrive personopplysninger om låneren i 
+      utlånskommentaren.
+    </p>
+
   </div>
 
   <div class="panel panel-primary">
