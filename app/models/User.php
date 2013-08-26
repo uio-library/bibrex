@@ -56,8 +56,8 @@ class User extends Eloquent {
 			$response = $ncip->lookupUser($this->ltid);
 			$this->in_bibsys = $response->exists;
 			if ($response->exists) {
-				$this['lastname'] = $response->lastname;
-				$this['firstname'] = $response->firstname;
+				$this['lastname'] = $response->lastName;
+				$this['firstname'] = $response->firstName;
 				$this['email'] = $response->email;
 				$this['phone'] = $response->phone;
 			}
