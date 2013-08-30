@@ -45,10 +45,10 @@ class Loan extends Eloquent {
 			dd("user not found");
 		}
 		$user = $results[0];
-		
+
 		if ($user->ltid == $guestNumber) {
 			$this->error = "Det midlertidige lånekortet skal aldri skannes i Bibrex. Hvis bruker ikke har lånekort skal man istedet oppgi personens navn.";
-			return false;			
+			return false;
 		}
 		$ltid = $user->in_bibsys ? $user->ltid : $guestNumber;
 
@@ -65,7 +65,9 @@ class Loan extends Eloquent {
 			$response = $ncip->checkOutItem($ltid, $dokid);
 
 			if ($response->success) {
-				$this->due_at = $response->dueDate;
+				if ($response->dueDate) {
+					$this->due_at = $response->dueDate;
+				}
 			} else {
 				$this->error = "Dokumentet kunne ikke lånes ut i BIBSYS: " . $response->error;
 				return false;
