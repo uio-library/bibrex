@@ -84,7 +84,7 @@
   <div class="panel panel-success">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Utlån</h3>
+      <h3 class="panel-title">Utlån ({{ count($loans) }})</h3>
     </div>
 
 

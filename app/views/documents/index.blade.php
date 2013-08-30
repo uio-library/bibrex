@@ -5,7 +5,7 @@
   <div class="panel panel-primary">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Dokumenter</h3>
+      <h3 class="panel-title">Dokumenter ({{ count($documents) }})</h3>
     </div>
 
     <p>

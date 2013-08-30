@@ -57,7 +57,7 @@
   <div class="panel panel-primary">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Ting</h3>
+      <h3 class="panel-title">Ting ({{ count($things) }})</h3>
     </div>
 
     <p>
