@@ -135,7 +135,7 @@ class LoansController extends BaseController {
 		$ltid = false;
 		$user = false;
 		$name = false;
-		if (preg_match('/^[0-9a-zA-Z]{10}$/', $user_input)) {
+		if (preg_match('/^[0-9a-zA-Z]{10}$/', $user_input) && preg_match('/[0-9]/', $user_input)) {
 			$ltid = $user_input;
 			$user = User::where('ltid','=',$user_input)->first();
 		} else {
