@@ -13,7 +13,7 @@ class AddDueDate extends Migration {
 	{
 		Schema::table('loans', function($table)
 		{
-			$table->dateTime('due_at');
+			$table->dateTime('due_at')->nullable();
 		});
 	}
 
