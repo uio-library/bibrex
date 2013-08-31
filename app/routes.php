@@ -28,3 +28,5 @@ Route::controller('loans', 'LoansController');
 Route::controller('documents', 'DocumentsController');
 
 Route::controller('things', 'ThingsController');
+
+Route::controller('reminders', 'RemindersController');

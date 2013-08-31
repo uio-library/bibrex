@@ -67,6 +67,29 @@
 
     <div class="row">
       <div class="col-2">
+        <strong>Påminnelser:</strong>
+      </div>
+      <div class="col-6">
+        @if (count($loan->reminders) == 0)
+          <div>
+            <em>Ingen påminnelser sendt</em>
+          </div>
+        @else
+          @foreach ($loan->reminders as $reminder)
+            <div>
+              Påminnelse per {{ $reminder->medium == 'sms' ? 'SMS' : 'e-post' }} sendt {{ $reminder->date_created }}
+            </div>
+          @endforeach
+        @endif
+        <div>
+          <a href="{{ URL::action('RemindersController@getCreate') . '?loan_id=' . $loan->id }}">
+            Send påminnelse
+          </a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-2">
         <strong>Returnert:</strong>
       </div>
       <div class="col-6">

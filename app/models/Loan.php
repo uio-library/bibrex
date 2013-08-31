@@ -15,6 +15,11 @@ class Loan extends Eloquent {
 		return $this->belongsTo('Document');
 	}
 
+	public function reminders()
+	{
+		return $this->hasMany('Reminder');
+	}
+
 	public function representation($plaintext = false)
 	{
 		if ($this->document->thing->id == 1) {
