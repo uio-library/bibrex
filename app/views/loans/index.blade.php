@@ -198,15 +198,18 @@
       $('.list-group .added').removeClass('added').removeClass('focus');
     }, 1000)
 
-    $('select[name="thing"]').on('change', function(e) {
-      if ($(e.target).val() === '1') {
+    $thing = $('select[name="thing"]');
+    function thingChanged() {
+      if ($thing.val() === '1') {
         $('#bibsysdok_extras').show();
         $('#other_extras').hide();
       } else {
         $('#bibsysdok_extras').hide();
         $('#other_extras').show();
       }
-    });
+    }
+    $thing.on('change', thingChanged);
+    thingChanged();
 
     // $('input[name="ltid"]').typeahead([
     //   {
