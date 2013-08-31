@@ -78,7 +78,9 @@ class Loan extends Eloquent {
 			$ncip = new NcipClient();
 			$response = $ncip->checkOutItem($ltid, $dokid);
 
-			if ($response->success) {
+			// BIBSYS sometimes returns an empty response on successful checkouts.
+			// We will therefore threat an empty response as success... for now...
+			if ((!$response->success && $response->error == 'Empty response') || ($response->success)) {
 				if ($response->dueDate) {
 					$this->due_at = $response->dueDate;
 				}
