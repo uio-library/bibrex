@@ -61,6 +61,7 @@
       </div>
       <div class="col-6">
         {{ $loan->due_at }}
+        ({{ $loan->daysLeftFormatted() }})
       </div>
     </div>
 

@@ -27,14 +27,17 @@ class Loan extends Eloquent {
 		}
 	}
 
-	/**
-	 * Save the model to the database.
-	 *
-	 * @param  array  $options
-	 * @return bool
-	 */
-	public function save(array $options = array())
-	{
+	public function daysLeft() {
+		if (is_null($this->due_at)) {
+			return 999999;
+		}
+		$d1 = new DateTime($this->due_at);
+		$d2 = new DateTime();
+		$diff = $d2->diff($d1);
+		$dl = intval($diff->format('%r%a'));
+		if ($dl > 0) $dl++;
+		return $dl;
+	}
 
 	public function daysLeftFormatted() {
 		$d = $this->daysLeft();
@@ -58,6 +61,8 @@ class Loan extends Eloquent {
 			return false;
 		}
 		$ltid = $user->in_bibsys ? $user->ltid : $guestNumber;
+
+		$this->as_guest = !$user->in_bibsys;
 
 		$results = DB::select('SELECT things.id, documents.dokid FROM things,documents WHERE things.id = documents.thing_id AND documents.id = ?', array($this->document_id));
 		if (empty($results)) {

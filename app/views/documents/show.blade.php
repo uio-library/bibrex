@@ -97,7 +97,7 @@
           <strong>Forfall:</strong>
         </div>
         <div class="col-6">
-          {{ $loan->due_at }}
+          {{ $loan->due_at }} ({{ $loan->daysLeftFormatted() }})
         </div>
       </div>
 

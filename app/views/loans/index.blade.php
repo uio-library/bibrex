@@ -93,7 +93,7 @@
 
       <li class="list-group-item{{ in_array($loan->id, $loan_ids) ? ' added' : '' }}">
         <h4 class="list-group-item-heading">
-          <a href="{{ URL::action('DocumentsController@getShow', $loan->document->id) }}">
+          <a href="{{ URL::action('LoansController@getShow', $loan->id) }}">
             {{ $loan->representation() }}
 
           </a>
@@ -106,6 +106,7 @@
         </h4>
         <p class="list-group-item-text">
           Utlånt {{ $loan->created_at }}.
+          {{ $loan->daysLeftFormatted() }}.
           <a href="{{ URL::action('LoansController@getDestroy', $loan->id) }}?returnTo=loans.index">
             Returnér
           </a>
@@ -151,7 +152,7 @@
          template: [
             '<p class="repo-ltid">{'+'{ltid}'+'}</p><p class="repo-name">{'+'{lastname}'+'}, {'+'{firstname}'+'}</p>',
           ].join(''),
-          engine: Hogan 
+          engine: Hogan
       }])
     .on('typeahead:autocompleted', function(evt, datum) {
       $('input[name="user_id"]').val(datum.id);
@@ -180,6 +181,12 @@
     var isWorking = false;
     $('form').on('submit', function(e) {
       if (isWorking) return false;
+
+      if ($('#other_extras').is(':visible') && $('#count').val() > 3) {
+        if (!confirm('Sikker på at du vil låne ut ' + $('#count').val() + ' stk.?')) {
+          return false;
+        }
+      }
       isWorking = true;
       $('.spinner').show();
       $('input[type="button"]').prop('disabled', true);
@@ -197,7 +204,7 @@
         $('#other_extras').hide();
       } else {
         $('#bibsysdok_extras').hide();
-        $('#other_extras').show();       
+        $('#other_extras').show();
       }
     });
 
