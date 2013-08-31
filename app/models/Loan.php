@@ -15,12 +15,14 @@ class Loan extends Eloquent {
 		return $this->belongsTo('Document');
 	}
 
-	public function representation()
+	public function representation($plaintext = false)
 	{
 		if ($this->document->thing->id == 1) {
-			$s = rtrim($this->document->title,' :') 
+			$s = rtrim($this->document->title,' :')
 				. ($this->document->subtitle ? ' : ' . $this->document->subtitle : '');
-			$s .= ' <small>(' . $this->document->dokid . ')</small>';
+			if (!$plaintext) {
+				$s .= ' <small>(' . $this->document->dokid . ')</small>';
+			}
 			return $s;
 		} else {
 			return $this->document->thing->name;
@@ -86,6 +88,20 @@ class Loan extends Eloquent {
 			}
 
 		}
+	}
+
+	/**
+	 * Save the model to the database.
+	 *
+	 * @param  array  $options
+	 * @return bool
+	 */
+	public function save(array $options = array())
+	{
+
+		if (!$this->exists) {
+			$this->ncipSave();
+		}
 
 		parent::save($options);
 		return true;
@@ -112,6 +128,17 @@ class Loan extends Eloquent {
 		}
 
 		parent::delete();
+	}
+
+	/**
+	 * Restore a soft-deleted model instance.
+	 *
+	 * @return bool|null
+	 */
+	public function restore()
+	{
+		$this->ncipSave();
+		parent::restore();
 	}
 
 }
