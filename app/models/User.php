@@ -9,6 +9,23 @@ class User extends Eloquent {
 	 */
 	protected $table = 'users';
 
+	public static $rules = array(
+		'ltid' => 'not_guest_ltid' // this rule is defined in app/start/global.php
+	);
+	public static $messages = array(
+		'not_guest_ltid' => 'Det midlertidige lånekortet skal aldri skannes i Bibrex. Hvis bruker ikke har lånekort skal man istedet oppgi personens navn'
+	);
+
+	public function validate()
+	{
+		$v = Validator::make($this->attributes, static::$rules, static::$messages);
+
+		if ($v->passes()) return true;
+
+		$this->errors = $v->messages();
+		return false;
+	}
+
 	public function loans()
 	{
 		return $this->hasMany('Loan');
@@ -66,6 +83,9 @@ class User extends Eloquent {
 	 */
 	public function save(array $options = array())
 	{
+		if (!$this->validate()) {
+			return false;
+		}
 		if ($this->ltid) {
 			$response = $this->ncipLookup();
 			$this->in_bibsys = $response->exists;
@@ -80,6 +100,7 @@ class User extends Eloquent {
 		}
 
 		parent::save($options);
+		return true;
 	}
 
 }

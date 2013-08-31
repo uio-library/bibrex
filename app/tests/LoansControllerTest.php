@@ -67,32 +67,6 @@ class LoansControllerTest extends TestCase {
 		$this->assertSessionHasErrors('document_not_found');
     }
 
-    public function testStoreLoanUsingGuestNumber()
-	{
-
-		// Define the guest LTID
-		$dummy_ltid = 'umn1000000';
-		Config::set('app.guest_ltid', $dummy_ltid); // could we mock this? I've not found an elegant way to do it yet
-
-		// Mock the NCIP client
-		$response = new Danmichaelo\Ncip\UserResponse;
-		$this->ncip->shouldReceive('lookupUser')->once()
-			 ->andReturn($response);
-
-		// Store a loan to a *new* User using the guest LTID
-		// This should not be allowed, since the guest LTID
-		// should not be connected to any specific user
-		$this->call('POST', 'loans/store', array(
-			'ltid' => 'Duck, Donald',
-			'thing' => '1',
-			'ltid' => $dummy_ltid,
-			'dokid' => '12k211446'
-		));
-
-		$this->assertResponseStatus(302);
-		$this->assertSessionHasErrors('loan_save_error');
-    }
-
     public function testNcipLookupResponse()
 	{
 		$response = $this->call('GET', 'users/ncip-lookup/1');

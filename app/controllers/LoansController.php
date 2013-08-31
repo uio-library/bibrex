@@ -91,7 +91,7 @@ class LoansController extends BaseController {
 					->withErrors($validator)
 					->withInput();
 			}
-			$curl = New Curl;
+			$curl = new Curl;
 			$ids = $curl->simple_get('http://linode.biblionaut.net/services/getids.php?id=' . $unknown_id);
 			$ids = json_decode($ids);
 
@@ -173,7 +173,11 @@ class LoansController extends BaseController {
 				$user->lastname = $name[0];
 				$user->firstname = $name[1];
 			}
-			$user->save();
+			if (!$user->save()) {
+				return Redirect::action('LoansController@getIndex')
+					->withErrors($user->errors)
+					->withInput();
+			}
 		}
 
 		if ($thing->id == 1) {
@@ -186,15 +190,13 @@ class LoansController extends BaseController {
 		// Create new loan(s)
 		$loan_ids = array();
 		for ($i=0; $i < $count; $i++) {
-			$loan = new Loan();
+			$loan = new Loan;
 			$loan->user_id = $user->id;
 			$loan->document_id = $dok->id;
 			if (!$loan->save()) {
-
-				$messagebag->add('loan_save_error', $loan->error);
 				return Redirect::action('LoansController@getIndex')
-					->withErrors($validator);
-
+					->withErrors($loan->errors)
+					->withInput();
 			}
 			$loan_ids[] = $loan->id;
 		}

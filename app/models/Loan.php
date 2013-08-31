@@ -3,7 +3,7 @@
 class Loan extends Eloquent {
 	protected $guarded = array();
 	protected $softDelete = true;
-	public static $rules = array();
+	public $errors;
 
 	public function user()
 	{
@@ -54,27 +54,19 @@ class Loan extends Eloquent {
 			: '<span style="color:red;">Forfalt for ' . abs($d) . ' dager siden</span>';
 	}
 
-	private function ncipSave() {
-		$guestNumber = Config::get('app.guest_ltid');
+	private function ncipCheckout() {
 
 		$results = DB::select('SELECT ltid, in_bibsys FROM users WHERE users.id = ?', array($this->user_id));
-		if (empty($results)) {
-			dd("user not found");
-		}
+		if (empty($results)) dd("user not found");
 		$user = $results[0];
 
-		if ($user->ltid == $guestNumber) {
-			$this->error = "Det midlertidige lånekortet skal aldri skannes i Bibrex. Hvis bruker ikke har lånekort skal man istedet oppgi personens navn.";
-			return false;
-		}
-		$ltid = $user->in_bibsys ? $user->ltid : $guestNumber;
+		$ltid = $user->in_bibsys ? $user->ltid : Config::get('app.guest_ltid');
 
 		$this->as_guest = !$user->in_bibsys;
 
 		$results = DB::select('SELECT things.id, documents.dokid FROM things,documents WHERE things.id = documents.thing_id AND documents.id = ?', array($this->document_id));
-		if (empty($results)) {
-			dd("thing not found");
-		}
+		if (empty($results)) dd("thing not found");
+
 		$thing = $results[0];
 		$dokid = $thing->dokid;
 
@@ -90,11 +82,12 @@ class Loan extends Eloquent {
 					$this->due_at = $response->dueDate;
 				}
 			} else {
-				$this->error = "Dokumentet kunne ikke lånes ut i BIBSYS: " . $response->error;
+				$this->errors->add('checkout_error', 'Dokumentet kunne ikke lånes ut i BIBSYS: ' . $response->error);
 				return false;
 			}
 
 		}
+		return true;
 	}
 
 	/**
@@ -105,9 +98,9 @@ class Loan extends Eloquent {
 	 */
 	public function save(array $options = array())
 	{
-
+		$this->errors = new Illuminate\Support\MessageBag;
 		if (!$this->exists) {
-			if (!$this->ncipSave()) {
+			if (!$this->ncipCheckout()) {
 				return false;
 			}
 		}

@@ -81,3 +81,17 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+/*
+|--------------------------------------------------------------------------
+| Custom validators
+|--------------------------------------------------------------------------
+|
+| We add custom validators here
+|
+*/
+
+Validator::extend('not_guest_ltid', function($attribute, $value, $parameters)
+{
+    return $value != Config::get('app.guest_ltid');
+});
