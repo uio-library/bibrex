@@ -1,9 +1,9 @@
 <?php
 
 use Way\Tests\Factory;
+use Way\Tests\ModelHelpers;
 
 class UserTest extends TestCase {
-    use Way\Tests\ModelHelpers;
 
     public function testUsingGuestNumber()
     {
