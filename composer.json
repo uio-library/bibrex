@@ -8,11 +8,11 @@
         "danmichaelo/customxmlelement": "dev-master",
         "danmichaelo/ncip": "dev-master",
         "laravel/curl": "dev-master",
-        "loic-sharma/profiler": "dev-master",
-        "Mockery/Mockery": ">=0.7.2"
+        "loic-sharma/profiler": "dev-master"
 	},
     "require-dev": {
-        "phpunit/phpunit": "3.7.*"
+        "phpunit/phpunit": "3.7.*",
+        "Mockery/Mockery": ">=0.7.2"
     },
     "repositories": [
         {

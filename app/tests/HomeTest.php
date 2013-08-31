@@ -1,13 +1,13 @@
 <?php
 
-class ExampleTest extends TestCase {
+class HomeTest extends TestCase {
 
 	/**
 	 * A basic functional test example.
 	 *
 	 * @return void
 	 */
-	public function testBasicExample()
+	public function testRedirectsToLoansIndexView()
 	{
 		$crawler = $this->client->request('GET', '/');
 		$this->assertRedirectedToAction('LoansController@getIndex');

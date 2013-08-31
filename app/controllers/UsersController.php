@@ -70,8 +70,7 @@ class UsersController extends BaseController {
 		if (!$user) {
 			return Response::json(array('exists' => false));
 		}
-		$ncip = new NcipClient();
-		$data = $ncip->lookupUser($user->ltid);
+		$data = $user->ncipLookup();
 		$data['exists'] = true;
 
 		return Response::json($data);

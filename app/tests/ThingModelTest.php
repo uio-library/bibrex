@@ -1,9 +1,9 @@
 <?php
 
 
-class BibsysThingTest extends TestCase {
+class ThingModelTest extends TestCase {
 
-	public function testId()
+	public function testBibsysDocumentHasCorrectId()
 	{
 		$thing = Thing::where('name','BIBSYS-dokument')->first();
 

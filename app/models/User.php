@@ -44,6 +44,21 @@ class User extends Eloquent {
 	}
 
 	/**
+	 * Make a lookupUser request to the NCIP service
+	 *
+	 * @return UserResponse
+	 */
+	public function ncipLookup() {
+		if ($this->ltid) {
+			$ncip = App::make('NcipClient');
+			$response = $ncip->lookupUser($this->ltid);
+			return $response;
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * Save the model to the database.
 	 *
 	 * @param  array  $options
@@ -52,8 +67,7 @@ class User extends Eloquent {
 	public function save(array $options = array())
 	{
 		if ($this->ltid) {
-			$ncip = new NcipClient();
-			$response = $ncip->lookupUser($this->ltid);
+			$response = $this->ncipLookup();
 			$this->in_bibsys = $response->exists;
 			if ($response->exists) {
 				$this['lastname'] = $response->lastName;
