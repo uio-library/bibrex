@@ -10,12 +10,20 @@ class LoansControllerTest extends TestCase {
 	public function setUp()
 	{
         parent::setUp();
+
+        // Mock NCIP
 		$this->ncip = Mockery::mock();
 		App::instance('NcipClient', $this->ncip);
+
+        // Mock Curl
+		$this->curl = Mockery::mock();
+		App::instance('Curl', $this->curl);
+
 	}
 
 	public function testIndexView()
 	{
+		$this->curl->shouldReceive('simple_get')->never();
 		$this->call('GET', 'loans');
 
 		$this->assertResponseOk();
@@ -26,6 +34,7 @@ class LoansControllerTest extends TestCase {
 
 	public function testStoreBlankLoan()
 	{
+		$this->curl->shouldReceive('simple_get')->never();
 		$this->call('POST', 'loans/store');
 
 		$this->assertResponseStatus(302);
@@ -34,6 +43,7 @@ class LoansControllerTest extends TestCase {
 
 	public function testStoreLoanWithInvalidThing()
 	{
+		$this->curl->shouldReceive('simple_get')->never();
 		$this->call('POST', 'loans/store', array(
 			'ltid' => 'Duck, Donald',
 			'thing' => '999'
@@ -43,6 +53,7 @@ class LoansControllerTest extends TestCase {
 		$this->assertSessionHasErrors('thing_not_found');
     }
 
+	/*
 	public function testStoreBibsysLoanWithoutDokid()
 	{
 		$this->call('POST', 'loans/store', array(
@@ -53,10 +64,14 @@ class LoansControllerTest extends TestCase {
 
 		$this->assertResponseStatus(302);
 		$this->assertSessionHasErrors('dokid_empty');
-    }
+    }*/
 
     public function testStoreLoanWithUnknownDokid()
 	{
+		$this->curl->shouldReceive('simple_get')
+			->once()
+			->andReturn('{"objektid":"","dokid":"","heftid":""}');
+
 		$this->call('POST', 'loans/store', array(
 			'ltid' => 'Duck, Donald',
 			'thing' => '1',
@@ -77,6 +92,74 @@ class LoansControllerTest extends TestCase {
 
 		$json = json_decode($json);
 		$this->assertFalse($json->exists);
+    }
+
+	public function testNcipStoreitemForNewUserWithoutLtid()
+	{
+		$ltid = 'uo00000000';
+		$dokid = '99ns00000';
+		Config::set('app.guest_ltid', $ltid);
+
+		$this->curl->shouldReceive('simple_get')
+			->andReturnUsing(function($url) {
+				$url = explode('=', $url);
+				$this->assertEquals('http://linode.biblionaut.net/services/getids.php?id', $url[0]);
+				$dokid = $url[1];
+				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
+			});
+
+		$this->ncip->shouldReceive('lookupUser')->never();
+
+		$c = new Danmichaelo\Ncip\CheckoutResponse(null);
+		$this->ncip->shouldReceive('checkOutItem')->once()
+			->with($ltid, $dokid)
+			->andReturn($c);
+
+		$this->call('POST', 'loans/store', array(
+			'ltid' => 'Duck, Donald',
+			'thing' => '1',
+			'dokid' => $dokid
+		));
+
+		$this->assertResponseStatus(302);
+    }
+
+	public function testNcipStoreitemForNewUserWithLtid()
+	{
+
+		$ltid = 'uo00000001';
+		$dokid = '99ns00000';
+
+		$this->curl->shouldReceive('simple_get')
+			->andReturnUsing(function($url) {
+				$url = explode('=', $url);
+				$this->assertEquals('http://linode.biblionaut.net/services/getids.php?id', $url[0]);
+				$dokid = $url[1];
+				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
+			});
+
+		$u = new Danmichaelo\Ncip\UserResponse;
+		$u->exists = true;
+		$u->userId = $ltid;
+		$u->firstName = 'Donald';
+		$u->lastName = 'Duck';
+
+		$this->ncip->shouldReceive('lookupUser')->once()
+			->with($ltid)
+			->andReturn($u);
+
+		$c = new Danmichaelo\Ncip\CheckoutResponse(null);
+		$this->ncip->shouldReceive('checkOutItem')->once()
+			->with($ltid, $dokid)
+			->andReturn($c);
+
+		$this->call('POST', 'loans/store', array(
+			'ltid' => $ltid,
+			'thing' => '1',
+			'dokid' => $dokid
+		));
+
+		$this->assertResponseStatus(302);
     }
 
 }

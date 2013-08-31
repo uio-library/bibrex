@@ -91,7 +91,7 @@ class LoansController extends BaseController {
 					->withErrors($validator)
 					->withInput();
 			}
-			$curl = new Curl;
+			$curl = App::make('Curl');
 			$ids = $curl->simple_get('http://linode.biblionaut.net/services/getids.php?id=' . $unknown_id);
 			$ids = json_decode($ids);
 
