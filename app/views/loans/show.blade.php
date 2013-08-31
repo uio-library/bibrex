@@ -85,6 +85,7 @@
           <a href="{{ URL::action('RemindersController@getCreate') . '?loan_id=' . $loan->id }}">
             Send påminnelse
           </a>
+        </div>
       </div>
     </div>
 
