@@ -272,7 +272,7 @@ class LoansController extends BaseController {
 		$docid = $loan->document->id;
 		$loan->restore();
 		return Redirect::action('DocumentsController@getShow', $docid)
-			->with('status', 'Innleveringen ble angret.');	    	
+			->with('status', 'Innleveringen ble angret.');
 	}
 
 	/**
@@ -284,6 +284,9 @@ class LoansController extends BaseController {
 	public function getSync()
 	{
 		$user_loans = array();
+		$due = array();
+		header("Content-type: text/html; charset=utf-8");
+		echo "Starter sync...<br />\n";
 		$ncip = new NcipClient();
 		$guest_ltid = Config::get('app.guest_ltid');
 
@@ -299,16 +302,20 @@ class LoansController extends BaseController {
 					$response = $ncip->lookupUser($ltid);
 					$user_loans[$ltid] = array();
 					foreach ($response->loanedItems as $item) {
-						$user_loans[$nr][] = $item['id'];
+						$user_loans[$ltid][] = $item['id'];
+						$due[$item['id']] = $item['dateDue'];
 					}
 				}
-				if (in_array($dokid, $user_loans[$nr])) {
+				echo " (" . count($user_loans[$ltid]) . " lån), ";
+				if (in_array($dokid, $user_loans[$ltid])) {
 					echo " fortsatt utlånt";
+					$loan->due_at = $due[$dokid];
 				} else {
 					echo " returnert i BIBSYS";
-					$loan->delete();
+					//$loan->delete();
 				}
-				echo "\n";
+				echo "<br />\n";
+				$loan->save();
 			}
 		}
 		exit();
