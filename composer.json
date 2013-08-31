@@ -3,6 +3,7 @@
 	"description": "The Laravel Framework.",
 	"keywords": ["framework", "laravel"],
 	"require": {
+        "php": ">= 5.3.0",
 		"laravel/framework": "4.0.*",
         "way/generators": "dev-master",
         "danmichaelo/customxmlelement": "dev-master",
@@ -11,6 +12,7 @@
         "loic-sharma/profiler": "dev-master"
 	},
     "require-dev": {
+        "php": ">= 5.4.0",
         "phpunit/phpunit": "3.7.*",
         "way/laravel-test-helpers": "dev-master",
         "Mockery/Mockery": ">=0.7.2"
