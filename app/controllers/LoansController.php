@@ -4,13 +4,16 @@ class LoansController extends BaseController {
 
 	private $rules = array(
 		'ltid' => array('required'),
-		'dokid' => array('regex:/^[0-9a-zA-Z]{9}$/')
+		'dokid' => array('regex:/^[0-9a-zA-Z]{9}$/'),
+		'count' => array('integer', 'between:1,10')
 	);
 
 	private $messages = array(
 		'ltid.required' => 'Trenger enten navn eller LTID.',
 		'dokid.required' => 'Dokid må fylles ut.',
-		'dokid.regex' => 'Dokid er ikke et dokid.'
+		'dokid.regex' => 'Dokid er ikke et dokid.',
+		'count.integer' => 'Antall må være et heltall.',
+		'count.between' => 'Antall må være et tall mellom 1 og 10.'
 	);
 
 	/**
