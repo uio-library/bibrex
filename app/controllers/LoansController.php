@@ -285,19 +285,19 @@ class LoansController extends BaseController {
 	{
 		$user_loans = array();
 		$ncip = new NcipClient();
+		$guest_ltid = Config::get('app.guest_ltid');
+
 		foreach (Loan::with('document','user')->get() as $loan) {
 			if ($loan->document->thing_id == 1) {
 				$dokid = $loan->document->dokid;
 				echo "Sjekker: " . $loan->representation() . " : ";
-				if ($loan->user->in_bibsys) {
-					$nr = $loan->user->ltid;
-				} else {
-					$nr = $loan->guestNumber;
-				}
-				echo " $nr : ";
-				if (!isset($user_loans[$nr])) {
-					$response = $ncip->lookupUser($nr);
-					$user_loans[$nr] = array();
+				$ltid = $loan->as_guest ? $guest_ltid : $loan->user->ltid;
+				//$loan->as_guest = !$loan->user->in_bibsys;
+
+				echo " $ltid ";
+				if (!isset($user_loans[$ltid])) {
+					$response = $ncip->lookupUser($ltid);
+					$user_loans[$ltid] = array();
 					foreach ($response->loanedItems as $item) {
 						$user_loans[$nr][] = $item['id'];
 					}

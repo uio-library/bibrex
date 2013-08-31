@@ -5,8 +5,6 @@ class Loan extends Eloquent {
 	protected $softDelete = true;
 	public static $rules = array();
 
-	public $guestNumber = 'umn1002157';
-
 	public function user()
 	{
 		return $this->belongsTo('User');
@@ -38,7 +36,16 @@ class Loan extends Eloquent {
 	public function save(array $options = array())
 	{
 
-		$guestNumber = array_get($options, 'guestNumber', $this->guestNumber);
+	public function daysLeftFormatted() {
+		$d = $this->daysLeft();
+		if ($d == 999999) return 'Forfaller aldri';
+		return $d >= 0
+			? '<span style="color:green;">Forfaller om ' . $d . ' dager</span>'
+			: '<span style="color:red;">Forfalt for ' . abs($d) . ' dager siden</span>';
+	}
+
+	private function ncipSave() {
+		$guestNumber = Config::get('app.guest_ltid');
 
 		$results = DB::select('SELECT ltid, in_bibsys FROM users WHERE users.id = ?', array($this->user_id));
 		if (empty($results)) {
