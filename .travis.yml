@@ -6,7 +6,8 @@ python:
   - 5.5
 
 install: 
-  - composer install
+  - curl -sS https://getcomposer.org/installer | php
+  - php composer.phar install
 
 script: 
-  - phpunit
+  - vendor/bin/phpunit
