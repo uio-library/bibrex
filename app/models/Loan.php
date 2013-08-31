@@ -107,7 +107,9 @@ class Loan extends Eloquent {
 	{
 
 		if (!$this->exists) {
-			$this->ncipSave();
+			if (!$this->ncipSave()) {
+				return false;
+			}
 		}
 
 		parent::save($options);

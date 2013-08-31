@@ -2,7 +2,7 @@
 
 
 class LoansControllerTest extends TestCase {
- 	
+
 	public function testIndex()
 	{
 		$this->call('GET', 'loans');
@@ -24,7 +24,7 @@ class LoansControllerTest extends TestCase {
 	public function testStoreLoanWithInvalidThing()
 	{
 		$this->call('POST', 'loans/store', array(
-			'ltid' => 'Duck, Donald', 
+			'ltid' => 'Duck, Donald',
 			'thing' => '999'
 		));
 
@@ -35,7 +35,7 @@ class LoansControllerTest extends TestCase {
 	public function testStoreBibsysLoanWithoutDokid()
 	{
 		$this->call('POST', 'loans/store', array(
-			'ltid' => 'Duck, Donald', 
+			'ltid' => 'Duck, Donald',
 			'thing' => '1',
 			'dokid' => ''
 		));
@@ -47,7 +47,7 @@ class LoansControllerTest extends TestCase {
     public function testStoreLoanWithUnknownDokid()
 	{
 		$this->call('POST', 'loans/store', array(
-			'ltid' => 'Duck, Donald', 
+			'ltid' => 'Duck, Donald',
 			'thing' => '1',
 			'dokid' => '99ns00000'
 		));
@@ -59,7 +59,7 @@ class LoansControllerTest extends TestCase {
     public function testStoreLoanUsingGuestNumber()
 	{
 		$this->call('POST', 'loans/store', array(
-			'ltid' => 'Duck, Donald', 
+			'ltid' => 'Duck, Donald',
 			'thing' => '1',
 			'ltid' => 'umn1002157',
 			'dokid' => '12k211446'
@@ -67,6 +67,14 @@ class LoansControllerTest extends TestCase {
 
 		$this->assertResponseStatus(302);
 		$this->assertSessionHasErrors('loan_save_error');
+    }
+
+    public function testNcipLookupResponse()
+	{
+		$response = $this->call('GET', 'users/ncip-lookup/1');
+
+		$this->assertResponseStatus(200);
+		$this->assertJSON($response->getContent());
     }
 
 }

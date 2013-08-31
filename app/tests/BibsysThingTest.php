@@ -2,7 +2,7 @@
 
 
 class BibsysThingTest extends TestCase {
- 	
+
 	public function testId()
 	{
 		$thing = Thing::where('name','BIBSYS-dokument')->first();
