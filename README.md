@@ -14,3 +14,7 @@ Simple lending system using NCIP to connect to a library system.
 4. `php artisan config:publish loic-sharma/profiler` to create 
    the config file `app/config/packages/loic-sharma/profiler/config.php`
 5. Update config files in `app/config`
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/danmichaelo/bibrex/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
