@@ -21,6 +21,11 @@ Route::get('/', function()
 	return Redirect::action('LoansController@getIndex');
 });
 
+App::missing(function($exception)
+{
+    return Response::view('errors.missing', array(), 404);
+});
+
 Route::controller('users', 'UsersController');
 
 Route::controller('loans', 'LoansController');

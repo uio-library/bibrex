@@ -53,6 +53,9 @@ class UsersController extends BaseController {
 	{
 		# with('loans')->
 		$user = User::find($id);
+		if (!$user) {
+		    return Response::view('errors.missing', array('what' => 'Brukeren'), 404);
+		}
 		return Response::view('users.show', array(
 				'user' => $user
 			));

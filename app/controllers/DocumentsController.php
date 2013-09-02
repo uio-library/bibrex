@@ -25,6 +25,9 @@ class DocumentsController extends BaseController {
 	{
 
 		$document = Document::with('thing')->find($id);
+		if (!$document) {
+		    return Response::view('errors.missing', array('what' => 'Dokumentet'), 404);
+		}
 		return Response::view('documents.show', array(
 			'document' => $document
 		));

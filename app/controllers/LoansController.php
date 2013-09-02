@@ -29,11 +29,13 @@ class LoansController extends BaseController {
 			$things[$thing->id] = $thing->name;
 		}
 
-		return Response::view('loans.index', array(
+		$r = Response::view('loans.index', array(
 			'loans' => $loans,
 			'things' => $things,
 			'loan_ids' => Session::get('loan_ids', array())
 		));
+		$r->header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');
+		return $r;
 	}
 
 	/**
@@ -248,6 +250,10 @@ class LoansController extends BaseController {
 	public function getDestroy($id)
 	{
 		$loan = Loan::find($id);
+		if (!$loan) {
+			// App::abort(404);
+		    return Response::view('errors.missing', array('what' => 'Lånet'), 404);
+		}
 		$repr = $loan->representation();
 		$docid = $loan->document->id;
 		$user = $loan->user->name();
@@ -274,6 +280,10 @@ class LoansController extends BaseController {
 	public function getRestore($id)
 	{
 		$loan = Loan::withTrashed()->find($id);
+		if (!$loan) {
+			// App::abort(404);
+		    return Response::view('errors.missing', array('what' => 'Lånet'), 404);
+		}
 		$docid = $loan->document->id;
 		$loan->restore();
 		return Redirect::action('DocumentsController@getShow', $docid)
