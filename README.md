@@ -14,7 +14,8 @@ Simple lending system using NCIP to connect to a library system.
 4. `php artisan config:publish loic-sharma/profiler` to create 
    the config file `app/config/packages/loic-sharma/profiler/config.php`
 5. Update config files in `app/config`
-
+6. `php artisan migrate` to create the database tables
+7. `php artisan db:seed` to seed initial database data
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/danmichaelo/bibrex/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
