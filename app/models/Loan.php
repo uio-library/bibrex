@@ -124,8 +124,8 @@ class Loan extends Eloquent {
 			$ncip = App::make('NcipClient');
 			$response = $ncip->checkInItem($dokid);
 
-			if (!$response['success']) {
-				dd("Dokumentet kunne ikke leveres inn i BIBSYS: " . $response['error']);
+			if (!$response->success) {
+				dd("Dokumentet kunne ikke leveres inn i BIBSYS: " . $response->error);
 			}
 		}
 

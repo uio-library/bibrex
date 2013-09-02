@@ -110,7 +110,7 @@ class LoansControllerTest extends TestCase {
 
 		$this->ncip->shouldReceive('lookupUser')->never();
 
-		$c = new Danmichaelo\Ncip\CheckoutResponse(null);
+		$c = new Danmichaelo\Ncip\CheckOutResponse(null);
 		$this->ncip->shouldReceive('checkOutItem')->once()
 			->with($ltid, $dokid)
 			->andReturn($c);
@@ -148,7 +148,7 @@ class LoansControllerTest extends TestCase {
 			->with($ltid)
 			->andReturn($u);
 
-		$c = new Danmichaelo\Ncip\CheckoutResponse(null);
+		$c = new Danmichaelo\Ncip\CheckOutResponse(null);
 		$this->ncip->shouldReceive('checkOutItem')->once()
 			->with($ltid, $dokid)
 			->andReturn($c);
