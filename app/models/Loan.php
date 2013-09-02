@@ -139,8 +139,11 @@ class Loan extends Eloquent {
 	 */
 	public function restore()
 	{
-		$this->ncipSave();
+		if (!$this->ncipCheckout()) {
+			return false;
+		}
 		parent::restore();
+		return true;
 	}
 
 }
