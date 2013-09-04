@@ -48,10 +48,17 @@ class Loan extends Eloquent {
 
 	public function daysLeftFormatted() {
 		$d = $this->daysLeft();
-		if ($d == 999999) return 'Forfaller aldri';
-		return $d >= 0
-			? '<span style="color:green;">Forfaller om ' . $d . ' dager</span>'
-			: '<span style="color:red;">Forfalt for ' . abs($d) . ' dager siden</span>';
+		if ($d == 999999) 
+			return 'Forfaller «aldri»';
+		if ($d > 1)
+			return '<span style="color:green;">Forfaller om ' . $d . ' dager</span>';
+		if ($d == 1)
+			return '<span style="color:orange;">Forfaller i morgen</span>';
+		if ($d == 0)
+			return '<span style="color:orange;">Forfaller i dag</span>';
+		if ($d == -1)
+			return '<span style="color:red;">Forfalt i går</span>';
+		return'<span style="color:red;">Forfalt for ' . abs($d) . ' dager siden</span>';
 	}
 
 	private function ncipCheckout() {
