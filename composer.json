@@ -34,7 +34,9 @@
 	},
 	"scripts": {
 		"post-install-cmd": [
-			"php artisan optimize"
+			"php artisan optimize",
+			"php artisan config:publish danmichaelo/ncip",
+			"php artisan config:publish loic-sharma/profiler"
 		],
 		"pre-update-cmd": [
 			"php artisan clear-compiled"
