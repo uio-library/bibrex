@@ -325,12 +325,12 @@ class LoansController extends BaseController {
 				if (in_array($dokid, $user_loans[$ltid])) {
 					echo " fortsatt utlånt";
 					$loan->due_at = $due[$dokid];
+					$loan->save();
 				} else {
 					echo " returnert i BIBSYS";
-					//$loan->delete();
+					$loan->delete();
 				}
 				echo "<br />\n";
-				$loan->save();
 			}
 		}
 		exit();
