@@ -106,7 +106,22 @@ class ThingsController extends BaseController {
 	 */
 	public function getDestroy($id)
 	{
-		//
+		$thing = $this->thingFactory->find($id);
+		if (!$thing) {
+			return Response::view('errors.missing', array('what' => 'Tingen'), 404);
+		}
+
+		$name = $thing->name;
+
+		if (count($thing->allLoans()) != 0) {
+			return Redirect::action('ThingsController@getShow', $thing->id)
+				->with('status', 'Beklager, kan bare slette ting som ikke har blitt lånt ut enda.');
+		}
+
+		$thing->delete();
+
+		return Redirect::action('ThingsController@getIndex')
+			->with('status', 'Tingen «' . $name . '» ble slettet.');
 	}
 
 }

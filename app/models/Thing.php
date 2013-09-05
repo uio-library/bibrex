@@ -119,4 +119,15 @@ class Thing extends Eloquent {
         return true;
     }
 
+    /**
+     * Delete the model from the database.
+     *
+     * @return bool|null
+     */
+    public function delete()
+    {
+        Log::info('Slettet ting: ' . $this->name);
+        parent::delete();
+    }
+
 }
