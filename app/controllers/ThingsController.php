@@ -2,6 +2,13 @@
 
 class ThingsController extends BaseController {
 
+	protected $thing;
+
+	public function __construct(Thing $thing)
+	{
+		$this->thingFactory = $thing;
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -9,11 +16,10 @@ class ThingsController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		$things = Thing::with('documents.loans')->get();
+		$things = $this->thingFactory->with('documents.loans')->get();
 		return Response::view('things.index', array(
-				'things' => $things
-			));
-
+			'things' => $things
+		));
 	}
 
 	/**
@@ -23,30 +29,17 @@ class ThingsController extends BaseController {
 	 */
 	public function postStore()
 	{
+		$thing = new $this->thingFactory();
+		$thing->name = Input::get('thing');
 
-		$validator = Validator::make(Input::all(), array(
-			'thing' => array('required')
-		), array(
-			'thing.required' => 'ting må fylles ut',
-		));
-		if ($validator->fails())
-		{
+		if (!$thing->save()) {
 			return Redirect::action('ThingsController@getIndex')
-				->withErrors($validator)
+				->withErrors($thing->errors)
 				->withInput();
 		}
 
-		$thing = Thing::where('name','=',Input::get('thing'))->first();
-		if ($thing) {
-			return Redirect::action('ThingsController@getIndex')
-				->with('status', 'Tingen finnes allerede!');
-		}
-
-		$thing = new Thing();
-		$thing->name = Input::get('thing');
-		$thing->save();
-			return Redirect::action('ThingsController@getIndex')
-				->with('status', 'Tingen ble lagret!');
+		return Redirect::action('ThingsController@getIndex')
+			->with('status', 'Tingen ble lagret!');
 	}
 
 	/**
@@ -57,8 +50,7 @@ class ThingsController extends BaseController {
 	 */
 	public function getShow($id)
 	{
-
-		$thing = Thing::find($id);
+		$thing = $this->thingFactory->find($id);
 		if (!$thing) {
 			return Response::view('errors.missing', array('what' => 'Tingen'), 404);
 		}
@@ -75,10 +67,10 @@ class ThingsController extends BaseController {
 	 */
 	public function getEdit($id)
 	{
-		$thing = Thing::find($id);
+		$thing = $this->thingFactory->find($id);
 		return Response::view('things.edit', array(
-				'thing' => $thing
-			));
+			'thing' => $thing
+		));
 	}
 
 	/**
@@ -89,29 +81,21 @@ class ThingsController extends BaseController {
 	 */
 	public function postUpdate($id)
 	{
-
-		$validator = Validator::make(Input::all(), array(
-			'name' => array('required')
-		), array(
-			'name.required' => 'Navnet kan ikke være blankt',
-		));
-		if ($validator->fails())
-		{
-			return Redirect::action('ThingsController@getEdit', $id)
-				->withErrors($validator)
-				->withInput();
-		}
-
-		$thing = Thing::find($id);
+		$thing = $this->thingFactory->find($id);
 		if (!$thing) {
-			return Redirect::action('ThingsController@getIndex')
-				->with('status', 'Tingen finnes ikke!');
+			return Response::view('errors.missing', array('what' => 'Tingen'), 404);
 		}
 
 		$thing->name = Input::get('name');
-		$thing->save();
-			return Redirect::action('ThingsController@getIndex')
-				->with('status', 'Tingen ble lagret!');
+
+		if (!$thing->save()) {
+			return Redirect::action('ThingsController@getEdit', $thing->id)
+				->withErrors($thing->errors)
+				->withInput();
+		}
+
+		return Redirect::action('ThingsController@getShow', $thing->id)
+			->with('status', 'Tingen ble lagret!');
 	}
 
 	/**
