@@ -18,7 +18,7 @@
     </div>
 
     <div class="panel-footer">
-      <a href="{{ URL::action('ThingsController@getIndex') }}" class="btn">Avbryt</a>
+      <a href="{{ URL::action('ThingsController@getShow', $thing->id) }}" class="btn btn-default">Avbryt</a>
       {{ Form::submit('Lagre', array('class' => 'btn btn-success')) }}
     </div>
 

@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="/site.css">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" type="text/css" href="/glyphicons/html_css/css/halflings.css">
+  <link rel="stylesheet" type="text/css" href="/halflings.css">
 </head>
 <body>
 

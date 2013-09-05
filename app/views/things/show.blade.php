@@ -5,23 +5,18 @@
   <div class="panel panel-primary">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Ting #{{ $thing->id }}</h3>
+      <h3 class="panel-title">Ting #{{ $thing->id }}: {{ $thing->name }}</h3>
     </div>
 
-    <div class="row">
-      <div class="col-2">
-        <strong>Navn:</strong>
-      </div>
-      <div class="col-6">
-        {{ $thing->name }}
+    <a class="btn btn-default" href="{{ URL::action('ThingsController@getEdit', $thing->id) }}">
+      <i class="halflings-icon pencil"></i>
+      Rediger
+    </a>
 
-          &nbsp;&nbsp;
-          <a href="{{ URL::action('ThingsController@getEdit', $thing->id) }}"  class="halflings pencil">
-            <i></i>Rediger
-          </a>
-
-      </div>
-    </div>
+    <a class="btn btn-default" href="{{ URL::action('ThingsController@getDestroy', $thing->id) }}">
+      <i class="halflings-icon trash"></i>
+      Slett
+    </a>
 
     <h3>Aktive lån</h3>
     @foreach ($loans = $thing->activeLoans() as $nr => $loan)
