@@ -86,19 +86,26 @@ class User extends Eloquent {
 		if (!$this->validate()) {
 			return false;
 		}
-		if ($this->ltid) {
-			$response = $this->ncipLookup();
-			$this->in_bibsys = $response->exists;
-			if ($response->exists) {
-				$this['lastname'] = $response->lastName;
-				$this['firstname'] = $response->firstName;
-				$this['email'] = $response->email;
-				$this['phone'] = $response->phone;
+		if (!$this->exists) {
+			if ($this->ltid) {
+				$response = $this->ncipLookup();
+				$this->in_bibsys = $response->exists;
+				if ($response->exists) {
+					$this['lastname'] = $response->lastName;
+					$this['firstname'] = $response->firstName;
+					$this['email'] = $response->email;
+					$this['phone'] = $response->phone;
+					Log::info('Fant [[User:' . $this->ltid . ']] i BIBSYS');
+				} else {
+					Log::info('Fant ikke [[User:' . $this->ltid . ']] i BIBSYS');
+				}
+			} else {
+				$this->in_bibsys = false;
 			}
+			Log::info('Opprettet ny bruker i BIBREX');
 		} else {
-			$this->in_bibsys = false;
+			Log::info('Oppdaterte opplysningene for bruker [[User:' . $this->id . ']].');
 		}
-
 		parent::save($options);
 		return true;
 	}
