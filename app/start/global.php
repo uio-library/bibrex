@@ -31,13 +31,20 @@ ClassLoader::addDirectories(array(
 |
 */
 
-$logFile = 'log-'.php_sapi_name().'.txt';
+#$logFile = 'log-'.php_sapi_name().'.txt';
 #Log::useDailyFiles(storage_path().'/logs/'.$logFile);
 
-$monolog = Log::getMonoLog();
-$redis = new Predis\Client();
-$handler = new Monolog\Handler\RedisHandler($redis, 'monolog');
-$monolog->pushHandler($handler);
+if (App::environment() == 'testing') {
+	$monolog = Log::getMonoLog();
+	$redis = new Predis\Client();
+	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog-testing');
+	$monolog->pushHandler($handler);
+} else {
+	$monolog = Log::getMonoLog();
+	$redis = new Predis\Client();
+	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog');
+	$monolog->pushHandler($handler);
+}
 
 /*
 |--------------------------------------------------------------------------
