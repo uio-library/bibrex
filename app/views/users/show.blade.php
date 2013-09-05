@@ -68,7 +68,7 @@
   </div>
 
 
-  <h4>Utlån</h4>
+  <h4>Aktive utlån</h4>
 
   @if (count($user->loans) == 0)
     <em>Ingen utlån</em>

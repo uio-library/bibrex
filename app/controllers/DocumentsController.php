@@ -25,7 +25,7 @@ class DocumentsController extends BaseController {
 	{
 
 		if (is_numeric($id)) {
-			$document = Document::with('thing')->find($id);
+			$document = Document::find($id);
 		} else {
 			$document = Document::where('dokid','=',$id)->first();
 		}

@@ -65,12 +65,11 @@
 
     @endif
 
-
-    @foreach ($document->loans as $loan)
+    <h3>Lånehistorikk</h3>
+    @foreach ($loans = $document->allLoans as $nr => $loan)
       <hr>
 
-      <a href="{{ URL::action('LoansController@getDestroy', $loan->id) }}" style="float:right">Returnér dokument</a>
-
+      <big class="col-1" style="float:right;">{{ (count($loans) - $nr) }}</big>
       <div class="row">
         <div class="col-2">
           <strong>Låntaker:</strong>
@@ -94,15 +93,6 @@
 
       <div class="row">
         <div class="col-2">
-          <strong>Forfall:</strong>
-        </div>
-        <div class="col-6">
-          {{ $loan->due_at }} ({{ $loan->daysLeftFormatted() }})
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-2">
           <strong>Returnert:</strong>
         </div>
         <div class="col-6">
@@ -111,6 +101,10 @@
       </div> 
 
     @endforeach
+
+    @if (count($loans) == 0)
+      <em>Ingen utlån</em>
+    @endif
 
   </div>
 

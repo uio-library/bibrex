@@ -15,6 +15,14 @@ class Document extends Eloquent {
         return $this->hasMany('Loan');
     }
 
+	public function allLoans()
+	{
+		return $this->hasMany('Loan')
+			->with('document.thing')
+			->withTrashed()
+			->orderBy('created_at', 'desc');
+	}
+
 	/**
 	 * Mutuator for the dokid field
 	 *
