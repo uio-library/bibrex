@@ -18,7 +18,7 @@ class Document extends Eloquent {
 	public function allLoans()
 	{
 		return $this->hasMany('Loan')
-			->with('document.thing')
+			->with('document.thing', 'user')
 			->withTrashed()
 			->orderBy('created_at', 'desc');
 	}

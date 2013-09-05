@@ -68,11 +68,10 @@
     <ul class="list-group">
       @foreach ($things as $thing)
         <li class="list-group-item">
-          {{ $thing->name }}
-          &nbsp;&nbsp;
-          <a href="{{ URL::action('ThingsController@getEdit', $thing->id) }}"  class="halflings pencil">
-            <i></i>Rediger
+          <a href="{{ URL::action('ThingsController@getShow', $thing->id) }}">
+            {{ $thing->name }}
           </a>
+          ({{ count($thing->activeLoans()) }} utlånt nå)
         </li>
       @endforeach
     </ul>

@@ -9,7 +9,7 @@ class ThingsController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		$things = Thing::all();
+		$things = Thing::with('documents.loans')->get();
 		return Response::view('things.index', array(
 				'things' => $things
 			));
@@ -52,12 +52,19 @@ class ThingsController extends BaseController {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  string  $id
 	 * @return Response
 	 */
 	public function getShow($id)
 	{
-		//
+
+		$thing = Thing::find($id);
+		if (!$thing) {
+			return Response::view('errors.missing', array('what' => 'Tingen'), 404);
+		}
+		return Response::view('things.show', array(
+			'thing' => $thing
+		));
 	}
 
 	/**
