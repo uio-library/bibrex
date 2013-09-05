@@ -35,3 +35,5 @@ Route::controller('documents', 'DocumentsController');
 Route::controller('things', 'ThingsController');
 
 Route::controller('reminders', 'RemindersController');
+
+Route::controller('logs', 'LogsController');

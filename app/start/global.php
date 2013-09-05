@@ -32,8 +32,12 @@ ClassLoader::addDirectories(array(
 */
 
 $logFile = 'log-'.php_sapi_name().'.txt';
+#Log::useDailyFiles(storage_path().'/logs/'.$logFile);
 
-Log::useDailyFiles(storage_path().'/logs/'.$logFile);
+$monolog = Log::getMonoLog();
+$redis = new Predis\Client();
+$handler = new Monolog\Handler\RedisHandler($redis, 'monolog');
+$monolog->pushHandler($handler);
 
 /*
 |--------------------------------------------------------------------------

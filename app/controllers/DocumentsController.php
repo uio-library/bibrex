@@ -18,15 +18,19 @@ class DocumentsController extends BaseController {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  string  $id
 	 * @return Response
 	 */
 	public function getShow($id)
 	{
 
-		$document = Document::with('thing')->find($id);
+		if (is_numeric($id)) {
+			$document = Document::with('thing')->find($id);
+		} else {
+			$document = Document::where('dokid','=',$id)->first();
+		}
 		if (!$document) {
-		    return Response::view('errors.missing', array('what' => 'Dokumentet'), 404);
+			return Response::view('errors.missing', array('what' => 'Dokumentet'), 404);
 		}
 		return Response::view('documents.show', array(
 			'document' => $document

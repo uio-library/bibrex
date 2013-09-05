@@ -46,13 +46,19 @@ class UsersController extends BaseController {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  string  $id
 	 * @return Response
 	 */
 	public function getShow($id)
 	{
 		# with('loans')->
-		$user = User::find($id);
+
+		if (is_numeric($id)) {
+			$user = User::find($id);
+		} else {
+			$user = User::where('ltid','=',$id)->first();
+		}
+
 		if (!$user) {
 		    return Response::view('errors.missing', array('what' => 'Brukeren'), 404);
 		}

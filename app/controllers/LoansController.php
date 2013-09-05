@@ -324,9 +324,13 @@ class LoansController extends BaseController {
 				echo " (" . count($user_loans[$ltid]) . " lån), ";
 				if (in_array($dokid, $user_loans[$ltid])) {
 					echo " fortsatt utlånt";
+					if (is_null($loan->due_at)) {
+						Log::info('[Sync] Oppdaterer forfallsdato for [[Document:' . $dokid . ']]');
+					}
 					$loan->due_at = $due[$dokid];
 					$loan->save();
 				} else {
+					Log::info('[Sync] Dokumentet [[Document:' . $dokid . ']] har blitt returnert i BIBSYS, så vi returnerer det i BIBREX også');
 					echo " returnert i BIBSYS";
 					$loan->delete();
 				}

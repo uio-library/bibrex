@@ -29,10 +29,11 @@
         <li><a href="{{ URL::action('UsersController@getIndex') }}">Brukere</a></li>
         <li><a href="{{ URL::action('DocumentsController@getIndex') }}">Dokumenter</a></li>
         <li><a href="{{ URL::action('ThingsController@getIndex') }}">Ting</a></li>
+        <li><a href="{{ URL::action('LogsController@getIndex') }}">Logg</a></li>
       </ul>
       <p class="navbar-text pull-right"><a href="/about">Hjelp</a></p>
      </div>
-    
+
     @show
 
     @if (!empty($status))
@@ -67,6 +68,8 @@
       $('.navbar li:nth-child(3)').addClass('active');
     } else if (window.location.href.match(/things/)) {
       $('.navbar li:nth-child(4)').addClass('active');
+    } else if (window.location.href.match(/logs/)) {
+      $('.navbar li:nth-child(5)').addClass('active');
     }
   </script>
 
