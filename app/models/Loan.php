@@ -49,7 +49,7 @@ class Loan extends Eloquent {
 	public function daysLeftFormatted() {
 		$d = $this->daysLeft();
 		if ($d == 999999) 
-			return 'Forfaller «aldri»';
+			return '';
 		if ($d > 1)
 			return '<span style="color:green;">Forfaller om ' . $d . ' dager</span>';
 		if ($d == 1)

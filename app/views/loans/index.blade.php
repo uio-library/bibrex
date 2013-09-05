@@ -106,7 +106,7 @@
         </h4>
         <p class="list-group-item-text">
           Utlånt {{ $loan->created_at }}.
-          {{ $loan->daysLeftFormatted() }}.
+          {{ ($d = $loan->daysLeftFormatted()) ? "$d." : "" }}
           <a href="{{ URL::action('LoansController@getDestroy', $loan->id) }}?returnTo=loans.index">
             Returnér
           </a>

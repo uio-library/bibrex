@@ -84,7 +84,7 @@
             Utlånt
           </th>
           <th>
-            Levert
+            Forfall
           </th>
         </tr>
       </thead>
@@ -100,7 +100,7 @@
             {{ $loan->created_at }}
           </td>
           <td>
-            {{ $loan->deleted_at }}
+            {{ $loan->daysLeftFormatted() ?: "ukjent / aldri" }}
           </td>
         </tr>
       @endforeach
