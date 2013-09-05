@@ -2,18 +2,6 @@
 
 @section('content')
 
-  @if ($e = $errors->all('<li>:message</li>'))
-    <div class="alert alert-info">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>  
-      Kunne ikke lagre fordi:
-      <ul>
-      @foreach ($e as $msg)
-        {{$msg}}
-      @endforeach
-      </ul>
-    </div>
-  @endif
-
   {{ Form::model($thing, array(
       'action' => array('ThingsController@postUpdate', $thing->id),
       'class' => 'panel panel-primary',

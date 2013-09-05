@@ -8,18 +8,6 @@
       <h3 class="panel-title">Nytt utlån</h3>
     </div>
 
-    @if ($e = $errors->all('<li>:message</li>'))
-      <div class="alert alert-danger">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>  
-        Kunne ikke lagre fordi:
-        <ul>
-        @foreach ($e as $msg)
-          {{$msg}}
-        @endforeach
-        </ul>
-      </div>
-    @endif
-
     {{ Form::model(new Loan(), array(
         'action' => 'LoansController@postStore',
         'class' => 'form-inline'
