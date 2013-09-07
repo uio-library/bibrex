@@ -17,8 +17,7 @@ install:
   - composer install
 
 before_script:
-  - php artisan --env=testing migrate:refresh
-  - php artisan --env=testing db:seed
+  - php artisan --env=testing migrate --seed
   - php artisan --env=testing db:backup app/tests/_data/dump.sql
   - mysql -e 'create database myapp_test;'
 
