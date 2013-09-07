@@ -20,6 +20,17 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
 		return require __DIR__.'/../../bootstrap/start.php';
 	}
 
+    public function setUpDb()
+    {
+        Artisan::call('migrate');
+        Artisan::call('db:seed');
+    }
+
+    public function teardownDb()
+    {
+        Artisan::call('migrate:reset');
+    }
+
     public function setUp()
     {
         parent::setUp();
@@ -32,17 +43,10 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     public function teardown()
     {
         m::close();
-    }
-
-    public function setUpDb()
-    {
-        Artisan::call('migrate');
-        Artisan::call('db:seed');
-    }
-
-    public function teardownDb()
-    {
-        Artisan::call('migrate:reset');
+        if($this->useDatabase)
+        {
+            $this->teardownDb();
+        }
     }
 
 }

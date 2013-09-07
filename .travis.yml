@@ -5,8 +5,23 @@ php:
   - 5.4
   - 5.5
 
-install: 
+mysql:
+  database: bibrex_test
+  username: tester
+  encoding: utf8
+
+services:
+  - redis-server
+
+install:
   - composer install
 
-script: 
+before_script:
+  - php artisan --env=testing migrate:refresh
+  - php artisan --env=testing db:seed
+  - php artisan --env=testing db:backup app/tests/_data/dump.sql
+  - mysql -e 'create database myapp_test;'
+
+script:
   - vendor/bin/phpunit
+  - vendor/bin/codecept run acceptance --steps

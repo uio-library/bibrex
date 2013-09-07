@@ -13,27 +13,27 @@
     </div>
 
     <div class="form-group">
-      {{ Form::label('ltid', 'LTID: ') }} (kan stå blankt hvis personen f.eks. ikke fått studiekort enda)
+      {{ Form::label('ltid', 'LTID') }} (kan stå blankt hvis personen f.eks. ikke fått studiekort enda)
       {{ Form::text('ltid', $user->ltid, array('class' => 'form-control')) }}
     </div>
 
     <div class="form-group">
-      {{ Form::label('lastname', 'Etternavn: ') }}
+      {{ Form::label('lastname', 'Etternavn') }}
       {{ Form::text('lastname', $user->lastname, array('class' => 'form-control')) }}
     </div>
 
     <div class="form-group">
-      {{ Form::label('firstname', 'Fornavn: ') }}
+      {{ Form::label('firstname', 'Fornavn') }}
       {{ Form::text('firstname', $user->firstname, array('class' => 'form-control')) }}
     </div>
 
     <div class="form-group">
-      {{ Form::label('phone', 'Tlf.: ') }}
+      {{ Form::label('phone', 'Mobil') }}
       {{ Form::text('phone', $user->phone, array('class' => 'form-control')) }}
     </div>
 
     <div class="form-group">
-      {{ Form::label('email', 'Epost: ') }}
+      {{ Form::label('email', 'Epost') }}
       {{ Form::text('email', $user->email, array('class' => 'form-control')) }}
     </div>
 

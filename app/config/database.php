@@ -56,7 +56,7 @@ return array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
 			'database'  => 'bibrex',
-			'username'  => '',
+			'username'  => 'bibrex',
 			'password'  => '',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
@@ -120,5 +120,19 @@ return array(
 		),
 
 	),
+
+	/*
+	|--------------------------------------------------------------------------
+	| Backup settings
+	|--------------------------------------------------------------------------
+	|
+	*/
+	'backup' => array(
+		'path'  => __DIR__.'/../storage/dumps/',
+		's3'    => array(
+			'path'  => '/bibrex-backup/'
+		)
+	),
+
 
 );
