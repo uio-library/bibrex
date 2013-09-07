@@ -127,6 +127,8 @@ return array(
 		'Way\Generators\GeneratorsServiceProvider',
 		'Profiler\ProfilerServiceProvider',
 		'Danmichaelo\Ncip\NcipServiceProvider',
+		'Schickling\Backup\BackupServiceProvider',
+		'Aws\Laravel\AwsServiceProvider',
 	),
 
 	/*
@@ -192,8 +194,9 @@ return array(
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
 		'CustomXMLElement'=> 'Danmichaelo\CustomXMLElement\CustomXMLElement',
-		'NcipClient'	  => 'Danmichaelo\Ncip\NcipClient',
-		'Profiler' 		  => 'Profiler\Facades\Profiler',
+		'NcipClient'      => 'Danmichaelo\Ncip\NcipClient',
+		'Profiler'        => 'Profiler\Facades\Profiler',
+		'AWS'             => 'Aws\Laravel\AwsFacade',
 
 	),
 
