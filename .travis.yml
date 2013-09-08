@@ -17,9 +17,9 @@ install:
   - composer install
 
 before_script:
-  - php artisan --env=testing migrate --seed
-  - php artisan --env=testing db:backup app/tests/_data/dump.sql
-  - mysql -e 'create database myapp_test;'
+  - php artisan --env=testing --database=mysql --seed migrate
+  - php artisan --env=testing --database=mysql db:backup app/tests/_data/dump.sql
+  - mysql -e 'create database bibrex_test;'
 
 script:
   - vendor/bin/phpunit
