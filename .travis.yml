@@ -23,4 +23,4 @@ before_script:
 
 script:
   - vendor/bin/phpunit
-  - vendor/bin/codecept run acceptance --steps
+  - vendor/bin/codecept run functional --steps --debug
