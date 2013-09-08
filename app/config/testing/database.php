@@ -12,8 +12,8 @@ return array(
     'mysql' => array(
       'driver'    => 'mysql',
       'host'      => 'localhost',
-      'database'  => 'bibrex_test',
-      'username'  => 'tester',
+      'database'  => 'myapp_test',
+      'username'  => 'travis',
       'password'  => '',
       'charset'   => 'utf8',
       'collation' => 'utf8_unicode_ci',
