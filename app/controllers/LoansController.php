@@ -25,7 +25,7 @@ class LoansController extends BaseController {
 	{
 		$loans = Loan::with('document.thing','user')->orderBy('created_at','desc')->get();
 		$things = array();
-		foreach (Thing::all() as $thing) {
+		foreach (Thing::where('disabled', false)->get() as $thing) {
 			$things[$thing->id] = $thing->name;
 		}
 

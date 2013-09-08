@@ -87,6 +87,7 @@ class ThingsController extends BaseController {
 		}
 
 		$thing->name = Input::get('name');
+		$thing->disabled = Input::get('disabled') == 'on';
 
 		if (!$thing->save()) {
 			return Redirect::action('ThingsController@getEdit', $thing->id)
