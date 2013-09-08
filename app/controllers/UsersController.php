@@ -80,7 +80,6 @@ class UsersController extends BaseController {
 			return Response::json(array('exists' => false));
 		}
 		$data = $user->ncipLookup();
-		$data['exists'] = true;
 
 		return Response::json($data);
 	}

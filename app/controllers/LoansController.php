@@ -302,7 +302,7 @@ class LoansController extends BaseController {
 		$due = array();
 		header("Content-type: text/html; charset=utf-8");
 		echo "Starter sync...<br />\n";
-		$ncip = new NcipClient();
+		$ncip = App::make('NcipClient');
 		$guest_ltid = Config::get('app.guest_ltid');
 
 		foreach (Loan::with('document','user')->get() as $loan) {
@@ -337,6 +337,31 @@ class LoansController extends BaseController {
 				echo "<br />\n";
 			}
 		}
+		echo "<br />\n";
+
+		$users = array();
+		foreach (User::with('loans.document.thing')->get() as $user) {
+			foreach ($user->loans as $loan) {
+				if ($loan->as_guest && $loan->document->thing->id == 1) {
+					$ltid = $user->ltid;
+					if (!empty($ltid)) {
+						echo "Checking loan $loan->id for $ltid : ";
+						if (!isset($users[$ltid])) {
+							$response = $ncip->lookupUser($ltid);
+							$users[$ltid] = $response;
+						}
+						if ($users[$ltid]->exists) {
+							echo " user has been imported, attempt to transfer loan ";
+							$loan->transfer();
+						} else {
+							echo " nope, not yet imported";
+						}
+						echo "<br />\n";
+					}
+				}
+			}
+		}
+
 		exit();
 	}
 

@@ -164,4 +164,23 @@ class Loan extends Eloquent {
 		return true;
 	}
 
+	public function transfer()
+	{
+		if ($this->as_guest) {
+			$dokid = $this->document->dokid;
+			$ltid = $this->user->ltid;
+			Log::info('Attempting to transfer ' . $dokid . ' to ' . $ltid);
+			$ncip = App::make('NcipClient');
+			$ncip->checkInItem($dokid);
+			$response = $ncip->checkOutItem($ltid, $dokid);
+			if ($response->success) {
+				$this->as_guest = false;
+				$this->save();
+			} else {
+				die($response->error);
+			}
+		}
+		return true;
+	}
+
 }
