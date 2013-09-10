@@ -41,30 +41,30 @@
 
         <ul class="nav navbar-nav">
 
-          <li{{ strpos($_SERVER['REQUEST_URI'], '/loans') === 0 ? ' class="active"':'' }}>
+          <li{{ strpos(getenv('REQUEST_URI'), '/loans') === 0 ? ' class="active"':'' }}>
             <a href="{{ URL::action('LoansController@getIndex') }}">Utlån</a>
           </li>
 
-          <li{{ strpos($_SERVER['REQUEST_URI'], '/users') === 0 ? ' class="active"':'' }}>
+          <li{{ strpos(getenv('REQUEST_URI'), '/users') === 0 ? ' class="active"':'' }}>
             <a href="{{ URL::action('UsersController@getIndex') }}">Brukere</a>
           </li>
 
-          <li{{ strpos($_SERVER['REQUEST_URI'], '/documents') === 0 ? ' class="active"':'' }}>
+          <li{{ strpos(getenv('REQUEST_URI'), '/documents') === 0 ? ' class="active"':'' }}>
             <a href="{{ URL::action('DocumentsController@getIndex') }}">Dokumenter</a>
           </li>
 
-          <li{{ strpos($_SERVER['REQUEST_URI'], '/things') === 0 ? ' class="active"':'' }}>
+          <li{{ strpos(getenv('REQUEST_URI'), '/things') === 0 ? ' class="active"':'' }}>
             <a href="{{ URL::action('ThingsController@getIndex') }}">Ting</a>
           </li>
 
-          <li{{ strpos($_SERVER['REQUEST_URI'], '/logs') === 0 ? ' class="active"':'' }}>
+          <li{{ strpos(getenv('REQUEST_URI'), '/logs') === 0 ? ' class="active"':'' }}>
             <a href="{{ URL::action('LogsController@getIndex') }}">Logg</a>
           </li>
 
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-          <li{{ strpos($_SERVER['REQUEST_URI'], '/about') === 0 ? ' class="active"':'' }}>
+          <li{{ strpos(getenv('REQUEST_URI'), '/about') === 0 ? ' class="active"':'' }}>
             <a href="/about">Hjelp</a>
           </li>
         </ul>

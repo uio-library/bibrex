@@ -213,7 +213,7 @@ class LoansController extends BaseController {
 			}
 		} else {
 			return Redirect::action('LoansController@getIndex')
-				->with('status', ($count == 1 ? 'Dokumentet' : 'Dokumentene') . ' ble lånt ut')
+				->with('status', ($count == 1 ? 'Utlånet' : 'Utlånene') . ' er lagret.')
 				->with('loan_ids', $loan_ids);
 		}
 
