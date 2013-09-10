@@ -43,6 +43,7 @@
           {{ $loan->user->lastname }},
           {{ $loan->user->firstname }}
         </a>
+          {{ $loan->as_guest? '(utlånt på midlertidig kort)' : '' }}
       </div>
     </div>
 
