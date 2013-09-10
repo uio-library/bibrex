@@ -23,7 +23,7 @@ class UsersController extends BaseController {
 	public function getIndex()
 	{
 		$users = array();
-		foreach (User::with('loans')->get() as $user) {
+		foreach (User::with('loans')->orderBy('lastname')->get() as $user) {
 			$users[] = array(
 				'id' => $user->id,
 				'value' => $user->lastname . ', ' . $user->firstname,
