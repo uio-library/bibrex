@@ -8,15 +8,17 @@
       <h3 class="panel-title">Ting #{{ $thing->id }}: {{ $thing->name }}</h3>
     </div>
 
-    <a class="btn btn-default" href="{{ URL::action('ThingsController@getEdit', $thing->id) }}">
-      <i class="halflings-icon pencil"></i>
-      Rediger
-    </a>
+    <div class="panel-body">
 
-    <a class="btn btn-default" href="{{ URL::action('ThingsController@getDestroy', $thing->id) }}">
-      <i class="halflings-icon trash"></i>
-      Slett
-    </a>
+      <a class="btn btn-default" href="{{ URL::action('ThingsController@getEdit', $thing->id) }}">
+        <i class="halflings-icon pencil"></i>
+        Rediger
+      </a>
+
+      <a class="btn btn-default" href="{{ URL::action('ThingsController@getDestroy', $thing->id) }}">
+        <i class="halflings-icon trash"></i>
+        Slett
+      </a>
 
     <h3>Aktive lån</h3>
     @foreach ($loans = $thing->activeLoans() as $nr => $loan)
@@ -80,6 +82,7 @@
       </div>
     @endif
 
+    </div>
 
   </div>
 

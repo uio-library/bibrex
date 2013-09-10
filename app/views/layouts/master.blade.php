@@ -12,7 +12,7 @@
   <![endif]-->
  
   <!-- Complete CSS (Responsive, With Icons) -->
-  <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="/site.css">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" type="text/css" href="/halflings.css">
@@ -23,16 +23,53 @@
 
     @section('sidebar')
 
-    <div class="navbar">
-      <ul class="nav navbar-nav">
-        <li><a href="{{ URL::action('LoansController@getIndex') }}">Utlån</a></li>
-        <li><a href="{{ URL::action('UsersController@getIndex') }}">Brukere</a></li>
-        <li><a href="{{ URL::action('DocumentsController@getIndex') }}">Dokumenter</a></li>
-        <li><a href="{{ URL::action('ThingsController@getIndex') }}">Ting</a></li>
-        <li><a href="{{ URL::action('LogsController@getIndex') }}">Logg</a></li>
-      </ul>
-      <p class="navbar-text pull-right"><a href="/about">Hjelp</a></p>
-     </div>
+    <nav class="navbar navbar-default" role="navigation">
+
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">BIBREX</a>
+      </div>
+
+      <!-- Navigation links -->
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+
+        <ul class="nav navbar-nav">
+
+          <li{{ strpos($_SERVER['REQUEST_URI'], '/loans') === 0 ? ' class="active"':'' }}>
+            <a href="{{ URL::action('LoansController@getIndex') }}">Utlån</a>
+          </li>
+
+          <li{{ strpos($_SERVER['REQUEST_URI'], '/users') === 0 ? ' class="active"':'' }}>
+            <a href="{{ URL::action('UsersController@getIndex') }}">Brukere</a>
+          </li>
+
+          <li{{ strpos($_SERVER['REQUEST_URI'], '/documents') === 0 ? ' class="active"':'' }}>
+            <a href="{{ URL::action('DocumentsController@getIndex') }}">Dokumenter</a>
+          </li>
+
+          <li{{ strpos($_SERVER['REQUEST_URI'], '/things') === 0 ? ' class="active"':'' }}>
+            <a href="{{ URL::action('ThingsController@getIndex') }}">Ting</a>
+          </li>
+
+          <li{{ strpos($_SERVER['REQUEST_URI'], '/logs') === 0 ? ' class="active"':'' }}>
+            <a href="{{ URL::action('LogsController@getIndex') }}">Logg</a>
+          </li>
+
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li{{ strpos($_SERVER['REQUEST_URI'], '/about') === 0 ? ' class="active"':'' }}>
+            <a href="/about">Hjelp</a>
+          </li>
+        </ul>
+
+    </nav>
 
     @show
 
@@ -59,30 +96,18 @@
   </div>
 
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
-  <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+
   <script type="text/javascript" src="/hogan-2.0.0.js"></script>
   <script type="text/javascript" src="/typeahead.js/typeahead.min.js"></script>
+  <script type="text/javascript" src="/components/select2/select2.js"></script>
   <!--
   <script src="//cdnjs.cloudflare.com/ajax/libs/css3finalize/3.4.0/jquery.css3finalize.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
   -->
   @yield('scripts')
-
-
-  <script type="text/javascript">
-    if (window.location.href.match(/loans/)) {
-      $('.navbar li:nth-child(1)').addClass('active');
-    } else if (window.location.href.match(/users/)) {
-      $('.navbar li:nth-child(2)').addClass('active');
-    } else if (window.location.href.match(/documents/)) {
-      $('.navbar li:nth-child(3)').addClass('active');
-    } else if (window.location.href.match(/things/)) {
-      $('.navbar li:nth-child(4)').addClass('active');
-    } else if (window.location.href.match(/logs/)) {
-      $('.navbar li:nth-child(5)').addClass('active');
-    }
-  </script>
 
   <script type="text/javascript">
 

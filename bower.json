@@ -1,0 +1,13 @@
+{
+  "name": "bibrex",
+  "version": "0.1.0",
+  "author": {
+    "name": "Dan Michael Heggø",
+    "email": "danmichaelo@gmail.com"
+  },
+  "dependencies": {
+    "bootstrap": "3.0.x",
+    "select2": "3.4.x",
+    "typeahead.js": "0.9.x"
+  }
+}

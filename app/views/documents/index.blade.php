@@ -8,9 +8,11 @@
       <h3 class="panel-title">Dokumenter ({{ count($documents) }})</h3>
     </div>
 
-    <p>
-        Et dokument er en instans av en dings/ting.
-    </p>
+    <div class="panel-body">
+      <p>
+          Et dokument er en instans av en dings/ting.
+      </p>
+    </div>
 
     <!-- List group -->
     <ul class="list-group">

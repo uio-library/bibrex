@@ -7,37 +7,40 @@
       <h3 class="panel-title">Ny ting</h3>
     </div>
 
-    {{ Form::model(new Thing(), array(
-        'action' => 'ThingsController@postStore',
-        'class' => 'form-inline'
+    <div class="panel-body">
+
+      {{ Form::model(new Thing(), array(
+          'action' => 'ThingsController@postStore',
+          'class' => 'form-inline'
+          )) }}
+
+        Navn:
+        {{ Form::text('thing', null, array(
+            'placeholder' => 'Navn', 
+            'class' => 'form-control',
+            'style' => 'width:120px'
         )) }}
 
-      Navn:
-      {{ Form::text('thing', null, array(
-          'placeholder' => 'Navn', 
-          'class' => 'form-control',
-          'style' => 'width:120px'
-      )) }}
+        <button type="submit" class="btn btn-success">
+          Lagre ny ting
+        </button>
 
-      <button type="submit" class="btn btn-success">
-        Lagre ny ting
-      </button>
+        <img src="/img/spinner2.gif" class="spinner" />
 
-      <img src="/img/spinner2.gif" class="spinner" />
+      {{ Form::close() }}
 
-    {{ Form::close() }}
+      <h3>Hva med klikkere?</h3>
 
-    <h3>Hva med klikkere?</h3>
-
-    <p style="margin:10px 0;">
-      Klikkere skal ikke legges til. Klikkere har HEFTID festet 
-      på baksiden og lånes ut som normalt i BIBSYS. Det er per i dag 
-      ikke teknisk mulig for BIBREX å låne ut dokumenter med HEFTID, 
-      så hvis bruker ikke har gyldig LTID har man et problem. En 
-      løsning kan være å låne ut på «Midlertid låner» (umn1002157) 
-      i BIBSYS og skrive personopplysninger om låneren i 
-      utlånskommentaren.
-    </p>
+      <p style="margin:10px 0;">
+        Klikkere skal ikke legges til. Klikkere har HEFTID festet 
+        på baksiden og lånes ut som normalt i BIBSYS. Det er per i dag 
+        ikke teknisk mulig for BIBREX å låne ut dokumenter med HEFTID, 
+        så hvis bruker ikke har gyldig LTID har man et problem. En 
+        løsning kan være å låne ut på «Midlertid låner» (umn1002157) 
+        i BIBSYS og skrive personopplysninger om låneren i 
+        utlånskommentaren.
+      </p>
+    </div>
 
   </div>
 
@@ -47,9 +50,13 @@
       <h3 class="panel-title">Ting ({{ count($things) }})</h3>
     </div>
 
-    <p>
-        En ting er en klasse av dokumenter.
-    </p>
+    <div class="panel-body">
+
+      <p>
+          En ting er en klasse av dokumenter.
+      </p>
+
+    </div>
 
     <!-- List group -->
     <ul class="list-group">

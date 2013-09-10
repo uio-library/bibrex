@@ -1,6 +1,12 @@
 body {
   font-family: 'Open Sans', sans-serif;
 }
+* {
+   -webkit-transition: max-width 0.2s ease-in-out;
+  -moz-transition: max-width 0.2s ease-in-out;
+  -o-transition: max-width 0.2s ease-in-out;
+  transition: max-width 0.2s ease-in-out;
+}
 .list-group li {
  -webkit-transition: all 0.5s ease-in-out;
   -moz-transition: all 0.5s ease-in-out;
@@ -14,6 +20,12 @@ body {
   background-color: #ffff44;
 }
 
+.padded {
+  padding: 10px;
+}
+p {
+  margin: 0 !important;
+}
 .navbar {
 	/*
   background: url(img/45-rex-castor.jpg) right top no-repeat;

@@ -8,52 +8,57 @@
       <h3 class="panel-title">Nytt utlån</h3>
     </div>
 
-    {{ Form::model(new Loan(), array(
-        'action' => 'LoansController@postStore',
-        'class' => 'form-inline'
-        )) }}
+    <div class="panel-body">
 
-      <div style="float:left; width: 260px;">
-        {{ Form::label('ltid', 'Til hvem?') }}
-        <small>Etternavn, fornavn eller LTID</small>
-        <div class="user">
-            {{ Form::text('ltid', null, array(
-              'placeholder' => 'Etternavn, fornavn eller LTID', 
-              'class' => 'form-control typeahead',
-              'style' => 'width:250px'
+      {{ Form::model(new Loan(), array(
+          'action' => 'LoansController@postStore',
+          'class' => 'form-inline'
+          )) }}
+
+        <div class="row">
+
+          <div class="col-sm-5">
+            {{ Form::label('ltid', 'Til hvem?') }}
+            <small>Etternavn, fornavn eller LTID</small>
+            <div class="user">
+                {{ Form::text('ltid', null, array(
+                  'placeholder' => 'Etternavn, fornavn eller LTID', 
+                  'class' => 'form-control typeahead',
+                  'style' => 'display:block'
+                )) }}
+                {{ Form::hidden('user_id') }}
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+            {{ Form::label('thing', 'Hva?') }}<br />
+            {{ Form::select('thing', $things, null, array(
+                'class' => 'form-control',
+                'style' => 'display:block'
             )) }}
-            {{ Form::hidden('user_id') }}
+          </div>
+
+          <div id="bibsysdok_extras" class="col-sm-3">
+            {{ Form::label('dokid', 'DOKID:') }}<br />
+            {{ Form::text('dokid', null, array(
+                'placeholder' => 'DOKID',
+                'class' => 'form-control',
+                'style' => 'display:block'
+            )) }}
+          </div>
+
+          <div id="other_extras" class="col-sm-3" style="display:none;">
+            {{ Form::label('count', 'Antall:') }}<br />
+            {{ Form::text('count', '1', array(
+                'placeholder' => 'Antall',
+                'class' => 'form-control',
+                'style' => 'display:block'
+            )) }}
+          </div>
+
         </div>
-      </div>
 
-      <div style="float:left; width: 200px;">
-        {{ Form::label('thing', 'Hva?') }}<br />
-        {{ Form::select('thing', $things, null, array(
-            'class' => 'form-control',
-            'style' => 'width:180px'
-        )) }}
-      </div>
-
-      <div id="bibsysdok_extras" class="float:left; width: 310px;">
-        {{ Form::label('dokid', 'DOKID:') }}<br />
-        {{ Form::text('dokid', null, array(
-            'placeholder' => 'DOKID',
-            'class' => 'form-control',
-            'style' => 'width:180px'
-        )) }}
-      </div>
-
-      <div id="other_extras" style="display:none; float:left; width: 90px;">
-        {{ Form::label('count', 'Antall:') }}<br />
-        {{ Form::text('count', '1', array(
-            'placeholder' => 'Antall',
-            'class' => 'form-control',
-            'style' => 'width:80px'
-        )) }}
-      </div>
-
-
-      <p style="padding-top:1.4em; clear:both;">
+      <p style="padding: 15px 0;">
         For bøker med RFID-brikker må du manuelt sette RFID-programmet i utlåns-modus for at boka skal bli avalarmisert.
         BIBREX snakker dessverre ikke med RFID-programmet (enda). 
       </p>
@@ -64,8 +69,8 @@
 
       <span class="spinner" style="padding-left:10px; font-style:italic;">Et øyeblikk...</span>
 
-
-    {{ Form::close() }}
+      {{ Form::close() }}
+    </div>
 
   </div>
 
@@ -122,6 +127,9 @@
     })();
 
   $(document).ready(function() {
+
+    //$("select").select2();
+
     var $ltid = $('input[name="ltid"]'),
       $dokid = $('input[name="dokid"]');
 
