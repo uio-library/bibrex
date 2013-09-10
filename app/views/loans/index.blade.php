@@ -72,14 +72,21 @@
   <div class="panel panel-success">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Utlån ({{ count($loans) }})</h3>
+      <h3 class="panel-title">Utlån (<span id="loancount">{{ count($loans) }}</span>)</h3>
     </div>
 
+    <p>
+      Vis bare 
+      <input type="checkbox" id="onlyLoansAsGuest">
+        <label for="onlyLoansAsGuest">utlån på midlertidig bruker</label>
+      <input type="checkbox" id="onlyOverdue">
+        <label for="onlyOverdue">forfalt</label>
+    </p>
 
     <ul class="list-group">
     @foreach ($loans as $loan)
 
-      <li class="list-group-item{{ in_array($loan->id, $loan_ids) ? ' added' : '' }}">
+      <li class="list-group-item{{ in_array($loan->id, $loan_ids) ? ' added' : '' }}" data-asguest="{{ $loan->as_guest ? 1 : 0 }}" data-overdue="{{ $loan->daysLeft() < 0 ? 1 : 0 }}">
         <h4 class="list-group-item-heading">
           <a href="{{ URL::action('LoansController@getShow', $loan->id) }}">
             {{ $loan->representation() }}
@@ -205,6 +212,27 @@
     //   local: [ "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune" ]
     //   }
     //   ]);
+
+
+
+    $('#onlyLoansAsGuest, #onlyOverdue').on('change', function() {
+      var onlyLoansAsGuest = $('#onlyLoansAsGuest').is(':checked'),
+        onlyOverdue = $('#onlyOverdue').is(':checked'),
+        cnt = 0;
+      $('.list-group-item').each(function(key, elem) {
+        var c1 = (!onlyLoansAsGuest || $(elem).data('asguest')),
+            c2 = (!onlyOverdue || $(elem).data('overdue'));
+        if (c1 && c2) {
+          cnt++;
+          $(elem).show();
+        } else {
+          $(elem).hide();
+        }
+      });
+      $('#loancount').text(cnt);
+
+    });
+
 
   });
 </script>
