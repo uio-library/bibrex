@@ -5,7 +5,7 @@
   <div class="panel panel-primary">
 
     <div class="panel-heading">
-      <h3 class="panel-title">Brukere ({{ count($users) }})</h3>
+      <h3 class="panel-title">Brukere (<span id="usercount">{{ count($users) }}</span>)</h3>
     </div>
 
     <div class="panel-body">
@@ -69,6 +69,7 @@
           </li>');
       });
       $('.list-group input').on('change', check_checked);
+      $('#usercount').text(users.length);
     }
 
     function check_checked() {
