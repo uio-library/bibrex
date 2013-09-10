@@ -22,25 +22,23 @@ class UsersController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		if (Request::ajax()) {
-			$users = array();
-			foreach (User::all() as $user) {
-				$users[] = array(
-					'id' => $user->id,
-					'value' => $user->lastname . ', ' . $user->firstname,
-					'lastname' => $user->lastname,
-					'firstname' => $user->firstname,
-					'ltid' => $user->ltid
-				);
-			}
-			return Response::json($users);
-
-		} else {
-			$users = User::with('loans')->get();
-			return Response::view('users.index', array(
-				'users' => $users
-			));
+		$users = array();
+		foreach (User::with('loans')->get() as $user) {
+			$users[] = array(
+				'id' => $user->id,
+				'value' => $user->lastname . ', ' . $user->firstname,
+				'lastname' => $user->lastname,
+				'firstname' => $user->firstname,
+				'ltid' => $user->ltid,
+				'loancount' => count($user->loans)
+			);
 		}
+		if (Request::ajax()) {
+			return Response::json($users);
+		}
+		return Response::view('users.index', array(
+			'users' => $users
+		));
 	}
 
 	/**
@@ -132,5 +130,69 @@ class UsersController extends BaseController {
 		return Redirect::action('UsersController@getShow', $id)
 			->with('status', 'Informasjonen ble lagret.');
 	}
+
+	/**
+	 * Display form to merge two users.
+	 *
+	 * @param  string  $user1
+	 * @param  string  $user2
+	 * @return Response
+	 */
+	public function getMerge($user1, $user2)
+	{
+		$user1 = User::find($user1);
+		if (!$user1) {
+		    return Response::view('errors.missing', array('what' => 'Bruker 1'), 404);
+		}
+
+		$user2 = User::find($user2);
+		if (!$user2) {
+		    return Response::view('errors.missing', array('what' => 'Bruker 2'), 404);
+		}
+
+		$merged = $user1->getMergeData($user2);
+
+		return Response::view('users.merge', array(
+			'user1' => $user1,
+			'user2' => $user2,
+			'merged' => $merged
+		));
+	}
+
+	/**
+	 * Merge $user2 into $user1
+	 *
+	 * @param  string  $user1
+	 * @param  string  $user2
+	 * @return Response
+	 */
+	public function postMerge($user1, $user2)
+	{
+		$user1 = User::find($user1);
+		if (!$user1) {
+		    return Response::view('errors.missing', array('what' => 'Bruker 1'), 404);
+		}
+
+		$user2 = User::find($user2);
+		if (!$user2) {
+		    return Response::view('errors.missing', array('what' => 'Bruker 2'), 404);
+		}
+
+		$data = array();
+		foreach (User::$editableAttributes as $attr) {
+			$data[$attr] = Input::get($attr);
+		}
+
+		$errors = $user1->merge($user2, $data);
+
+		if (!is_null($errors)) {
+			return Redirect::action('UsersController@getMerge', array($user1->id, $user2->id))
+				->withErrors($errors);
+		}
+
+		return Redirect::action('UsersController@getShow', $user1->id)
+			->with('status', 'Brukerne ble flettet.');
+	}
+
 
 }

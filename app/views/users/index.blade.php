@@ -12,6 +12,8 @@
 
       <form class="form-inline" role="form">
 
+        <button id="flett" class="btn btn-success" disabled="disabled" style="float:right;">Flett</button>
+
         <div class="form-group">
           <input type="text" id="search" class="form-control" placeholder="Søk">
         </div>
@@ -76,6 +78,7 @@
         if (chk.is(':checked')) {
           checked.push($(item).data('id'));
         }
+        $('#flett').prop('disabled', checked.length != 2);
       });
 
     }
@@ -84,6 +87,10 @@
       show_users(filter_users(users));
     }
 
+    $('#flett').on('click', function(e) {
+      e.preventDefault();
+      window.location.href = '/users/merge/' + checked[0] + '/' + checked[1];
+    });
     $('form input').on('keyup', update_users);
     $('form input').on('change', update_users);
     update_users();

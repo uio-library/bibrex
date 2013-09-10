@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\MessageBag;
+
 class User extends Eloquent {
 
 	/**
@@ -8,6 +10,13 @@ class User extends Eloquent {
 	 * @var string
 	 */
 	protected $table = 'users';
+
+	/**
+	 * Array of user-editable attributes (excluding machine-generated stuff)
+	 *
+	 * @static array
+	 */
+	public static $editableAttributes = array('ltid', 'lastname', 'firstname', 'phone', 'email', 'lang');
 
 	public static $rules = array(
 		'ltid' => 'not_guest_ltid' // this rule is defined in app/start/global.php
@@ -108,6 +117,75 @@ class User extends Eloquent {
 		}
 		parent::save($options);
 		return true;
+	}
+
+	protected function mergeAttribute($key, $user)
+	{
+		return strlen($user->$key) > strlen($this->$key) ? $user->$key : $this->$key;
+	}
+
+	/**
+	 * Get data for merging $user into the current user. The returned
+	 * array can be passed directly to mergeWith or presented to a user
+	 * for review first.
+	 *
+	 * @param  User  $user
+	 * @return array
+	 */
+	public function getMergeData($user)
+	{
+		$merged = array();
+		foreach (static::$editableAttributes as $attr) {
+			$merged[$attr] = $this->mergeAttribute($attr, $user);
+		}
+		return $merged;
+	}
+
+	/**
+	 * Merge another user $user into the user
+	 *
+	 * @param  User  $user
+	 * @return Illuminate\Support\MessageBag
+	 */
+	public function merge(User $user, array $data)
+	{
+		// Validate
+		$errors = new MessageBag();
+		$ltid = $data['ltid'];
+		if (!empty($ltid) && !empty($user->ltid) && ($ltid != $user->ltid)) {
+			$errors->add('ltid_conflict', "Kan ikke flette nytt LTID $ltid med eksisterende $user->ltid.");
+		}
+
+		if (!empty($ltid) && !empty($this->ltid) && ($ltid != $this->ltid)) {
+			$errors->add('ltid_conflict', "Kan ikke flette nytt LTID $ltid med eksisterende $this->ltid.");
+		}
+
+		if ($errors->count() > 0) {
+			return $errors;
+		}
+
+		Log::info('Fletter bruker ' . $user->id . ' inn i bruker ' . $this->id);
+
+		foreach ($user->loans as $loan) {
+			$loan->user_id = $this->id;
+			$loan->save();
+			Log::info('Lån ' . $loan->id . ' flyttet fra bruker ' . $user->id . ' til ' . $this->id);
+			if (!$loan->as_guest) {
+
+			}
+		}
+
+		// Delete other user first to avoid database integrity conflicts
+		$user->delete();
+
+		// Update properties of the current user with merge data
+		foreach ($data as $key => $val) {
+			$this->$key = $val;
+		}
+
+		$this->save();
+
+		return null;
 	}
 
 }
