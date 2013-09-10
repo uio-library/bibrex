@@ -3,3 +3,7 @@
 composer.phar
 composer.lock
 .DS_Store
+/public/components/
+/app/tests/_log/*
+/app/tests/_data/*
+/app/storage/dumps

@@ -7,7 +7,7 @@ class Thing extends Eloquent {
     /**
      * Validation rules.
      *
-     * @var array
+     * @static array
      */
     public static $rules = array(
         'name' => 'required|unique:things,name,:id:'
@@ -16,7 +16,7 @@ class Thing extends Eloquent {
     /**
      * Validation error messages.
      *
-     * @var array
+     * @static array
      */
     public static $messages = array(
         'name.required' => 'Navn må fylles ut',
