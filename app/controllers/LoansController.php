@@ -206,14 +206,14 @@ class LoansController extends BaseController {
 		if ($new_user) {
 			if ($user->in_bibsys) {
 				return Redirect::action('UsersController@getEdit', $user->id)
-					->with('status', 'Dokumentet ble lånt ut. Brukeren ble funnet i BIBSYS.');				
+					->with('status', 'Utlånet er lagret. Siden dette er en ny BIBREX-låner må du kontrollere og lagre opplysningene importert fra BIBSYS.');
 			} else {
 				return Redirect::action('UsersController@getEdit', $user->id)
-					->with('status', 'Dokumentet ble lånt ut. Siden dette er en ny låner må du registrere litt informasjon om vedkommende.');				
+					->with('status', 'Utlånet er lagret. Siden dette er en ny låner må du registrere litt informasjon om vedkommende.');
 			}
 		} else {
 			return Redirect::action('LoansController@getIndex')
-				->with('status', ($count == 1 ? 'Dokumentet' : 'Dokumentene') . ' ble lånt ut')
+				->with('status', ($count == 1 ? 'Utlånet' : 'Utlånene') . ' er lagret.')
 				->with('loan_ids', $loan_ids);
 		}
 

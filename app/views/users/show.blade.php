@@ -8,62 +8,63 @@
       <h3 class="panel-title">Bruker #{{ $user->id }}</h3>
     </div>
 
-    <a href="{{ URL::action('UsersController@getEdit', $user->id) }}" style="float:right">Rediger</a>
+    <div class="panel-body">
 
-    <div class="row">
-      <div class="col-2">
-        <strong>LTID:</strong>
-      </div>
-      <div class="col-6" id="ltid">
-        {{ $user->ltid ? $user->ltid : '<em>Intet LTID</em>' }}
-        : <span>{{ $user->in_bibsys ? 'finnes i BIBSYS' : 'finnes ikke i BIBSYS' }}</span>
-        (<a href="#">Sjekk på nytt</a>)
-      </div>
-    </div>
+      <a href="{{ URL::action('UsersController@getEdit', $user->id) }}" style="float:right">Rediger</a>
 
-    <div class="row">
-      <div class="col-2">
-        <strong>Navn:</strong>
-      </div>
-      <div class="col-6">
-        {{ $user->lastname }}, {{ $user->firstname }}
-      </div>
-    </div>
+      <table class="table">
+        <tr>
+          <th>
+            LTID:
+          </th>
+          <td>
+            {{ $user->ltid ? $user->ltid : '<em>Intet LTID</em>' }}
+            : <span>{{ $user->in_bibsys ? 'finnes i BIBSYS' : 'finnes ikke i BIBSYS' }}</span>
+            (<a href="#">Sjekk på nytt</a>)
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Navn:
+          </th>
+          <td>
+            {{ $user->lastname }}, {{ $user->firstname }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Telefon:
+          </th>
+          <td>
+            {{ $user->phone }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Epost:
+          </th>
+          <td>
+            {{ $user->email }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Språk:
+          </th>
+          <td>
+            {{ $user->lang }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Registrert:
+          </th>
+          <td>
+            {{ $user->created_at }}
+          </td>
+        </tr>
+      </table>
 
-    <div class="row">
-      <div class="col-2">
-        <strong>Telefon:</strong>
-      </div>
-      <div class="col-6">
-        {{ $user->phone }}
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-2">
-        <strong>Epost:</strong>
-      </div>
-      <div class="col-6">
-        {{ $user->email }}
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-2">
-        <strong>Språk:</strong>
-      </div>
-      <div class="col-6">
-        {{ $user->lang }}
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-2">
-        <strong>Registrert:</strong>
-      </div>
-      <div class="col-6">
-        {{ $user->created_at }}
-      </div>
     </div>
   </div>
 
