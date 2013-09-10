@@ -339,22 +339,25 @@ class LoansController extends BaseController {
 		}
 		echo "<br />\n";
 
-		$users = array();
+		// Checking if there are loans that can be transferred
+		$ncipUserData = array();
 		foreach (User::with('loans.document.thing')->get() as $user) {
 			foreach ($user->loans as $loan) {
 				if ($loan->as_guest && $loan->document->thing->id == 1) {
 					$ltid = $user->ltid;
 					if (!empty($ltid)) {
 						echo "Checking loan $loan->id for $ltid : ";
-						if (!isset($users[$ltid])) {
+						if (!isset($ncipUserData[$ltid])) {
 							$response = $ncip->lookupUser($ltid);
-							$users[$ltid] = $response;
+							$ncipUserData[$ltid] = $response;
 						}
-						if ($users[$ltid]->exists) {
+						if ($ncipUserData[$ltid]->exists) {
 							echo " user has been imported, attempt to transfer loan ";
 							$loan->transfer();
+							Log::info('Legger inn brukerdata fra NCIP til bruker ' . $user->id);
+							$user->mergeFromUserResponse($ncipUserData[$ltid]);
 						} else {
-							echo " nope, not yet imported";
+							echo " user has not yet been imported";
 						}
 						echo "<br />\n";
 					}

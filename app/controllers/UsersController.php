@@ -178,12 +178,12 @@ class UsersController extends BaseController {
 		    return Response::view('errors.missing', array('what' => 'Bruker 2'), 404);
 		}
 
-		$data = array();
+		$mergedAttributes = array();
 		foreach (User::$editableAttributes as $attr) {
-			$data[$attr] = Input::get($attr);
+			$mergedAttributes[$attr] = Input::get($attr);
 		}
 
-		$errors = $user1->merge($user2, $data);
+		$errors = $user1->merge($user2, $mergedAttributes);
 
 		if (!is_null($errors)) {
 			return Redirect::action('UsersController@getMerge', array($user1->id, $user2->id))
