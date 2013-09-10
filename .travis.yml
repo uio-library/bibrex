@@ -10,6 +10,8 @@ services:
 
 install:
   - composer install
+  - npm install bower
+  - ./node_modules/.bin/bower install
 
 before_script:
   - mysql -e 'create database myapp_test;'
