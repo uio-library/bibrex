@@ -107,7 +107,7 @@
         <a href="https://www.ub.uio.no/for-ansatte/innlaan-utlaan/utlaan/ureal/lanekort.html">«Lånekort», svært nyttig guide, oppdatert 9. aug 2013</a>
     </li>
     <li>
-        <a href="https://www.ub.uio.no/for-ansatte/om-ubo/grupper/bibsysgrupper/doksok/studiekort-fs-feide.html">«Studiekort, FS, FEIDE», 22. jan 2010</a>
+        <a href="https://www.ub.uio.no/for-ansatte/om-ubo/grupper/faste-grupper/bibsysgrupper/doksok/studiekort-fs-feide.html">«Studiekort, FS, FEIDE», 22. jan 2010</a>
     </li>
 </ul>
 
