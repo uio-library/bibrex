@@ -6,7 +6,6 @@
         "php": ">= 5.4.0",
 		"laravel/framework": "4.0.*",
         "way/generators": "dev-master",
-        "danmichaelo/customxmlelement": "dev-master",
         "danmichaelo/ncip": "dev-master",
         "laravel/curl": "dev-master",
         "loic-sharma/profiler": "dev-master",
