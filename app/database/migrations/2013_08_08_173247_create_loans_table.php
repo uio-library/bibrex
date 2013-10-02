@@ -16,7 +16,7 @@ class CreateLoansTable extends Migration {
 			$table->increments('id');
 			$table->integer('user_id')->unsigned();
 			$table->integer('document_id')->unsigned();
-			$table->enum('object_type', array('document', 'thing'));
+			//$table->enum('object_type', array('document', 'thing'));
 			$table->timestamps();
 			$table->softDeletes();
 
