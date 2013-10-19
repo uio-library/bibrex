@@ -127,15 +127,13 @@ class Loan extends Eloquent {
 	}
 
 	/**
-	 * Delete the model from the database.
+	 * Check in the document in NCIP and delete the loan
 	 *
-	 * @param  bool $ncipReturn
-	 * @return bool|null
+	 * @return null
 	 */
-	public function delete($ncipReturn)
+	public function checkIn()
 	{
-
-		if ($this->document->thing->id == 1 && $ncipReturn !== false) {
+		if ($this->document->thing->id == 1) {
 
 			$dokid = $this->document->dokid;
 
@@ -147,8 +145,7 @@ class Loan extends Eloquent {
 			}
 			Log::info('Returnerte [[Document:' . $dokid . ']] i BIBSYS');
 		}
-
-		parent::delete();
+		$this->delete();
 	}
 
 	/**

@@ -75,8 +75,8 @@ class NcipSync extends Command {
 
 					$this->info($dokid . ' har blitt returnet i BIBSYS');
 
-					$loan->delete(false); // Kan ha blitt lånt ut til en annen bruker i mellomtiden.
-										  // Vi bør derfor *ikke* returnere i NCIP
+					$loan->delete(); 	// Kan ha blitt lånt ut til en annen bruker i mellomtiden.
+										// Vi bør derfor *ikke* returnere i NCIP
 				}
 
 			}
