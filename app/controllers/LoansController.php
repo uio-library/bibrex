@@ -257,7 +257,7 @@ class LoansController extends BaseController {
 		$repr = $loan->representation();
 		$docid = $loan->document->id;
 		$user = $loan->user->name();
-		$loan->delete();
+		$loan->checkIn();
 
 		$returnTo = Input::get('returnTo', 'documents.show');
 
