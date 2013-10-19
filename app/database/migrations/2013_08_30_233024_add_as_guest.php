@@ -14,7 +14,7 @@ class AddAsGuest extends Migration {
 	{
 		Schema::table('loans', function($table)
 		{
-			$table->boolean('as_guest');
+			$table->boolean('as_guest')->default(0);
 		});
 	}
 
