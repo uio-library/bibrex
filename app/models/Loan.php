@@ -129,12 +129,13 @@ class Loan extends Eloquent {
 	/**
 	 * Delete the model from the database.
 	 *
+	 * @param  bool $ncipReturn
 	 * @return bool|null
 	 */
-	public function delete()
+	public function delete($ncipReturn)
 	{
 
-		if ($this->document->thing->id == 1) {
+		if ($this->document->thing->id == 1 && $ncipReturn !== false) {
 
 			$dokid = $this->document->dokid;
 
@@ -169,15 +170,17 @@ class Loan extends Eloquent {
 		if ($this->as_guest) {
 			$dokid = $this->document->dokid;
 			$ltid = $this->user->ltid;
-			Log::info('Attempting to transfer ' . $dokid . ' to ' . $ltid);
+
 			$ncip = App::make('NcipClient');
 			$ncip->checkInItem($dokid);
 			$response = $ncip->checkOutItem($ltid, $dokid);
 			if ($response->success) {
 				$this->as_guest = false;
 				$this->save();
+				Log::info('Overførte lånet av ' . $dokid . ' til ' . $ltid . ' i BIBSYS');
 			} else {
-				die($response->error);
+				Log::error('Klarte ikke å overføre lånet av ' . $dokid . ' til ' . $tlid . ' i BIBSYS');
+				return $response->error;
 			}
 		}
 		return true;
