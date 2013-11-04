@@ -24,7 +24,7 @@ class UsersController extends BaseController {
 	public function getIndex()
 	{
 		$users = array();
-		foreach (User::with('loans')->get() as $user) {
+		foreach (User::with('loans')->orderBy('lastname')->get() as $user) {
 			$users[] = array(
 				'id' => $user->id,
 				'value' => $user->lastname . ', ' . $user->firstname,
@@ -179,12 +179,12 @@ class UsersController extends BaseController {
 			return Response::view('errors.missing', array('what' => 'Bruker 2'), 404);
 		}
 
-		$data = array();
+		$mergedAttributes = array();
 		foreach (User::$editableAttributes as $attr) {
-			$data[$attr] = Input::get($attr);
+			$mergedAttributes[$attr] = Input::get($attr);
 		}
 
-		$errors = $user1->merge($user2, $data);
+		$errors = $user1->merge($user2, $mergedAttributes);
 
 		if (!is_null($errors)) {
 			return Redirect::action('UsersController@getMerge', array($user1->id, $user2->id))

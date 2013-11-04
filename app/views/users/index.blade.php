@@ -66,7 +66,7 @@
             <input type="checkbox" id="user' + user.id + '"> \
             <span class="badge">' + user.loancount + '</span> \
             <a href="/users/show/' + user.id + '">' + user.lastname + ', ' + user.firstname + '</a> \
-            (' + (user.firstname ? user.firstname : 'intet LTID') + ') \
+            ' + (user.ltid ? '(' + user.ltid + ')' : '') + ' \
           </li>');
       });
       $('.list-group input').on('change', check_checked);

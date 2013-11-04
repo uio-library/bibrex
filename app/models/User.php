@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\MessageBag;
+use Danmichaelo\Ncip\UserResponse;
 
 class User extends Eloquent {
 
@@ -65,7 +66,7 @@ class User extends Eloquent {
 	/**
 	 * Make a lookupUser request to the NCIP service
 	 *
-	 * @return UserResponse
+	 * @return Danmichaelo\Ncip\UserResponse
 	 */
 	public function ncipLookup() {
 		if ($this->ltid) {
@@ -93,10 +94,7 @@ class User extends Eloquent {
 				$response = $this->ncipLookup();
 				$this->in_bibsys = $response->exists;
 				if ($response->exists) {
-					$this['lastname'] = $response->lastName;
-					$this['firstname'] = $response->firstName;
-					$this['email'] = $response->email;
-					$this['phone'] = $response->phone;
+					$this->mergeFromUserResponse($response);
 					Log::info('Fant [[User:' . $this->ltid . ']] i BIBSYS');
 				} else {
 					Log::info('Fant ikke [[User:' . $this->ltid . ']] i BIBSYS');
@@ -116,7 +114,22 @@ class User extends Eloquent {
 		return true;
 	}
 
-	protected function mergeAttribute($key, $user)
+	/**
+	 * Merge in NCIP UserResponse data
+	 *
+	 * @param  Danmichaelo\Ncip\UserResponse  $response
+	 * @return void
+	 */
+	public function mergeFromUserResponse(UserResponse $response)
+	{
+		$this->lastname = $response->lastName;
+		$this->firstname = $response->firstName;
+		$this->email = $response->email;
+		$this->phone = $response->phone;
+		//$this->lang = $response->lang;  // WAIT: Seems like BIBSYS currently always returns "eng"
+	}
+
+	protected function mergeAttribute($key, User $user)
 	{
 		return strlen($user->$key) > strlen($this->$key) ? $user->$key : $this->$key;
 	}
@@ -139,13 +152,19 @@ class User extends Eloquent {
 	}
 
 	/**
-	 * Merge another user $user into the user
+	 * Merge in another user $user
 	 *
 	 * @param  User  $user
+	 * @param  array  $data  An array of merged attributes (optional)
 	 * @return Illuminate\Support\MessageBag
 	 */
-	public function merge(User $user, array $data)
+	public function merge(User $user, array $data = null)
 	{
+
+		if (is_null($data)) {
+			$data = $this->getMergeData($user);
+		}
+
 		// Validate
 		$errors = new MessageBag();
 		$ltid = $data['ltid'];

@@ -277,7 +277,7 @@ class LoansController extends BaseController {
 		$repr = $loan->representation();
 		$docid = $loan->document->id;
 		$user = $loan->user->name();
-		$loan->delete();
+		$loan->checkIn();
 
 		$returnTo = Input::get('returnTo', 'documents.show');
 
@@ -308,81 +308,6 @@ class LoansController extends BaseController {
 		$loan->restore();
 		return Redirect::action('DocumentsController@getShow', $docid)
 			->with('status', 'Innleveringen ble angret.');
-	}
-
-	/**
-	 * Checks if loans has been returned in BIBSYS
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function getSync()
-	{
-		$user_loans = array();
-		$due = array();
-		header("Content-type: text/html; charset=utf-8");
-		echo "Starter sync...<br />\n";
-		$ncip = App::make('NcipClient');
-		$guest_ltid = Auth::user()->guest_ltid;
-
-		foreach (Loan::with('document','user')->get() as $loan) {
-			if ($loan->document->thing_id == 1) {
-				$dokid = $loan->document->dokid;
-				echo "Sjekker: " . $loan->representation() . " : ";
-				$ltid = $loan->as_guest ? $guest_ltid : $loan->user->ltid;
-				//$loan->as_guest = !$loan->user->in_bibsys;
-
-				echo " $ltid ";
-				if (!isset($user_loans[$ltid])) {
-					$response = $ncip->lookupUser($ltid);
-					$user_loans[$ltid] = array();
-					foreach ($response->loanedItems as $item) {
-						$user_loans[$ltid][] = $item['id'];
-						$due[$item['id']] = $item['dateDue'];
-					}
-				}
-				echo " (" . count($user_loans[$ltid]) . " lån), ";
-				if (in_array($dokid, $user_loans[$ltid])) {
-					echo " fortsatt utlånt";
-					if (is_null($loan->due_at)) {
-						Log::info('[Sync] Oppdaterer forfallsdato for [[Document:' . $dokid . ']]');
-					}
-					$loan->due_at = $due[$dokid];
-					$loan->save();
-				} else {
-					Log::info('[Sync] Dokumentet [[Document:' . $dokid . ']] har blitt returnert i BIBSYS, så vi returnerer det i BIBREX også');
-					echo " returnert i BIBSYS";
-					$loan->delete();
-				}
-				echo "<br />\n";
-			}
-		}
-		echo "<br />\n";
-
-		$users = array();
-		foreach (User::with('loans.document.thing')->get() as $user) {
-			foreach ($user->loans as $loan) {
-				if ($loan->as_guest && $loan->document->thing->id == 1) {
-					$ltid = $user->ltid;
-					if (!empty($ltid)) {
-						echo "Checking loan $loan->id for $ltid : ";
-						if (!isset($users[$ltid])) {
-							$response = $ncip->lookupUser($ltid);
-							$users[$ltid] = $response;
-						}
-						if ($users[$ltid]->exists) {
-							echo " user has been imported, attempt to transfer loan ";
-							$loan->transfer();
-						} else {
-							echo " nope, not yet imported";
-						}
-						echo "<br />\n";
-					}
-				}
-			}
-		}
-
-		exit();
 	}
 
 }

@@ -13,7 +13,9 @@ class AddDisabledThing extends Migration {
 	public function up()
 	{
 		Schema::table('things', function(Blueprint $table) {
-			$table->boolean('disabled')->unsigned()->default(false);
+			$table->boolean('disabled')
+				->default(0)
+				->unsigned();
 		});
 	}
 

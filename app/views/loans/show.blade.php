@@ -45,6 +45,7 @@
             <a href="{{ URL::action('UsersController@getShow', $loan->user->id) }}">
               {{ $loan->user->lastname }},
               {{ $loan->user->firstname }}
+              {{ $loan->as_guest? '(utlånt på midlertidig kort)' : '' }}
             </a>
           </td>
         </tr>

@@ -33,8 +33,8 @@ $I->click('Lagre');
 $I->see('Informasjonen ble lagret');
 $I->seeInCurrentUrl('/users/show');
 
-$I->seeLink('The quark and the jaguar : adventures in the simple and the complex (94nf00228)');
-$I->click('The quark and the jaguar : adventures in the simple and the complex (94nf00228)');
+$I->seeLink('The quark and the jaguar');
+$I->click('The quark and the jaguar');
 
 $I->seeLink('Returnér dokument');
 $I->click('Returnér dokument');
