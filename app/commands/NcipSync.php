@@ -71,7 +71,7 @@ class NcipSync extends Command {
 					$loan->due_at = $due[$dokid];
 					$loan->save();
 				} else {
-					Log::comment('[Sync] Dokumentet [[Document:' . $dokid . ']] har blitt returnert i BIBSYS, så vi returnerer det i BIBREX også');
+					Log::info('[Sync] Dokumentet [[Document:' . $dokid . ']] har blitt returnert i BIBSYS, så vi returnerer det i BIBREX også');
 
 					$this->info($dokid . ' har blitt returnet i BIBSYS');
 
