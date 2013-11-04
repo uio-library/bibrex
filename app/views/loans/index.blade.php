@@ -90,7 +90,7 @@
     <div class="panel-body">
       Vis bare 
       <input type="checkbox" id="onlyLoansAsGuest">
-        <label for="onlyLoansAsGuest">utlån på midlertidig bruker</label>
+        <label for="onlyLoansAsGuest">utlån på gjestekort</label>
       <input type="checkbox" id="onlyOverdue">
         <label for="onlyOverdue">forfalt</label>
     </div>
