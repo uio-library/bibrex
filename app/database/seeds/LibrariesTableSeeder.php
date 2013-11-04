@@ -9,8 +9,8 @@ class LibrariesTableSeeder extends Seeder {
 
 		$libraries = array(
 			array(
-				'name' => 'Realfagsbiblioteket',
-				'email' => 'post@localhost',
+				'name' => 'Eksempelbiblioteket',
+				'email' => 'post@eksempelbiblioteket.no',
 				'password' => Hash::make('admin'),
 				'password_changed' => new DateTime,
 				'created_at' => new DateTime,

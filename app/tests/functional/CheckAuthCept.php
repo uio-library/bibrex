@@ -2,9 +2,12 @@
 
 $I = new TestGuy($scenario);
 
-$I->wantTo('Check that I\'m redirected to the login page');
+$I->wantTo('Check that I\'m able to login');
 $I->amOnPage('/');
 
-$I->seeCurrentUrlEquals('/login');
+$I->seeCurrentUrlEquals('/libraries/login');
+
+// defined in tests/_helpers/TestHelper.php
 $I->login();
+
 $I->seeCurrentUrlEquals('/loans/index');

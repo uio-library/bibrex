@@ -23,7 +23,15 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     public function setUpDb()
     {
         Artisan::call('migrate');
-        $this->seed();
+        Artisan::call('db:seed');
+        //$this->seed();
+
+        $this->library = Library::find(1);
+        if (is_null($this->library)) {
+            dd('Library not seeded!');
+        }
+        $this->be($this->library);
+
     }
 
     public function setUp()
@@ -35,7 +43,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
         }
     }
 
-    public function teardown()
+    public function tearDown()
     {
         m::close();
         Artisan::call('migrate:reset');

@@ -465,6 +465,25 @@ class TestGuy extends \Codeception\AbstractGuy
      * Documentation taken from corresponding module.
      * ----------------------------------------------
      *
+     *
+     * @see Codeception\Module\TestHelper::setupGuestNumber()
+     * @return \Codeception\Maybe
+     */
+    public function setupGuestNumber() {
+        $this->scenario->addStep(new \Codeception\Step\Action('setupGuestNumber', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
      * Assert that the session has a given list of values.
 	 *
 	 * @param  string|array  $key

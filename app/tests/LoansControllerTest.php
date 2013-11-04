@@ -96,13 +96,13 @@ class LoansControllerTest extends TestCase {
 
 	public function testNcipStoreitemForNewUserWithoutLtid()
 	{
-		$ltid = 'uo00000000';
+		$ltid = 'eks1234567';
 		$dokid = '99ns00000';
+
+        $this->library->guest_ltid = $ltid;
+
 		//Config::set('app.guest_ltid', $ltid);
 		//$ltid = Auth::user()->guest_ltid;
-
-		// TODO: Mock Auth
-		//Auth::loginUsingId(1);
 
 		$this->curl->shouldReceive('simple_get')
 			->andReturnUsing(function($url) {
@@ -131,7 +131,7 @@ class LoansControllerTest extends TestCase {
 	public function testNcipStoreitemForNewUserWithLtid()
 	{
 
-		$ltid = 'uo00000001';
+		$ltid = 'eks1234567';
 		$dokid = '99ns00000';
 
 		$this->curl->shouldReceive('simple_get')
