@@ -35,6 +35,8 @@ Route::post('/libraries/login', 'LibrariesController@postLogin');
 Route::group(array('before' => 'auth'), function()
 {
 
+	Route::controller('users', 'UsersController');
+
 	Route::controller('loans', 'LoansController');
 
 	Route::controller('documents', 'DocumentsController');
