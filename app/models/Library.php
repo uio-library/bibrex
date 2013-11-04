@@ -1,17 +1,22 @@
 <?php
 
-class Thing extends Eloquent {
+use Illuminate\Support\MessageBag;
+use Illuminate\Auth\UserInterface;
 
-    protected $guarded = array();
+class Library extends Eloquent implements UserInterface {
 
-    /**
-     * Validation rules.
-     *
-     * @static array
-     */
-    public static $rules = array(
-        'name' => 'required|unique:things,name,:id:'
-    );
+	/**
+	 * Array of user-editable attributes (excluding machine-generated stuff)
+	 *
+	 * @static array
+	 */
+	public static $editableAttributes = array('name', 'email', 'guest_ltid');
+
+	public static $rules = array(
+		'name' => 'required|unique:libraries,name,:id:',
+		'email' => 'required|email|unique:libraries,email,:id:',
+		'guest_ltid' => 'regex:/^[0-9a-zA-Z]{10}$/'
+	);
 
     /**
      * Validation error messages.
@@ -20,10 +25,14 @@ class Thing extends Eloquent {
      */
     public static $messages = array(
         'name.required' => 'Navn må fylles ut',
-        'name.unique' => 'Tingen finnes allerede'
+        'name.unique' => 'Navn må være unikt',
+        'email.required' => 'Epost må fylles ut',
+        'email.unique' => 'Epost må være unik',
+        'email.email' => 'Epost må være en gyldig epostadresse',
+        'guest_ltid.regex' => 'LTID må være et gyldig LTID',
     );
 
-    /**
+	/**
      * Validation errors.
      *
      * @var Illuminate\Support\MessageBag
@@ -71,37 +80,41 @@ class Thing extends Eloquent {
         return true;
     }
 
-    public function documents()
-    {
-        return $this->hasMany('Document');
-    }
+	/**
+	 * The database table used by the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'libraries';
 
+	/**
+	 * The attributes excluded from the model's JSON form.
+	 *
+	 * @var array
+	 */
+	protected $hidden = array('password');
 
-    public function activeLoans()
-    {
-        $library_id = Auth::user()->id;
+	/**
+	 * Get the unique identifier for the user.
+	 *
+	 * @return mixed
+	 */
+	public function getAuthIdentifier()
+	{
+		return $this->getKey();
+	}
 
-        $loans = array();
-        foreach ($this->documents as $doc) {
-            foreach ($doc->loans()->where('library_id', $library_id)->get() as $loan) {
-                $loans[] = $loan;
-            }
-        }
-        return $loans;
-    }
+	/**
+	 * Get the password for the user.
+	 *
+	 * @return string
+	 */
+	public function getAuthPassword()
+	{
+		return $this->password;
+	}
 
-    public function allLoans()
-    {
-        $loans = array();
-        foreach ($this->documents as $doc) {
-            foreach ($doc->allLoans as $loan) {
-                $loans[] = $loan;
-            }
-        }
-        return $loans;
-    }
-
-    /**
+	/**
      * Save the model to the database.
      *
      * @param  array  $options
@@ -112,24 +125,13 @@ class Thing extends Eloquent {
         if (!$this->validate()) {
             return false;
         }
-        if (!$this->exists) {
+        /*if (!$this->exists) {
             Log::info('Opprettet ny ting: ' . $this->name);
         } else {
             Log::info('Oppdaterte tingen: ' . $this->name);
-        }
+        }*/
         parent::save($options);
         return true;
-    }
-
-    /**
-     * Delete the model from the database.
-     *
-     * @return bool|null
-     */
-    public function delete()
-    {
-        Log::info('Slettet ting: ' . $this->name);
-        parent::delete();
     }
 
 }

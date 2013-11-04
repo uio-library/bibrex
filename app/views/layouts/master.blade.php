@@ -23,6 +23,8 @@
 
     @section('sidebar')
 
+    @if (Auth::check())
+
     <nav class="navbar navbar-default" role="navigation">
 
       <!-- Brand and toggle get grouped for better mobile display -->
@@ -64,12 +66,28 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
+
           <li{{ strpos(getenv('REQUEST_URI'), '/about') === 0 ? ' class="active"':'' }}>
             <a href="/about">Hjelp</a>
           </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                Logget inn som {{ Auth::user()->name }}
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="/libraries/my">Kontoinnstillinger</a></li>
+                @if (Session::get('iplogin') != true)
+                  <li><a href="/libraries/logout">Logg ut</a></li>
+                @endif
+              </ul>
+            </li>
+
         </ul>
 
     </nav>
+    @endif
 
     @show
 
@@ -90,6 +108,7 @@
         @endforeach
         </ul>
       </div>
+
     @endif
 
     @yield('content')

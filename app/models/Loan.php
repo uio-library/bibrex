@@ -20,6 +20,11 @@ class Loan extends Eloquent {
 		return $this->hasMany('Reminder');
 	}
 
+	public function library()
+	{
+		return $this->belongsTo('Library');
+	}
+
 	public function representation($plaintext = false)
 	{
 		if ($this->document->thing->id == 1) {
@@ -67,9 +72,15 @@ class Loan extends Eloquent {
 		if (empty($results)) dd("user not found");
 		$user = $results[0];
 
-		$ltid = $user->in_bibsys ? $user->ltid : Config::get('app.guest_ltid');
-
-		$this->as_guest = !$user->in_bibsys;
+		$ltid = $user->ltid;
+		$this->as_guest = false;
+		if (!$user->in_bibsys) {
+			$ltid = Auth::user()->guest_ltid;
+			if (!$ltid) {
+				die('Gjeste-LTID er ikke konfigurert i biblioteksinnstillingene!');
+			}
+			$this->as_guest = true;
+		}
 
 		$results = DB::select('SELECT things.id, documents.dokid FROM things,documents WHERE things.id = documents.thing_id AND documents.id = ?', array($this->document_id));
 		if (empty($results)) dd("thing not found");
@@ -88,7 +99,7 @@ class Loan extends Eloquent {
 			if ($this->as_guest) {
 				$logmsg .= ' (midlertidig lånekort)';
 			}
-			$logmsg .= ' i BIBSYS.';
+			$logmsg .= ' i NCIP-tjeneste.';
 			if ((!$response->success && $response->error == 'Empty response') || ($response->success)) {
 				if ($response->dueDate) {
 					$this->due_at = $response->dueDate;
@@ -117,6 +128,11 @@ class Loan extends Eloquent {
 	{
 		$this->errors = new Illuminate\Support\MessageBag;
 		if (!$this->exists) {
+
+			// Set library id
+			$this->library_id = Auth::user()->id;
+
+			// Checkout in NCIP service
 			if (!$this->ncipCheckout()) {
 				return false;
 			}

@@ -23,12 +23,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     public function setUpDb()
     {
         Artisan::call('migrate');
-        Artisan::call('db:seed');
-    }
-
-    public function teardownDb()
-    {
-        Artisan::call('migrate:reset');
+        $this->seed();
     }
 
     public function setUp()
@@ -43,10 +38,7 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     public function teardown()
     {
         m::close();
-        if($this->useDatabase)
-        {
-            $this->teardownDb();
-        }
+        Artisan::call('migrate:reset');
     }
 
 }

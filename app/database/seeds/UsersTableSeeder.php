@@ -12,7 +12,7 @@ class UsersTableSeeder extends Seeder {
 		);
 
 		// Uncomment the below to run the seeder
-		// DB::table('users')->insert($users);
+		DB::table('users')->insert($users);
 	}
 
 }

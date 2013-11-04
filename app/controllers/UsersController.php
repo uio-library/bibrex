@@ -15,6 +15,7 @@ class UsersController extends BaseController {
 		'firstname.required' => 'fornavn må fylles ut',
 		'lang.required' => 'språk må fylles ut'
 	);
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -58,7 +59,7 @@ class UsersController extends BaseController {
 		}
 
 		if (!$user) {
-		    return Response::view('errors.missing', array('what' => 'Brukeren'), 404);
+			return Response::view('errors.missing', array('what' => 'Brukeren'), 404);
 		}
 		return Response::view('users.show', array(
 				'user' => $user
@@ -142,12 +143,12 @@ class UsersController extends BaseController {
 	{
 		$user1 = User::find($user1);
 		if (!$user1) {
-		    return Response::view('errors.missing', array('what' => 'Bruker 1'), 404);
+			return Response::view('errors.missing', array('what' => 'Bruker 1'), 404);
 		}
 
 		$user2 = User::find($user2);
 		if (!$user2) {
-		    return Response::view('errors.missing', array('what' => 'Bruker 2'), 404);
+			return Response::view('errors.missing', array('what' => 'Bruker 2'), 404);
 		}
 
 		$merged = $user1->getMergeData($user2);
@@ -170,12 +171,12 @@ class UsersController extends BaseController {
 	{
 		$user1 = User::find($user1);
 		if (!$user1) {
-		    return Response::view('errors.missing', array('what' => 'Bruker 1'), 404);
+			return Response::view('errors.missing', array('what' => 'Bruker 1'), 404);
 		}
 
 		$user2 = User::find($user2);
 		if (!$user2) {
-		    return Response::view('errors.missing', array('what' => 'Bruker 2'), 404);
+			return Response::view('errors.missing', array('what' => 'Bruker 2'), 404);
 		}
 
 		$data = array();

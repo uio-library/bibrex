@@ -31,9 +31,6 @@ ClassLoader::addDirectories(array(
 |
 */
 
-#$logFile = 'log-'.php_sapi_name().'.txt';
-#Log::useDailyFiles(storage_path().'/logs/'.$logFile);
-
 if (App::environment() == 'testing') {
 	$monolog = Log::getMonoLog();
 	$redis = new Predis\Client();
@@ -104,5 +101,5 @@ require app_path().'/filters.php';
 
 Validator::extend('not_guest_ltid', function($attribute, $value, $parameters)
 {
-    return $value != Config::get('app.guest_ltid');
+    return $value != $ltid = Auth::user()->guest_ltid;
 });

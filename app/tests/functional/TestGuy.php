@@ -446,6 +446,25 @@ class TestGuy extends \Codeception\AbstractGuy
      * Documentation taken from corresponding module.
      * ----------------------------------------------
      *
+     *
+     * @see Codeception\Module\TestHelper::login()
+     * @return \Codeception\Maybe
+     */
+    public function login() {
+        $this->scenario->addStep(new \Codeception\Step\Action('login', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
      * Assert that the session has a given list of values.
 	 *
 	 * @param  string|array  $key

@@ -51,6 +51,15 @@
 
         <tr>
           <th>
+            Utlånssted:
+          </th>
+          <td>
+            {{ $loan->library->name }}
+          </td>
+        </tr>
+
+        <tr>
+          <th>
             Utlånt:
           </th>
           <td>

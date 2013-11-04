@@ -2,6 +2,13 @@
 
 @section('content')
 
+  @if (Auth::check() && is_null(Auth::user()->password))
+    <div class="alert alert-danger">
+      NB! Det er ikke satt noe passord for denne kontoen enda.
+      <a href="/libraries/my">Gå til biblioteksinnstillinger</a>
+    </div>
+  @endif
+
   <div class="panel panel-success">
 
     <div class="panel-heading">

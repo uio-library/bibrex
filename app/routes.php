@@ -11,9 +11,9 @@
 |
 */
 
-Route::get('/about', function()
+App::missing(function($exception)
 {
-	return Response::view('hello');
+    return Response::view('errors.missing', array(), 404);
 });
 
 Route::get('/', function()
@@ -21,19 +21,31 @@ Route::get('/', function()
 	return Redirect::action('LoansController@getIndex');
 });
 
-App::missing(function($exception)
+Route::get('/about', function()
 {
-    return Response::view('errors.missing', array(), 404);
+	return Response::view('hello');
 });
 
-Route::controller('users', 'UsersController');
-
-Route::controller('loans', 'LoansController');
-
-Route::controller('documents', 'DocumentsController');
-
-Route::controller('things', 'ThingsController');
-
-Route::controller('reminders', 'RemindersController');
-
 Route::controller('logs', 'LogsController');
+
+Route::get('/libraries/login', 'LibrariesController@getLogin');
+Route::post('/libraries/login', 'LibrariesController@postLogin');
+
+
+Route::group(array('before' => 'auth'), function()
+{
+
+	Route::controller('loans', 'LoansController');
+
+	Route::controller('documents', 'DocumentsController');
+
+	Route::controller('things', 'ThingsController');
+
+	Route::controller('reminders', 'RemindersController');
+
+	Route::controller('logs', 'LogsController');
+
+	Route::controller('libraries', 'LibrariesController');
+
+});
+

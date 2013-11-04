@@ -4,6 +4,8 @@ $I = new TestGuy($scenario);
 
 $I->wantTo('Checkout and return a document');
 $I->amOnPage('/');
+$I->seeCurrentUrlEquals('/login');
+$I->login();
 
 $I->seeInCurrentUrl('/loans');
 $I->see('Nytt utlån');
@@ -14,7 +16,7 @@ $I->fillField('DOKID:', '94nf00228');
 $I->click('Lån ut!');
 
 $I->see('Utlånet er lagret');
-$I->seeInDatabase('loans', ['id' => '1', 'document_id' => '1', 'user_id' => '1']);
+$I->seeInDatabase('loans', ['id' => '1', 'document_id' => '1', 'user_id' => '2']);
 $I->seeInDatabase('documents', ['thing_id' => '1']);
 $I->seeInDatabase('documents', ['dokid' => '94nf00228']);
 
@@ -48,7 +50,7 @@ $I->fillField('DOKID:', '94nf00228');
 $I->click('Lån ut!');
 
 $I->see('Utlånet er lagret');
-$I->seeInDatabase('loans', ['id' => '2', 'document_id' => '1', 'user_id' => '1']);
+$I->seeInDatabase('loans', ['id' => '2', 'document_id' => '1', 'user_id' => '2']);
 
 $I->seeInCurrentUrl('/loans');
 

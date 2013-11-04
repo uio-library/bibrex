@@ -17,9 +17,12 @@ class Document extends Eloquent {
 
 	public function allLoans()
 	{
+		$library_id = Auth::user()->id;
+
 		return $this->hasMany('Loan')
 			->with('document.thing', 'user')
 			->withTrashed()
+			->where('library_id', $library_id)
 			->orderBy('created_at', 'desc');
 	}
 

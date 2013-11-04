@@ -3,6 +3,9 @@
 
 Config::set('database.default', 'mysql');
 
+Route::enableFilters();
+Auth::logout(); // Shouldn't the Codeception Laravel module ideally do this?
+
 if ($scenario->running()) {
 
 	// Mock NCIP

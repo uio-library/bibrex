@@ -5,13 +5,6 @@ use Illuminate\Support\MessageBag;
 class User extends Eloquent {
 
 	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'users';
-
-	/**
 	 * Array of user-editable attributes (excluding machine-generated stuff)
 	 *
 	 * @static array
@@ -114,6 +107,10 @@ class User extends Eloquent {
 			Log::info('Opprettet ny bruker i BIBREX');
 		} else {
 			Log::info('Oppdaterte opplysningene for bruker [[User:' . $this->id . ']].');
+
+			// TODO: Hva hvis LTID endres fra et nr. til et annet og brukeren har lån?
+			//       Da må lånene overføres
+
 		}
 		parent::save($options);
 		return true;

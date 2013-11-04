@@ -16,6 +16,16 @@ class LoansController extends BaseController {
 		'count.between' => 'Antall må være et tall mellom 1 og 10.'
 	);
 
+	/*
+	 * Factory for Laravel Auth
+	 */
+	protected $auth;
+
+	/*
+	 * The currently logged in library
+	 */
+	protected $library;
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -23,9 +33,19 @@ class LoansController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		$loans = Loan::with('document.thing','user')->orderBy('created_at','desc')->get();
+		$library_id = Auth::user()->id;
+
+		// A list of all loans for the current library
+		$loans = Loan::with('document.thing','user')
+			->where('library_id', $library_id)
+			->orderBy('created_at','desc')->get();
+
+		// A list of all things for the select box
 		$things = array();
-		foreach (Thing::where('disabled', false)->get() as $thing) {
+		$q = Thing::where('disabled', false)
+			->where('library_id', $library_id)
+			->orWhere('library_id', NULL);
+		foreach ($q->get() as $thing) {
 			$things[$thing->id] = $thing->name;
 		}
 
@@ -303,7 +323,7 @@ class LoansController extends BaseController {
 		header("Content-type: text/html; charset=utf-8");
 		echo "Starter sync...<br />\n";
 		$ncip = App::make('NcipClient');
-		$guest_ltid = Config::get('app.guest_ltid');
+		$guest_ltid = Auth::user()->guest_ltid;
 
 		foreach (Loan::with('document','user')->get() as $loan) {
 			if ($loan->document->thing_id == 1) {

@@ -16,7 +16,14 @@ class ThingsController extends BaseController {
 	 */
 	public function getIndex()
 	{
-		$things = $this->thingFactory->with('documents.loans')->get();
+		$library_id = Auth::user()->id;
+
+		$things = $this->thingFactory
+			->with('documents.loans')
+			->where('library_id', null)
+			->orWhere('library_id', $library_id)
+			->get();
+
 		return Response::view('things.index', array(
 			'things' => $things
 		));

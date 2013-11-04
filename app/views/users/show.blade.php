@@ -111,38 +111,47 @@
 
   <h4>Lånehistorikk</h4>
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>
-          Dokument
-        </th>
-        <th>
-          Utlånt
-        </th>
-        <th>
-          Levert
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-     @foreach ($user->deliveredLoans as $loan)
-      <tr>
-        <td>
-          <a href="{{ URL::action('LoansController@getShow', $loan->id) }}">
-              {{ $loan->representation() }}
-          </a>
-        </td>
-        <td>
-          {{ $loan->created_at }}
-        </td>
-        <td>
-          {{ $loan->deleted_at }}
-        </td>
-      </tr>
-    @endforeach
-    </tbody>
-  </table>
+  @if (count($user->deliveredLoans) == 0)
+
+    <p>
+      <em>Ingen historikk</em>
+    </p>
+
+  @else
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>
+            Dokument
+          </th>
+          <th>
+            Utlånt
+          </th>
+          <th>
+            Levert
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+       @foreach ($user->deliveredLoans as $loan)
+        <tr>
+          <td>
+            <a href="{{ URL::action('LoansController@getShow', $loan->id) }}">
+                {{ $loan->representation() }}
+            </a>
+          </td>
+          <td>
+            {{ $loan->created_at }}
+          </td>
+          <td>
+            {{ $loan->deleted_at }}
+          </td>
+        </tr>
+      @endforeach
+      </tbody>
+    </table>
+  @endif
 
 @stop
 

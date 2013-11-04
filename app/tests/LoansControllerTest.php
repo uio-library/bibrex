@@ -98,7 +98,11 @@ class LoansControllerTest extends TestCase {
 	{
 		$ltid = 'uo00000000';
 		$dokid = '99ns00000';
-		Config::set('app.guest_ltid', $ltid);
+		//Config::set('app.guest_ltid', $ltid);
+		//$ltid = Auth::user()->guest_ltid;
+
+		// TODO: Mock Auth
+		//Auth::loginUsingId(1);
 
 		$this->curl->shouldReceive('simple_get')
 			->andReturnUsing(function($url) {
