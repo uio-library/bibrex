@@ -19,5 +19,3 @@ Simple lending system using NCIP to connect to a library system.
 * [5.9](https://github.com/scriptotek/bibrex/commit/0ae2d9e929da84ced1520fa676c83b280683e767) Mulighet for å slette ting, men bare hvis ikke utlånt enda
 
 [![Build Status](https://travis-ci.org/scriptotek/bibrex.png?branch=master)](https://travis-ci.org/danmichaelo/bibrex)
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/scriptotek/bibrex/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
