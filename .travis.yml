@@ -10,6 +10,8 @@ services:
 
 install:
   - composer install
+  - node -v
+  - npm version
   - npm install bower
   - ./node_modules/.bin/bower install
 
