@@ -44,10 +44,14 @@ class NcipSync extends Command {
 		$this->info('Sjekker om dokumenter har blitt returnert i BIBSYS...');
 
 		$ncip = App::make('NcipClient');
-		$guest_ltid = Config::get('app.guest_ltid');
 
-		foreach (Loan::with('document','user')->get() as $loan) {
+		foreach (Loan::with('document','user','library')->get() as $loan) {
 			if ($loan->document->thing_id == 1) {
+				$guest_ltid = $loan->library->guest_ltid;
+				if (is_null($guest_ltid)) {
+					// This would happen only if the guest ltid is removed at some point
+					continue;
+				}
 				$dokid = $loan->document->dokid;
 				$ltid = $loan->as_guest ? $guest_ltid : $loan->user->ltid;
 				//$loan->as_guest = !$loan->user->in_bibsys;
