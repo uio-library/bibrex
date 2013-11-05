@@ -74,6 +74,12 @@ class LibrariesController extends BaseController {
 		$lib->email = Input::get('email');
 		$lib->guest_ltid = Input::get('guest_ltid') ? Input::get('guest_ltid') : null;
 		$lib->email = Input::get('email') ? Input::get('email') : null;
+
+		$options = $lib->options;
+		$options['guestcard_for_nonworking_cards'] = (Input::get('guestcard_for_nonworking_cards') == 'true');
+		$options['guestcard_for_cardless_loans'] = (Input::get('guestcard_for_cardless_loans') == 'true');
+		$lib->options = $options;
+
 		if (!$lib->save()) {
 			return Redirect::back()
 				->withErrors($lib->errors)

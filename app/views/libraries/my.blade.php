@@ -34,6 +34,35 @@
         {{ Form::password('password', array('class' => 'form-control')) }}
       </div>
 
+      <div class="form-group">
+
+        {{ Form::checkbox(
+          'guestcard_for_nonworking_cards',
+          'true',
+          array_get($library->options, 'guestcard_for_nonworking_cards') ? true : false,
+          array('id' => 'guestcard_for_nonworking_cards')
+        ) }}
+        {{ Form::label(
+          'guestcard_for_nonworking_cards',
+          'Bruk gjestekort hvis brukers kort ikke virker'
+        )}}
+        (typisk studentkort som ikke har blitt importert enda)
+      </div>
+
+      <div class="form-group">
+        {{ Form::checkbox(
+          'guestcard_for_cardless_loans',
+          'true',
+          array_get($library->options, 'guestcard_for_cardless_loans') ? true : false,
+          array('id' => 'guestcard_for_cardless_loans')
+        )}}
+        {{ Form::label(
+          'guestcard_for_cardless_loans',
+          'Bruk gjestekort for kortløse utlån'
+        )}}
+        (kortløse utlån kan brukes f.eks. for å slippe å opprette nytt kort til en person som kommer til å få studentkort i løpet av de nærmeste dagene.)
+      </div>
+
     </div>
 
     <div class="panel-footer">

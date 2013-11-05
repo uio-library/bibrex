@@ -15,7 +15,7 @@ class Library extends Eloquent implements UserInterface {
 	public static $rules = array(
 		'name' => 'required|unique:libraries,name,:id:',
 		'email' => 'required|email|unique:libraries,email,:id:',
-		'guest_ltid' => 'regex:/^[0-9a-zA-Z]{10}$/'
+		'guest_ltid' => 'regex:/^[0-9a-zA-Z]{10}$/',
 	);
 
     /**
@@ -31,6 +31,19 @@ class Library extends Eloquent implements UserInterface {
         'email.email' => 'Epost må være en gyldig epostadresse',
         'guest_ltid.regex' => 'LTID må være et gyldig LTID',
     );
+
+    public function getOptionsAttribute($value)
+    {
+        if (is_null($value)) {
+            return json_decode('{}', true);
+        }
+        return json_decode($value, true);
+    }
+
+    public function setOptionsAttribute($value)
+    {
+        $this->attributes['options'] = json_encode($value);
+    }
 
 	/**
      * Validation errors.
@@ -68,6 +81,11 @@ class Library extends Eloquent implements UserInterface {
     {
         $rules = $this->processRules($rules ?: static::$rules);
         $messages = $this->processRules($messages ?: static::$messages);
+
+        if ($this->options['guestcard_for_nonworking_cards'] || $this->options['guestcard_for_cardless_loans']) {
+            $rules['guest_ltid'] .= '|required';
+            $messages['guest_ltid.required'] = 'Du har valgt å aktivere bruk av gjestekort, men har ikke angitt hvilket kort.';
+        }
 
         $v = Validator::make($this->attributes, $rules, $messages);
 

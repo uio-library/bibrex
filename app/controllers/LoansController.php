@@ -75,6 +75,17 @@ class LoansController extends BaseController {
 	}
 
 	/**
+	 * TODO: Move method to a more reasonable place (where is that?)
+	 */
+	public function isLTID($value)
+	{
+		return (											// If
+			preg_match('/^[0-9a-zA-Z]{10}$/', $value) &&    // ... it's 10 characters long
+			preg_match('/[0-9]{6,}/', $value)				// ... and contains at least six adjacent numbers
+		);													// ... we assume it's a LTID :)
+	}
+
+	/**
 	 * Store a newly created resource in storage.
 	 *
 	 * @return Response
@@ -160,7 +171,7 @@ class LoansController extends BaseController {
 		$ltid = false;
 		$user = false;
 		$name = false;
-		if (preg_match('/^[0-9a-zA-Z]{10}$/', $user_input) && preg_match('/[0-9]/', $user_input)) {
+		if ($this->isLTID($user_input)) {
 			$ltid = $user_input;
 			$user = User::where('ltid','=',$user_input)->first();
 		} else {
@@ -186,11 +197,21 @@ class LoansController extends BaseController {
 			}
 		}
 
+		$lib = Auth::user();
 		$new_user = false;
 		if (!$user) {
 			$new_user = true;
 			$user = new User();
-			if ($ltid !== false) $user->ltid = $ltid;
+			if ($ltid === false) {
+				if (!array_get($lib->options, 'guestcard_for_cardless_loans', false)) {
+					$messagebag->add('cardless_loans_not_activated', 'Kortløse utlån er ikke aktivert for dette biblioteket. Det kan aktiveres i <a href="' . action('LibrariesController@getMy') . '">kontoinnstillingene</a>.');
+					return Redirect::action('LoansController@getIndex')
+						->withErrors($validator)
+						->withInput();
+				}
+			} else {
+				$user->ltid = $ltid;
+			}
 			if ($name !== false) {
 				$user->lastname = $name[0];
 				$user->firstname = $name[1];

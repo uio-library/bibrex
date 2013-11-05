@@ -75,11 +75,27 @@ class Loan extends Eloquent {
 		$ltid = $user->ltid;
 		$this->as_guest = false;
 		if (!$user->in_bibsys) {
-			$ltid = Auth::user()->guest_ltid;
-			if (!$ltid) {
-				die('Gjeste-LTID er ikke konfigurert i biblioteksinnstillingene!');
+
+			$lib = Auth::user();
+
+			if (is_null($ltid) && !array_get($lib->options, 'guestcard_for_cardless_loans', false)) {
+				$this->errors->add('cardless_not_activated', 'Kortløse utlån er ikke aktivert. Det kan aktiveres i <a href="' . action('LibrariesController@getMy') . '">kontoinnstillingene</a>.');
+				return false;
 			}
+
+			if (!is_null($ltid) && !array_get($lib->options, 'guestcard_for_nonworking_cards', false)) {
+				$this->errors->add('guestcard_not_activated', 'Kortet ble ikke funnet i BIBSYS og bruk av gjestekort er ikke aktivert. Det kan aktiveres i <a href="' . action('LibrariesController@getMy') . '">kontoinnstillingene</a>.');
+				return false;
+			}
+
+			if (is_null($lib->guest_ltid)) {
+				$this->errors->add('guestcard_not_configured', 'Gjestekortnummer er ikke satt opp i <a href="' . action('LibrariesController@getMy') . '">kontoinnstillingene</a>.');
+				return false;
+			}
+
+			$ltid = $lib->guest_ltid;
 			$this->as_guest = true;
+
 		}
 
 		$results = DB::select('SELECT things.id, documents.dokid FROM things,documents WHERE things.id = documents.thing_id AND documents.id = ?', array($this->document_id));

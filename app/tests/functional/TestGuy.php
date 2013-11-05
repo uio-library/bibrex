@@ -466,11 +466,11 @@ class TestGuy extends \Codeception\AbstractGuy
      * ----------------------------------------------
      *
      *
-     * @see Codeception\Module\TestHelper::setupGuestNumber()
+     * @see Codeception\Module\TestHelper::configureGuestCard()
      * @return \Codeception\Maybe
      */
-    public function setupGuestNumber() {
-        $this->scenario->addStep(new \Codeception\Step\Action('setupGuestNumber', func_get_args()));
+    public function configureGuestCard() {
+        $this->scenario->addStep(new \Codeception\Step\Action('configureGuestCard', func_get_args()));
         if ($this->scenario->running()) {
             $result = $this->scenario->runStep();
             return new Maybe($result);

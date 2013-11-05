@@ -8,7 +8,7 @@ $I->seeCurrentUrlEquals('/libraries/login');
 
 // defined in tests/_helpers/TestHelper.php
 $I->login();
-$I->setupGuestNumber();
+$I->configureGuestCard();
 
 $I->amOnPage('/loans');
 $I->see('Nytt utlån');

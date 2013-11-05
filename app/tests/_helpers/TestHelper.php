@@ -15,11 +15,15 @@ class TestHelper extends \Codeception\Module
 		$this->getModule('Laravel4')->click('Logg inn');
     }
 
-    function setupGuestNumber() {
+    function configureGuestCard() {
 		$this->getModule('Laravel4')->amOnPage('/libraries/my');
-	    $this->debug('Filling "LTID for gjestekort": eks1234567');
+
+	    $this->debug('Configuring guest card: eks1234567');
 		$this->getModule('Laravel4')->fillField('LTID for gjestekort', 'eks1234567');
+		$this->getModule('Laravel4')->checkOption('Bruk gjestekort hvis brukers kort ikke virker');
+		$this->getModule('Laravel4')->checkOption('Bruk gjestekort for kortløse utlån');
 		$this->getModule('Laravel4')->click('Lagre');
+
     }
 
 }

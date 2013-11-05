@@ -94,15 +94,40 @@ class LoansControllerTest extends TestCase {
 		$this->assertFalse($json->exists);
     }
 
-	public function testNcipStoreitemForNewUserWithoutLtid()
+	public function testCardlessLoansNotActivatedAsDefault()
+	{
+		$dokid = '99ns00000';
+
+		$this->curl->shouldReceive('simple_get')
+			->andReturnUsing(function($url) {
+				$url = explode('=', $url);
+				$this->assertEquals('http://linode.biblionaut.net/services/getids.php?id', $url[0]);
+				$dokid = $url[1];
+				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
+			});
+
+		$this->ncip->shouldReceive('lookupUser')->never();
+		$this->ncip->shouldReceive('checkOutItem')->never();
+
+		$this->call('POST', 'loans/store', array(
+			'ltid' => 'Duck, Donald',
+			'thing' => '1',
+			'dokid' => $dokid
+		));
+
+		$this->assertResponseStatus(302);
+		$this->assertSessionHasErrors('cardless_loans_not_activated');
+    }
+
+    public function testNcipStoreitemForNewUserWithoutLtid()
 	{
 		$ltid = 'eks1234567';
 		$dokid = '99ns00000';
 
+        $opts = $this->library->options;
+        $opts['guestcard_for_cardless_loans'] = true;
+        $this->library->options = $opts;
         $this->library->guest_ltid = $ltid;
-
-		//Config::set('app.guest_ltid', $ltid);
-		//$ltid = Auth::user()->guest_ltid;
 
 		$this->curl->shouldReceive('simple_get')
 			->andReturnUsing(function($url) {
