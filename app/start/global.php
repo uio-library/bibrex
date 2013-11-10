@@ -103,3 +103,5 @@ Validator::extend('not_guest_ltid', function($attribute, $value, $parameters)
 {
     return $value != $ltid = Auth::user()->guest_ltid;
 });
+
+// se også app/services/validators

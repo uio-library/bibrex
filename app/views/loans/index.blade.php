@@ -15,6 +15,8 @@
       <h3 class="panel-title">Nytt utlån</h3>
     </div>
 
+
+
     <div class="panel-body">
 
       {{ Form::model(new Loan(), array(
@@ -147,7 +149,8 @@
     var $ltid = $('input[name="ltid"]'),
       $dokid = $('input[name="dokid"]');
 
-    $ltid.focus();
+    setTimeout(function() { $('#ltid').focus(); }, 100)
+
     $('.spinner').hide();
 
     //console.info("Clearing localStorage");
@@ -170,19 +173,40 @@
     .on('typeahead:selected', function(evt, datum) {
       $('input[name="user_id"]').val(datum.id);
     })
-
+/*
     var ltidLength = 0;
+    var popovervisible = false;
     function ltidChanged(e) {
       var v = $ltid.val();
-      if (v.length !== ltidLength) {
-        ltidLength = v.length;
-        if (ltidLength == 10 && v.match('[0-9]')) {
-          if ($('select[name="thing"]').val() === '1') {
-            $dokid.focus();
-          }
+      if (v.length >= 4 && /[0-9]/.test(v) && v.substr(0,3) === 'ubo') {
+
+        if (!popovervisible) {
+          $('#ltid').attr('data-title', 'Sikker på dette?');
+          $('#ltid').attr('data-content', 'Kun kortnumre som starter på «uo» importeres automatisk. «ubo»-numre må registreres manuelt med LTREG i Bibsys.');
+          $('#ltid').popover('show');
         }
+        popovervisible = true;
+      } else if (v.length > 4 && /[0-9]/.test(v) && v.substr(0,2) !== 'uo') {
+        if (!popovervisible) {
+          $('#ltid').attr('data-title', 'Sikker på dette?');
+          $('#ltid').attr('data-content', 'Kun kortnumre som starter på «uo» importeres automatisk. Andre numre må registreres manuelt med LTREG i Bibsys. Husk at hvis kortet er registrert ved en annen institusjon kan man bruke F12 LTKOP for å slippe å fylle inn alt.');
+          $('#ltid').popover('show');
+        }
+        popovervisible = true;
+
+      } else if (popovervisible) {
+        $('#ltid').popover('hide');
+        popovervisible = false;
       }
-    };
+      // if (v.length !== ltidLength) {
+      //   ltidLength = v.length;
+      //   if (ltidLength == 10 && v.match('[0-9]')) {
+      //     if ($('select[name="thing"]').val() === '1') {
+      //       $dokid.focus();
+      //     }
+      //   }
+      // }
+    };*/
 
     //$ltid.on('keyup', ltidChanged);
     //$ltid.on('paste', ltidChanged);   // IE, FF3  (http://stackoverflow.com/a/574971)

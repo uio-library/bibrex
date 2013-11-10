@@ -3,12 +3,13 @@
 class LoansController extends BaseController {
 
 	private $rules = array(
-		'ltid' => array('required'),
-		'dokid' => array('regex:/^[0-9a-zA-Z]{9}$/'),
-		'count' => array('integer', 'between:1,10')
+		'ltid' => 'required|startswithuo', // Husk: custom validators i app/start/global.php
+		'dokid' => 'regex:/^[0-9a-zA-Z]{9}$/',
+		'count' => 'integer|between:1,10'
 	);
 
 	private $messages = array(
+		'ltid.startswithuo' => 'Kun kortnumre som starter på «uo» (vanlige studentkort) blir importert automatisk. Kortnumre som starter på «ubo» (ansattkort og nøkkelkort) må du registrere manuelt med LTREG i Bibsys. For kort fra andre institusjoner kan du bruke F12 LTKOP når du er på LTREG-skjermen.',
 		'ltid.required' => 'Trenger enten navn eller LTID.',
 		'dokid.required' => 'Dokid må fylles ut.',
 		'dokid.regex' => 'Dokid er ikke et dokid.',
@@ -174,6 +175,11 @@ class LoansController extends BaseController {
 		if ($this->isLTID($user_input)) {
 			$ltid = $user_input;
 			$user = User::where('ltid','=',$user_input)->first();
+		} else if (preg_match('/[0-9]/', $user_input)) {
+			$messagebag->add('invalid_ltid_format', 'Kortnummeret har feil lengde.');
+			return Redirect::action('LoansController@getIndex')
+				->withErrors($validator)
+				->withInput();
 		} else {
 			$user_id = Input::get('user_id');
 			if (!empty($user_id)) {

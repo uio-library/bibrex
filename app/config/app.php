@@ -118,6 +118,7 @@ return array(
 		'Danmichaelo\Ncip\NcipServiceProvider',
 		'Schickling\Backup\BackupServiceProvider',
 		'Aws\Laravel\AwsServiceProvider',
+		'App\Services\Providers\ValidatorServiceProvider',
 	),
 
 	/*

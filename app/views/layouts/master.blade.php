@@ -132,8 +132,8 @@
 
     $(document).ready(function() {
 
-      if ($('.alert').length != 0) {
-        $('.alert').hide().slideDown();
+      if ($('.container > .alert').length != 0) {
+        $('.container > .alert').hide().slideDown();
       }
 
       //parent.postMessage("Hello","*");
