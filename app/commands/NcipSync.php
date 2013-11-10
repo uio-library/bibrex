@@ -104,12 +104,13 @@ class NcipSync extends Command {
 						}
 						if ($ncipUserData[$ltid]->exists) {
 							$this->info($ltid . ' har blitt importert i BIBSYS.');
+							Log::info('[Sync] ' . $ltid . ' har blitt importert i BIBSYS');
 
 							$t = $loan->transfer();
 							if ($t !== true) {
 								$this->error($t);
 							}
-							Log::info('Synkroniserer brukerdata fra NCIP for bruker ' . $user->id);
+							//Log::info('[Sync] Synkroniserer brukerdata fra NCIP for bruker ' . $user->id);
 							$user->mergeFromUserResponse($ncipUserData[$ltid]);
 						} else {
 							$this->comment($ltid . ' er fortsatt ikke i BIBSYS.');
