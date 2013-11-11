@@ -3,17 +3,17 @@
 class UsersController extends BaseController {
 
 	private $rules = array(
-		'ltid' => array('regex:/^[0-9a-zA-Z]{10}$/'),
-		'lastname' => array('required'),
-		'firstname' => array('required'),
-		'lang' => array('required')
+		'ltid' => 'regex:/^[0-9a-zA-Z]{10}$/',
+		'lastname' => 'required',
+		'firstname' => 'required',
+		'lang' => 'required'
 	);
 
 	private $messages = array(
-		'ltid.regex' => 'ltid er ikke et ltid',
-		'lastname.required' => 'etternavn må fylles ut',
-		'firstname.required' => 'fornavn må fylles ut',
-		'lang.required' => 'språk må fylles ut'
+		'ltid.regex' => 'LTID har ikke riktig format.',
+		'lastname.required' => 'Etternavn må fylles inn.',
+		'firstname.required' => 'Fornavn må fylles inn.',
+		'lang.required' => 'Språk må fylles inn.'
 	);
 
 	/**
