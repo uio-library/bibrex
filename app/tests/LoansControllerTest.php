@@ -156,7 +156,7 @@ class LoansControllerTest extends TestCase {
 	public function testNcipStoreitemForNewUserWithLtid()
 	{
 
-		$ltid = 'eks1234567';
+		$ltid = 'uo12345678';
 		$dokid = '99ns00000';
 
 		$this->curl->shouldReceive('simple_get')
