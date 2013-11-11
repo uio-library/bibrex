@@ -6,6 +6,7 @@ class UsersController extends BaseController {
 		'ltid' => 'regex:/^[0-9a-zA-Z]{10}$/',
 		'lastname' => 'required',
 		'firstname' => 'required',
+		'email' => 'requiredWithout:phone',
 		'lang' => 'required'
 	);
 
@@ -13,6 +14,7 @@ class UsersController extends BaseController {
 		'ltid.regex' => 'LTID har ikke riktig format.',
 		'lastname.required' => 'Etternavn må fylles inn.',
 		'firstname.required' => 'Fornavn må fylles inn.',
+		'email.required_without' => 'Enten e-post eller telefonnummer må fylles inn.',
 		'lang.required' => 'Språk må fylles inn.'
 	);
 

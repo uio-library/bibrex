@@ -25,7 +25,9 @@ $I->seeInDatabase('documents', ['dokid' => '94nf00228']);
 
 $I->seeInCurrentUrl('/users/edit');
 $I->see('Siden dette er en ny låner');
+$I->click('Lagre');
 
+$I->seeInCurrentUrl('/users/edit');
 $I->fillField('Mobil', '90207510');
 $I->fillField('Epost', 'danmichaelo@gmail.com');
 $I->click('Lagre');
