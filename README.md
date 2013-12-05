@@ -18,4 +18,4 @@ Simple lending system using NCIP to connect to a library system.
 * [9.9](https://github.com/scriptotek/bibrex/commit/394c3e4608114e4fba9e00b9fe58d78f8ef8f001) Mulighet for å deaktivere ting for utlån
 * [5.9](https://github.com/scriptotek/bibrex/commit/0ae2d9e929da84ced1520fa676c83b280683e767) Mulighet for å slette ting, men bare hvis ikke utlånt enda
 
-[![Build Status](https://travis-ci.org/scriptotek/bibrex.png?branch=master)](https://travis-ci.org/danmichaelo/bibrex)
+[![Build Status](https://travis-ci.org/scriptotek/bibrex.png?branch=master)](https://travis-ci.org/scriptotek/bibrex)
