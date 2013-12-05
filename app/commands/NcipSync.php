@@ -41,6 +41,8 @@ class NcipSync extends Command {
 		$user_loans = array();
 		$due = array();
 
+        $this->info(sprintf('-[ %s : Synkronisering starter ]------------------------------------', strftime('%Y-%m-%d %H:%M:%S')));
+
 		$this->info('Sjekker om dokumenter har blitt returnert i BIBSYS...');
 
 		$ncip = App::make('NcipClient');
@@ -119,6 +121,8 @@ class NcipSync extends Command {
 				}
 			}
 		}
+
+        $this->info(sprintf('-[ %s : Synkronisering ferdig ]------------------------------------', strftime('%Y-%m-%d %H:%M:%S')));
 
 	}
 
