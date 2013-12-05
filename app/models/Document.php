@@ -47,7 +47,7 @@ class Document extends Eloquent {
 	{
 
 		if ($this->objektid) {
-			$url = 'http://linode.biblionaut.net/services/sru_iteminfo.php?repo=bibsys&objektid=' . $this->objektid;
+			$url = 'http://services.biblionaut.net/sru_iteminfo.php?repo=bibsys&objektid=' . $this->objektid;
 
 			$curl = New Curl;
 			$data = $curl->simple_get($url);
