@@ -50,7 +50,7 @@ class Document extends Eloquent {
 			$url = 'http://services.biblionaut.net/sru_iteminfo.php?repo=bibsys&objektid=' . $this->objektid;
 
 			$curl = New Curl;
-			$data = $curl->simple_get($url);
+			$data = $curl->get($url);
 			$data = json_decode($data);
 
 			if (isset($data->title))
@@ -60,7 +60,7 @@ class Document extends Eloquent {
 			if (isset($data->cover_image))
 				$this->cover_image = $data->cover_image;
 			if (isset($data->year))
-				$this->year = $data->year;			
+				$this->year = $data->year;
 		}
 
 		parent::save($options);

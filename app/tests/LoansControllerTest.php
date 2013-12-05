@@ -23,7 +23,7 @@ class LoansControllerTest extends TestCase {
 
 	public function testIndexView()
 	{
-		$this->curl->shouldReceive('simple_get')->never();
+		$this->curl->shouldReceive('get')->never();
 		$this->call('GET', 'loans');
 
 		$this->assertResponseOk();
@@ -34,7 +34,7 @@ class LoansControllerTest extends TestCase {
 
 	public function testStoreBlankLoan()
 	{
-		$this->curl->shouldReceive('simple_get')->never();
+		$this->curl->shouldReceive('get')->never();
 		$this->call('POST', 'loans/store');
 
 		$this->assertResponseStatus(302);
@@ -43,7 +43,7 @@ class LoansControllerTest extends TestCase {
 
 	public function testStoreLoanWithInvalidThing()
 	{
-		$this->curl->shouldReceive('simple_get')->never();
+		$this->curl->shouldReceive('get')->never();
 		$this->call('POST', 'loans/store', array(
 			'ltid' => 'Duck, Donald',
 			'thing' => '999'
@@ -68,7 +68,7 @@ class LoansControllerTest extends TestCase {
 
     public function testStoreLoanWithUnknownDokid()
 	{
-		$this->curl->shouldReceive('simple_get')
+		$this->curl->shouldReceive('get')
 			->once()
 			->andReturn('{"objektid":"","dokid":"","heftid":""}');
 
@@ -98,7 +98,7 @@ class LoansControllerTest extends TestCase {
 	{
 		$dokid = '99ns00000';
 
-		$this->curl->shouldReceive('simple_get')
+		$this->curl->shouldReceive('get')
 			->andReturnUsing(function($url) {
 				$url = explode('=', $url);
 				$this->assertEquals('http://linode.biblionaut.net/services/getids.php?id', $url[0]);
@@ -129,7 +129,7 @@ class LoansControllerTest extends TestCase {
         $this->library->options = $opts;
         $this->library->guest_ltid = $ltid;
 
-		$this->curl->shouldReceive('simple_get')
+		$this->curl->shouldReceive('get')
 			->andReturnUsing(function($url) {
 				$url = explode('=', $url);
 				$this->assertEquals('http://linode.biblionaut.net/services/getids.php?id', $url[0]);
@@ -159,7 +159,7 @@ class LoansControllerTest extends TestCase {
 		$ltid = 'uo12345678';
 		$dokid = '99ns00000';
 
-		$this->curl->shouldReceive('simple_get')
+		$this->curl->shouldReceive('get')
 			->andReturnUsing(function($url) {
 				$url = explode('=', $url);
 				$this->assertEquals('http://linode.biblionaut.net/services/getids.php?id', $url[0]);
