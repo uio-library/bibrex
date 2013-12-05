@@ -101,7 +101,7 @@ class LoansControllerTest extends TestCase {
 		$this->curl->shouldReceive('get')
 			->andReturnUsing(function($url) {
 				$url = explode('=', $url);
-				$this->assertEquals('http://linode.biblionaut.net/services/getids.php?id', $url[0]);
+				$this->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
 				$dokid = $url[1];
 				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
 			});
@@ -132,7 +132,7 @@ class LoansControllerTest extends TestCase {
 		$this->curl->shouldReceive('get')
 			->andReturnUsing(function($url) {
 				$url = explode('=', $url);
-				$this->assertEquals('http://linode.biblionaut.net/services/getids.php?id', $url[0]);
+				$this->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
 				$dokid = $url[1];
 				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
 			});
@@ -162,7 +162,7 @@ class LoansControllerTest extends TestCase {
 		$this->curl->shouldReceive('get')
 			->andReturnUsing(function($url) {
 				$url = explode('=', $url);
-				$this->assertEquals('http://linode.biblionaut.net/services/getids.php?id', $url[0]);
+				$this->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
 				$dokid = $url[1];
 				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
 			});

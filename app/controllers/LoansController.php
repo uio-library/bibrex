@@ -126,7 +126,7 @@ class LoansController extends BaseController {
 					->withInput();
 			}
 			$curl = App::make('Curl');
-			$ids = $curl->get('http://linode.biblionaut.net/services/getids.php?id=' . $unknown_id);
+			$ids = $curl->get('http://services.biblionaut.net/getids.php?id=' . $unknown_id);
 			$ids = json_decode($ids);
 
 			if (empty($ids->dokid)) {
