@@ -15,8 +15,6 @@
       <h3 class="panel-title">Nytt utlån</h3>
     </div>
 
-
-
     <div class="panel-body">
 
       {{ Form::model(new Loan(), array(

@@ -210,7 +210,7 @@ class LoansController extends BaseController {
 			$user = new User();
 			if ($ltid === false) {
 				if (!array_get($lib->options, 'guestcard_for_cardless_loans', false)) {
-					$messagebag->add('cardless_loans_not_activated', 'Kortløse utlån er ikke aktivert for dette biblioteket. Det kan aktiveres i <a href="' . action('LibrariesController@getMy') . '">kontoinnstillingene</a>.');
+					$messagebag->add('cardless_loans_not_activated', 'Kortløse utlån er ikke aktivert for dette biblioteket. Det kan aktiveres i <a href="' . action('LibrariesController@myAccount') . '">kontoinnstillingene</a>.');
 					return Redirect::action('LoansController@getIndex')
 						->withErrors($validator)
 						->withInput();

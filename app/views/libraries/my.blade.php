@@ -3,7 +3,7 @@
 @section('content')
 
   {{ Form::model($library, array(
-      'action' => array('LibrariesController@postMy'),
+      'action' => array('LibrariesController@postStoreMyAccount'),
       'class' => 'panel panel-primary',
       'method' => 'post'
   )) }}

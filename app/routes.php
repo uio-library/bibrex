@@ -30,7 +30,7 @@ Route::controller('logs', 'LogsController');
 
 Route::get('/libraries/login', 'LibrariesController@getLogin');
 Route::post('/libraries/login', 'LibrariesController@postLogin');
-
+Route::get('/logout', 'LibrariesController@getLogout');
 
 Route::group(array('before' => 'auth'), function()
 {
@@ -48,6 +48,12 @@ Route::group(array('before' => 'auth'), function()
 	Route::controller('logs', 'LogsController');
 
 	Route::controller('libraries', 'LibrariesController');
+
+	Route::get('/my/account', 'LibrariesController@myAccount');
+	Route::get('/my/ips', 'LibrariesController@myIps');
+	Route::post('/my/ips/store', 'LibrariesController@storeIp');
+	Route::get('/my/ips/remove/{id}', 'LibrariesController@removeIp');
+
 
 });
 

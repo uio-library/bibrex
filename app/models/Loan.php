@@ -79,17 +79,17 @@ class Loan extends Eloquent {
 			$lib = Auth::user();
 
 			if (is_null($ltid) && !array_get($lib->options, 'guestcard_for_cardless_loans', false)) {
-				$this->errors->add('cardless_not_activated', 'Kortløse utlån er ikke aktivert. Det kan aktiveres i <a href="' . action('LibrariesController@getMy') . '">kontoinnstillingene</a>.');
+				$this->errors->add('cardless_not_activated', 'Kortløse utlån er ikke aktivert. Det kan aktiveres i <a href="' . action('LibrariesController@myAccount') . '">kontoinnstillingene</a>.');
 				return false;
 			}
 
 			if (!is_null($ltid) && !array_get($lib->options, 'guestcard_for_nonworking_cards', false)) {
-				$this->errors->add('guestcard_not_activated', 'Kortet ble ikke funnet i BIBSYS og bruk av gjestekort er ikke aktivert. Det kan aktiveres i <a href="' . action('LibrariesController@getMy') . '">kontoinnstillingene</a>.');
+				$this->errors->add('guestcard_not_activated', 'Kortet ble ikke funnet i BIBSYS og bruk av gjestekort er ikke aktivert. Det kan aktiveres i <a href="' . action('LibrariesController@myAccount') . '">kontoinnstillingene</a>.');
 				return false;
 			}
 
 			if (is_null($lib->guest_ltid)) {
-				$this->errors->add('guestcard_not_configured', 'Gjestekortnummer er ikke satt opp i <a href="' . action('LibrariesController@getMy') . '">kontoinnstillingene</a>.');
+				$this->errors->add('guestcard_not_configured', 'Gjestekortnummer er ikke satt opp i <a href="' . action('LibrariesController@myAccount') . '">kontoinnstillingene</a>.');
 				return false;
 			}
 

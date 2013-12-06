@@ -2,6 +2,81 @@
 
 class LibrariesController extends BaseController {
 
+	protected $lib;
+
+	public function __construct(Library $lib)
+	{
+		$this->libFactory = $lib;
+	}
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function getIndex()
+	{
+		$items = Library::with('ips')->get();
+		return Response::view('libraries.index', array(
+			'libraries' => $items
+		));
+	}
+
+	/**
+	 * Display a form to create the resource.
+	 *
+	 * @return Response
+	 */
+	public function getCreate()
+	{
+		return Response::view('libraries.create', array());
+	}
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function postStore()
+	{
+		$lib = new $this->libFactory();
+
+		if (!$lib->setPassword(Input::get('password'), Input::get('password2'))) {
+			return Redirect::back()
+				->withErrors($lib->errors)
+				->withInput();
+		}
+
+		$lib->name = Input::get('name');
+		$lib->email = Input::get('email');
+
+		if (!$lib->save()) {
+			return Redirect::back()
+				->withErrors($lib->errors)
+				->withInput();
+		}
+
+		return Redirect::action('LibrariesController@getIndex')
+			->with('status', 'Biblioteket ble opprettet!');
+	}
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  string  $id
+	 * @return Response
+	 */
+	public function getShow($id)
+	{
+		$lib = $this->libFactory->find($id);
+		if (!$lib) {
+			return Response::view('errors.missing', array('what' => 'Biblioteket'), 404);
+		}
+		return Response::view('libraries.show', array(
+			'library' => $lib
+		));
+	}
+
 	function getLogin()
 	{
 		$library_ip = LibraryIp::whereRaw('? LIKE ip', array(getenv('REMOTE_ADDR')))->first();
@@ -39,19 +114,7 @@ class LibrariesController extends BaseController {
 		return Redirect::to('/');
 	}
 
-	public function getShow($id)
-	{
-		$lib = Library::find($id);
-		if (!$lib) {
-			return Response::view('errors.missing', array('what' => 'Biblioteket'), 404);
-		}
-		return Response::view('libraries.show', array(
-			'library' => $lib
-		));
-
-	}
-
-	public function getMy()
+	public function myAccount()
 	{
 		$lib = Auth::user();
 		if (!$lib) {
@@ -63,7 +126,7 @@ class LibrariesController extends BaseController {
 
 	}
 
-	public function postMy()
+	public function postStoreMyAccount()
 	{
 		$lib = Auth::user();
 		if (!$lib) {
@@ -93,7 +156,7 @@ class LibrariesController extends BaseController {
 		}
 
 		return Redirect::action('LibrariesController@getShow', $lib->id)
-			->with('status', 'Informasjonen ble lagret.');
+			->with('status', 'Kontoinformasjonen ble lagret.');
 
 	}
 
@@ -117,17 +180,86 @@ class LibrariesController extends BaseController {
 			return Response::view('errors.missing', array('what' => 'Biblioteket'), 404);
 		}
 
-		if (Input::get('password1') != Input::get('password')) {
+		if (!$lib->setPassword(Input::get('password'), Input::get('password1'))) {
 			return Redirect::back()
+				->withErrors($lib->errors)
 				->withInput();
 		}
-
-		$lib->password = Hash::make(Input::get('password'));
 		$lib->save();
 
 		return Redirect::action('LibrariesController@getShow', $lib->id)
 			->with('status', 'Nytt passord ble satt.');
+	}
 
+	/**
+	 * Display a listing of the ips.
+	 *
+	 * @return Response
+	 */
+	public function myIps()
+	{
+
+		$lib = Auth::user();
+		if (!$lib) {
+			return Response::view('errors.missing', array('what' => 'Biblioteket'), 404);
+		}
+
+		return Response::view('libraries.ips.index', array(
+			'library' => $lib
+		));
+
+	}
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function storeIp()
+	{
+		$lib = Auth::user();
+		if (!$lib) {
+			return Response::view('errors.missing', array('what' => 'Biblioteket'), 404);
+		}
+
+		$ip = new LibraryIp(array(
+			'library_id' => $lib->id,
+			'ip' => Input::get('ip')
+		));
+
+		if (!$ip->save()) {
+			return Redirect::back()
+				->withErrors($ip->errors)
+				->withInput();
+		}
+
+		return Redirect::action('LibrariesController@myIps')
+			->with('status', 'IP-adressen ble lagt til');
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function removeIp($id)
+	{
+		$lib = Auth::user();
+		if (!$lib) {
+			return Response::view('errors.missing', array('what' => 'Biblioteket'), 404);
+		}
+
+		$ip = LibraryIp::find($id);
+		if ($ip->library_id != $lib->id) {
+			return Redirect::action('LibrariesController@myIps')
+				->with('status', 'IP-adressen hører ikke til ditt bibliotek.');
+		}
+
+		$ip->delete();
+
+		return Redirect::action('LibrariesController@myIps')
+			->with('status', 'IP-adressen ble fjernet');
 	}
 
 }

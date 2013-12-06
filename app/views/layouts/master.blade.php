@@ -77,9 +77,17 @@
                 <b class="caret"></b>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="/libraries/my">Kontoinnstillinger</a></li>
+                <li>
+                	<a href="{{ URL::action('LibrariesController@myAccount') }}">Kontoinnstillinger</a>
+                </li>
+                <li>
+                	<a href="{{ URL::action('LibrariesController@myIps') }}">Autopålogging</a>
+                </li>
+                <li>
+                	<a href="{{ URL::action('LibrariesController@getIndex') }}">Biblioteksoversikt</a>
+                </li>
                 @if (Session::get('iplogin') != true)
-                  <li><a href="/libraries/logout">Logg ut</a></li>
+                  <li><a href="/logout">Logg ut</a></li>
                 @endif
               </ul>
             </li>

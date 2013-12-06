@@ -32,6 +32,16 @@ class Library extends Eloquent implements UserInterface {
         'guest_ltid.regex' => 'LTID må være et gyldig LTID',
     );
 
+    public function ips()
+	{
+		return $this->hasMany('LibraryIp');
+	}
+
+	public function loans()
+	{
+		return $this->hasMany('Loan');
+	}
+
     public function getOptionsAttribute($value)
     {
         if (is_null($value)) {
@@ -82,7 +92,7 @@ class Library extends Eloquent implements UserInterface {
         $rules = $this->processRules($rules ?: static::$rules);
         $messages = $this->processRules($messages ?: static::$messages);
 
-        if ($this->options['guestcard_for_nonworking_cards'] || $this->options['guestcard_for_cardless_loans']) {
+        if (array_get($this->options, 'guestcard_for_nonworking_cards', false) || array_get($this->options, 'guestcard_for_cardless_loans', false)) {
             $rules['guest_ltid'] .= '|required';
             $messages['guest_ltid.required'] = 'Du har valgt å aktivere bruk av gjestekort, men har ikke angitt hvilket kort.';
         }
@@ -150,6 +160,43 @@ class Library extends Eloquent implements UserInterface {
         }*/
         parent::save($options);
         return true;
+    }
+
+    /**
+     * Sets a new password. Note that it does *not store the model*.
+     *
+     * @param  string    $password
+     * @param  string    $passwordRepeated
+     * @return bool
+     */
+    public function setPassword($password, $passwordRepeated)
+    {
+    	$errors = new MessageBag;
+    	if (mb_strlen($password) < 8) {
+			$errors->add('pwd_tooshort', "Passordet er for kort (kortere enn 8 tegn).");
+    	}
+
+    	if ($password != $passwordRepeated) {
+			$errors->add('pwd_unequal', "Du gjentok ikke passordet likt.");
+    	}
+
+		if ($errors->count() > 0) {
+            $this->errors = $errors;
+            return false;
+		}
+
+    	$this->password = Hash::make($password);
+    	return true;
+    }
+
+    public function getLoansCount()
+    {
+    	return $this->loans()->withTrashed()->count();
+    }
+
+    public function getActiveLoansCount()
+    {
+    	return $this->loans()->count();
     }
 
 }
