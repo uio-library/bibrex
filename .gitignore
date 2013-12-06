@@ -7,3 +7,6 @@ composer.lock
 /app/tests/_log/*
 /app/tests/_data/*
 /app/storage/dumps
+/app/tests/acceptance/WebGuy.php
+/app/tests/functional/TestGuy.php
+/app/tests/unit/CodeGuy.php

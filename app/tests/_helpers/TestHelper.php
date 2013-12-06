@@ -16,7 +16,7 @@ class TestHelper extends \Codeception\Module
     }
 
     function configureGuestCard() {
-		$this->getModule('Laravel4')->amOnPage('/libraries/my');
+		$this->getModule('Laravel4')->amOnPage('/my/account');
 
 	    $this->debug('Configuring guest card: eks1234567');
 		$this->getModule('Laravel4')->fillField('LTID for gjestekort', 'eks1234567');
