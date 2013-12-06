@@ -299,7 +299,7 @@ class LoansController extends BaseController {
 		$loan = Loan::find($id);
 		if (!$loan) {
 			// App::abort(404);
-		    return Response::view('errors.missing', array('what' => 'Lånet'), 404);
+			return Response::view('errors.missing', array('what' => 'Lånet'), 404);
 		}
 		$repr = $loan->representation();
 		$docid = $loan->document->id;
@@ -329,7 +329,7 @@ class LoansController extends BaseController {
 		$loan = Loan::withTrashed()->find($id);
 		if (!$loan) {
 			// App::abort(404);
-		    return Response::view('errors.missing', array('what' => 'Lånet'), 404);
+			return Response::view('errors.missing', array('what' => 'Lånet'), 404);
 		}
 		$docid = $loan->document->id;
 		$loan->restore();

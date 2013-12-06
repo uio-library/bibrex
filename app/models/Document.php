@@ -11,9 +11,9 @@ class Document extends Eloquent {
 	}
 
 	public function loans()
-    {
-        return $this->hasMany('Loan');
-    }
+	{
+		return $this->hasMany('Loan');
+	}
 
 	public function allLoans()
 	{

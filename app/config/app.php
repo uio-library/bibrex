@@ -26,7 +26,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://localhost',
+	'url' => 'http://rex.biblionaut.net',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ return array(
 	|
 	*/
 
-	'timezone' => 'UTC',
+	'timezone' => 'Europe/Oslo',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -65,7 +65,7 @@ return array(
 	|
 	*/
 
-	'key' => 'YourSecretKey!!!',
+	'key' => 'wHeQ4ISNxkjs)"?ls=+?.2A/shdg9)H',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -117,8 +117,8 @@ return array(
 		'Profiler\ProfilerServiceProvider',
 		'Danmichaelo\Ncip\NcipServiceProvider',
 		'Schickling\Backup\BackupServiceProvider',
-		'Aws\Laravel\AwsServiceProvider',
-		'App\Services\Providers\ValidatorServiceProvider',
+        'Aws\Laravel\AwsServiceProvider',
+        'App\Services\Providers\ValidatorServiceProvider',
 	),
 
 	/*
