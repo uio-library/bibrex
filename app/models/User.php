@@ -2,7 +2,7 @@
 
 use Illuminate\Support\MessageBag;
 use Danmichaelo\Ncip\UserResponse;
-
+use Danmichaelo\Ncip\InvalidNcipResponseException;
 class User extends Eloquent {
 
 	/**
@@ -71,11 +71,13 @@ class User extends Eloquent {
 	public function ncipLookup() {
 		if ($this->ltid) {
 			$ncip = App::make('NcipClient');
-			$response = $ncip->lookupUser($this->ltid);
-			return $response;
-		} else {
-			return null;
+			try {
+				return $ncip->lookupUser($this->ltid);
+			} catch (InvalidNcipResponseException $e) {
+				return null;
+			}
 		}
+		return null;
 	}
 
 	/**
@@ -90,17 +92,18 @@ class User extends Eloquent {
 			return false;
 		}
 		if (!$this->exists) {
+			$this->in_bibsys = false;
 			if ($this->ltid) {
 				$response = $this->ncipLookup();
-				$this->in_bibsys = $response->exists;
-				if ($response->exists) {
-					$this->mergeFromUserResponse($response);
-					Log::info('Fant [[User:' . $this->ltid . ']] i BIBSYS');
-				} else {
-					Log::info('Fant ikke [[User:' . $this->ltid . ']] i BIBSYS');
+				if (!is_null($response)) {
+					$this->in_bibsys = $response->exists;
+					if ($response->exists) {
+						$this->mergeFromUserResponse($response);
+						Log::info('Fant [[User:' . $this->ltid . ']] i BIBSYS');
+					} else {
+						Log::info('Fant ikke [[User:' . $this->ltid . ']] i BIBSYS');
+					}
 				}
-			} else {
-				$this->in_bibsys = false;
 			}
 			Log::info('Opprettet ny bruker i BIBREX');
 		} else {
