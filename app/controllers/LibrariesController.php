@@ -79,13 +79,15 @@ class LibrariesController extends BaseController {
 
 	function getLogin()
 	{
-		$library_ip = LibraryIp::whereRaw('? LIKE ip', array(getenv('REMOTE_ADDR')))->first();
-		if ($library_ip) {
-			$lib = $library_ip->library;
-			Auth::loginUsingId($lib->id);
-			Session::put('iplogin', true);
-			//Session::flash('logged_in_from_ip', true);
-			return Redirect::intended('/');
+		if (isset($_SERVER)) {
+			$library_ip = LibraryIp::whereRaw('? LIKE ip', array(array_get($_SERVER, 'REMOTE_ADDR','')))->first();
+			if ($library_ip) {
+				$lib = $library_ip->library;
+				Auth::loginUsingId($lib->id);
+				Session::put('iplogin', true);
+				//Session::flash('logged_in_from_ip', true);
+				return Redirect::intended('/');
+			}
 		}
 		return Response::view('login');
 	}
