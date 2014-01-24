@@ -24,6 +24,8 @@ class TestHelper extends \Codeception\Module
 		$this->getModule('Laravel4')->checkOption('Bruk gjestekort for kortløse utlån');
 		$this->getModule('Laravel4')->click('Lagre');
 
+		$this->getModule('Laravel4')->seeInCurrentUrl('/show/1');
+		$this->getModule('Laravel4')->see('Kontoinformasjonen ble lagret');
     }
 
 }
