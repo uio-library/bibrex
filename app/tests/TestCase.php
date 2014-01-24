@@ -37,6 +37,10 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
     public function setUp()
     {
         parent::setUp();
+
+        // Mock Log
+        Log::shouldReceive('info')->zeroOrMoreTimes();
+
         if($this->useDatabase)
         {
             $this->setUpDb();
