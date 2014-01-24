@@ -9,11 +9,6 @@ class LibraryIpsTableSeeder extends Seeder {
 
 		$ips = array(
 			array('library_id' => 1,
-				'ip' => '127.0.0.1',
-				'created_at' => new DateTime,
-				'updated_at' => new DateTime
-			),
-			array('library_id' => 1,
 				'ip' => getHostByName(getHostName()),
 				'created_at' => new DateTime,
 				'updated_at' => new DateTime
