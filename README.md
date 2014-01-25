@@ -1,4 +1,5 @@
 [![Stories in Ready](https://badge.waffle.io/scriptotek/bibrex.png?label=ready)](http://waffle.io/scriptotek/bibrex)
+[![Dependencies Status](https://depending.in/scriptotek/bibrex.png)](http://depending.in/scriptotek/bibrex)
 
 ## BIBREX
 
