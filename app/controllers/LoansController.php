@@ -44,11 +44,13 @@ class LoansController extends BaseController {
 		// A list of all things for the select box
 		$things = array();
 		$q = Thing::where('disabled', false)
-			->where('library_id', $library_id)
-			->orWhere('library_id', NULL);
+            ->where(function($query) use ($library_id) {
+                $query->where('library_id', $library_id)
+                      ->orWhere('library_id', NULL);
+              });
 		foreach ($q->get() as $thing) {
 			$things[$thing->id] = $thing->name;
-		}
+        }
 
 		$r = Response::view('loans.index', array(
 			'loans' => $loans,
