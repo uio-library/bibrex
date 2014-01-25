@@ -119,7 +119,18 @@
 
     @endif
 
+    <div class="well" style="border: 1px solid #aaa; border-radius:3px; background: white; padding: 10px;margin-bottom: 20px; background: #ffffef;">
+      17.1.2014: BIBSYS har stengt beta-versjonen av
+      <a href="http://www.ncip.info/">NCIP</a>-tjenesten sin, fordi den var usikret,
+      men uten at noen ny versjon er på plass.
+        Inntil videre får vi dermed ikke hentet ut låntakerinformasjon, og vik kan ikke bruke Bibrex til å 
+        låne ut dokumenter på ikke-importerte studentkort.
+        <hr>
+      25.1.2014: Utlån av dingser fungerer nå igjen, men låntakerinformasjon må skrives inn manuelt første gang for hver bruker.
+    </div>
+
     @yield('content')
+
   </div>
 
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
