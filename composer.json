@@ -16,7 +16,7 @@
         "phpunit/phpunit": "3.7.*",
         "way/laravel-test-helpers": "dev-master",
         "Mockery/Mockery": ">=0.7.2",
-        "codeception/codeception": "dev-master",
+        "codeception/codeception": "1.8.*",
         "doctrine/dbal": "dev-master"
     },
     "repositories": [
