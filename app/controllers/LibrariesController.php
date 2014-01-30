@@ -95,10 +95,10 @@ class LibrariesController extends BaseController {
 	public function postLogin()
 	{
 
-		$credentials = [
+		$credentials = array(
 			'name' => Input::get('library'),
 			'password' => Input::get('password')
-		];
+		);
 
 		if (Auth::attempt($credentials, true)) {
 			Session::put('iplogin', false);
