@@ -4,7 +4,7 @@
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {
-        "php": ">= 5.4.0",
+        "php": ">= 5.3",
 		"laravel/framework": "4.1.*",
         "way/generators": "dev-master",
         "danmichaelo/ncip": "dev-master",

@@ -33,11 +33,11 @@ class UserTest extends TestCase {
         $this->library->guest_ltid = $guest_ltid;
 
         // Using the guest LTID should not be allowed
-        $loan = Factory::make('User', ['ltid' => $guest_ltid]);
+        $loan = Factory::make('User', array('ltid' => $guest_ltid));
         $this->assertNotValid($loan);
 
         // Using some other LTID should be allowed
-        $loan = Factory::make('User', ['ltid' => $some_other_ltid]);
+        $loan = Factory::make('User', array('ltid' => $some_other_ltid));
         $this->assertValid($loan);
     }
 
