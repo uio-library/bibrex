@@ -98,10 +98,22 @@ class LoansControllerTest extends TestCase {
 	{
 		$dokid = '99ns00000';
 
+		// $this can be used in anonymous functions as of PHP 5.4.0.
+		// As long as we have to support PHP 5.3, we have to do the $that trick
+		$that = $this;
+
 		$this->curl->shouldReceive('get')
-			->andReturnUsing(function($url) {
+			->andReturnUsing(function($url) use ($that) {
 				$url = explode('=', $url);
-				$this->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
+				$that->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
+				$dokid = $url[1];
+				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
+			});
+
+		$this->curl->shouldReceive('get')
+			->andReturnUsing(function($url) use ($that) {
+				$url = explode('=', $url);
+				$that->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
 				$dokid = $url[1];
 				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
 			});
@@ -124,15 +136,19 @@ class LoansControllerTest extends TestCase {
 		$ltid = 'eks1234567';
 		$dokid = '99ns00000';
 
+		// $this can be used in anonymous functions as of PHP 5.4.0.
+		// As long as we have to support PHP 5.3, we have to do the $that trick
+		$that = $this;
+
         $opts = $this->library->options;
         $opts['guestcard_for_cardless_loans'] = true;
         $this->library->options = $opts;
         $this->library->guest_ltid = $ltid;
 
 		$this->curl->shouldReceive('get')
-			->andReturnUsing(function($url) {
+			->andReturnUsing(function($url) use ($that) {
 				$url = explode('=', $url);
-				$this->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
+				$that->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
 				$dokid = $url[1];
 				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
 			});
@@ -159,10 +175,14 @@ class LoansControllerTest extends TestCase {
 		$ltid = 'uo12345678';
 		$dokid = '99ns00000';
 
+		// $this can be used in anonymous functions as of PHP 5.4.0.
+		// As long as we have to support PHP 5.3, we have to do the $that trick
+		$that = $this;
+
 		$this->curl->shouldReceive('get')
-			->andReturnUsing(function($url) {
+			->andReturnUsing(function($url) use ($that) {
 				$url = explode('=', $url);
-				$this->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
+				$that->assertEquals('http://services.biblionaut.net/getids.php?id', $url[0]);
 				$dokid = $url[1];
 				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
 			});
