@@ -20,8 +20,8 @@ $I->selectOption('Hva?','PS3-kontroller');
 $I->click('Lån ut!');
 
 $I->see('Utlånet er lagret');
-$I->seeInDatabase('loans', ['id' => '1', 'document_id' => '1', 'user_id' => '1']);
-$I->seeInDatabase('documents', ['thing_id' => '2']);
+$I->seeInDatabase('loans', array('id' => '1', 'document_id' => '1', 'user_id' => '1'));
+$I->seeInDatabase('documents', array('thing_id' => '2'));
 //$I->seeInDatabase('documents', ['thing_id' => '2']);
 //$I->seeInDatabase('documents', ['dokid' => '94nf00228']);
 
