@@ -3,8 +3,36 @@
 use Way\Tests\Factory;
 
 class UserTest extends TestCase {
-    use Way\Tests\ModelHelpers;
+    #use Way\Tests\ModelHelpers;
+    /**
+     * Methods copied from Way\Tests\ModelHelpers, since traits are not supported in PHP 5.3
+     */
+    public function assertValid($model)
+    {
+        $this->assertRespondsTo('validate', $model, "The 'validate' method does not exist on this model.");
+        $this->assertTrue($model->validate(), 'Model did not pass validation.');
+    }
 
+    public function assertNotValid($model)
+    {
+        $this->assertRespondsTo('validate', $model, "The 'validate' method does not exist on this model.");
+        $this->assertFalse($model->validate(), 'Did not expect model to pass validation.');
+    }
+
+    public function assertRespondsTo($method, $class, $message = null)
+    {
+        $message = $message ?: "Expected the '$class' class to have method, '$method'.";
+
+        $this->assertTrue(
+            method_exists($class, $method),
+            $message
+        );
+    }
+
+
+    /**
+     * Everything else
+     */
     public function tearDown()
     {
         Mockery::close();
