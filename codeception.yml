@@ -16,3 +16,7 @@ modules:
             user: 'travis'
             password: ''
             dump: app/tests/_data/dump.sql
+            populate: true
+            cleanup: false
+        Laravel4:
+            cleanup: false

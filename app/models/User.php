@@ -70,7 +70,7 @@ class User extends Eloquent {
 	 */
 	public function ncipLookup() {
 		if ($this->ltid) {
-			$ncip = App::make('NcipClient');
+			$ncip = App::make('ncip.client');
 			try {
 				return $ncip->lookupUser($this->ltid);
 			} catch (InvalidNcipResponseException $e) {

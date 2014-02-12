@@ -22,7 +22,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url":  "https://github.com/danmichaelo/ncip.git"
+            "url":  "https://github.com/danmichaelo/php-ncip.git"
         },
         {
             "type": "vcs",

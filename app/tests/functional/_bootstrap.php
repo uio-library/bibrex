@@ -13,7 +13,7 @@ if ($scenario->running()) {
 	Log::info('Mocking NcipClient');
 
 	$ncipMock = Mockery::mock();
-	App::instance('NcipClient', $ncipMock);
+	App::instance('ncip.client', $ncipMock);
 
 	$response1 = new Danmichaelo\Ncip\CheckOutResponse(null);
 	$ncipMock->shouldReceive('checkOutItem')

@@ -106,7 +106,7 @@ class Loan extends Eloquent {
 
 		if ($thing->id == 1) {
 
-			$ncip = App::make('NcipClient');
+			$ncip = App::make('ncip.client');
 			$response = $ncip->checkOutItem($ltid, $dokid);
 
 			// BIBSYS sometimes returns an empty response on successful checkouts.
@@ -169,7 +169,7 @@ class Loan extends Eloquent {
 
 			$dokid = $this->document->dokid;
 
-			$ncip = App::make('NcipClient');
+			$ncip = App::make('ncip.client');
 			$response = $ncip->checkInItem($dokid);
 
 			if (!$response->success) {
@@ -200,7 +200,7 @@ class Loan extends Eloquent {
 			$dokid = $this->document->dokid;
 			$ltid = $this->user->ltid;
 
-			$ncip = App::make('NcipClient');
+			$ncip = App::make('ncip.client');
 			$ncip->checkInItem($dokid);
 			$response = $ncip->checkOutItem($ltid, $dokid);
 			if ($response->success) {

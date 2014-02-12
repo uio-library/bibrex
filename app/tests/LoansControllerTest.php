@@ -13,7 +13,7 @@ class LoansControllerTest extends TestCase {
 
         // Mock NCIP
 		$this->ncip = Mockery::mock();
-		App::instance('NcipClient', $this->ncip);
+		App::instance('ncip.client', $this->ncip);
 
         // Mock Curl
 		$this->curl = Mockery::mock();

@@ -40,6 +40,8 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
 
         // Mock Log
         Log::shouldReceive('info')->zeroOrMoreTimes();
+        Log::shouldReceive('debug')->zeroOrMoreTimes();
+        Log::shouldReceive('error')->zeroOrMoreTimes();
 
         if($this->useDatabase)
         {

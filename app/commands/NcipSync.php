@@ -45,7 +45,7 @@ class NcipSync extends Command {
 
 		$this->info('Sjekker om dokumenter har blitt returnert i BIBSYS...');
 
-		$ncip = App::make('NcipClient');
+		$ncip = App::make('ncip.client');
 
 		foreach (Loan::with('document','user','library')->get() as $loan) {
 			if ($loan->document->thing_id == 1) {
