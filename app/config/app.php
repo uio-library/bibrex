@@ -65,7 +65,7 @@ return array(
 	|
 	*/
 
-	'key' => 'wHeQ4ISNxkjs)"?ls=+?.2A/shdg9)H',
+	'key' => 'MY_SECRET_KEY',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -107,8 +107,6 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 
-		'Way\Generators\GeneratorsServiceProvider',
-		'Profiler\ProfilerServiceProvider',
 		'Danmichaelo\Ncip\NcipServiceProvider',
 		'Schickling\Backup\BackupServiceProvider',
         'Aws\Laravel\AwsServiceProvider',
