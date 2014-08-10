@@ -135,11 +135,11 @@
 
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
 
-  <script type="text/javascript" src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="{{ URL::to('/components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
-  <script type="text/javascript" src="/hogan-2.0.0.js"></script>
-  <script type="text/javascript" src="/typeahead.js/typeahead.min.js"></script>
-  <script type="text/javascript" src="/components/select2/select2.js"></script>
+  <script type="text/javascript" src="{{ URL::to('/hogan-2.0.0.js') }}"></script>
+  <script type="text/javascript" src="{{ URL::to('/typeahead.js/typeahead.min.js') }}"></script>
+  <script type="text/javascript" src="{{ URL::to('/components/select2/select2.js') }}"></script>
   <!--
   <script src="//cdnjs.cloudflare.com/ajax/libs/css3finalize/3.4.0/jquery.css3finalize.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
