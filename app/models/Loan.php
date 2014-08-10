@@ -107,16 +107,15 @@ class Loan extends Eloquent {
 		if ($thing->id == 1) {
 
 			$ncip = App::make('ncip.client');
-			Log::info('[NCIP] Lånte ut ' . $dokid . ' til ' . $ltid);
 			$response = $ncip->checkOutItem($ltid, $dokid);
 
 			// BIBSYS sometimes returns an empty response on successful checkouts.
 			// We will therefore threat an empty response as success... for now...
-			$logmsg = 'Lånte ut [[Document:' . $dokid . ']] til ' . $ltid . '';
+			$logmsg = '[NCIP] Lånte ut ' . $dokid . ']] til ' . $ltid . '';
 			if ($this->as_guest) {
 				$logmsg .= ' (midlertidig lånekort)';
 			}
-			$logmsg .= ' i NCIP-tjeneste.';
+			$logmsg .= ' i BIBSYS.';
 			if ((!$response->success && $response->error == 'Empty response') || ($response->success)) {
 				if ($response->dueDate) {
 					$this->due_at = $response->dueDate;
@@ -171,13 +170,13 @@ class Loan extends Eloquent {
 			$dokid = $this->document->dokid;
 
 			$ncip = App::make('ncip.client');
-			Log::info('[NCIP] Leverte ' . $dokid);
 			$response = $ncip->checkInItem($dokid);
 
 			if (!$response->success) {
+				Log::error('Dokumentet ' . $dokid . ' kunne ikke leveres inn i BIBSYS: ' . $response->error);
 				dd("Dokumentet kunne ikke leveres inn i BIBSYS: " . $response->error);
 			}
-			Log::info('Returnerte [[Document:' . $dokid . ']] i BIBSYS');
+			Log::info('[NCIP] Returnerte ' . $dokid . ' i BIBSYS');
 		}
 		$this->delete();
 	}

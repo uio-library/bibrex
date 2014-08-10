@@ -39,7 +39,7 @@ $handler = new Monolog\Handler\RotatingFileHandler(
 );
 $monolog->pushHandler($handler);
 
-$handler2 = new Monolog\Handler\HipChatHandler(
+$handler2 = new HipChatHandler(
     Config::get('hipchat.token'),
     'Scriptotek',
 	'BibRex',
