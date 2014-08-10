@@ -51,6 +51,8 @@ class Document extends Eloquent {
 			$url = 'http://services.biblionaut.net/sru_iteminfo.php?repo=bibsys&objektid=' . $this->objektid;
 
 			$curl = New Curl;
+            $curl->cookie_file = storage_path('cookie_file');
+            $curl->follow_redirects = false;
 			$data = $curl->get($url);
 			$data = json_decode($data);
 

@@ -127,7 +127,10 @@ class LoansController extends BaseController {
 					->withErrors($validator)
 					->withInput();
 			}
-			$curl = App::make('Curl');
+            $curl = App::make('Curl');
+            touch(storage_path('cookie_file'));
+            $curl->cookie_file = storage_path('cookie_file');
+            $curl->follow_redirects = false;
 			$ids = $curl->get('http://services.biblionaut.net/getids.php?id=' . $unknown_id);
 			$ids = json_decode($ids);
 
