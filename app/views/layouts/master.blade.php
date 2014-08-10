@@ -12,10 +12,10 @@
   <![endif]-->
  
   <!-- Complete CSS (Responsive, With Icons) -->
-  <link rel="stylesheet" type="text/css" href="/components/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" type="text/css" href="/site.css">
+  <link rel="stylesheet" type="text/css" href="{{ URL::to('/components/bootstrap/dist/css/bootstrap.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ URL::to('/site.css') }}">
   <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" type="text/css" href="/halflings.css">
+  <link rel="stylesheet" type="text/css" href="{{ URL::to('/halflings.css') }}">
 </head>
 <body>
 
