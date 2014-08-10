@@ -6,6 +6,9 @@
  * @author   Taylor Otwell <taylorotwell@gmail.com>
  */
 
+// Allow PHP Web Server requests that resemble file requests
+if (file_exists(__DIR__ . $_SERVER["REQUEST_URI"])) return false;
+
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader

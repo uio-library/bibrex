@@ -57,7 +57,10 @@ class ThingsController extends BaseController {
 	 */
 	public function getShow($id)
 	{
-		$thing = $this->thingFactory->find($id);
+		$thing = $this->thingFactory
+			->with('documents.loans')
+			->with('documents.allLoans')
+			->find($id);
 		if (!$thing) {
 			return Response::view('errors.missing', array('what' => 'Tingen'), 404);
 		}
