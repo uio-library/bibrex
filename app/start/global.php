@@ -31,17 +31,33 @@ ClassLoader::addDirectories(array(
 |
 */
 
-if (App::environment() == 'testing') {
-	$monolog = Log::getMonoLog();
-	$redis = new Predis\Client();
-	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog-testing');
-	$monolog->pushHandler($handler);
-} else {
-	$monolog = Log::getMonoLog();
-	$redis = new Predis\Client();
-	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog');
-	$monolog->pushHandler($handler);
-}
+$monolog = Log::getMonoLog();
+
+$handler = new Monolog\Handler\RotatingFileHandler(
+	storage_path('logs/bibrex.log'),
+	90  // days, one file a day
+);
+$monolog->pushHandler($handler);
+
+$handler2 = new Monolog\Handler\HipChatHandler(
+	Config::get('hipchat.token'),
+	'BibRex',
+	true,
+	$monolog::INFO
+);
+$monolog->pushHandler($handler2);
+
+// if (App::environment() == 'testing') {
+// 	$monolog = Log::getMonoLog();
+// 	$redis = new Predis\Client();
+// 	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog-testing');
+// 	$monolog->pushHandler($handler);
+// } else {
+// 	$monolog = Log::getMonoLog();
+// 	$redis = new Predis\Client();
+// 	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog');
+// 	$monolog->pushHandler($handler);
+// }
 
 /*
 |--------------------------------------------------------------------------
