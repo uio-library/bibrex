@@ -72,6 +72,7 @@ class User extends Eloquent {
 		if ($this->ltid) {
 			$ncip = App::make('ncip.client');
 			try {
+				Log::info('[NCIP] Henter brukerinfo for ' . $this->ltid);
 				return $ncip->lookupUser($this->ltid);
 			} catch (InvalidNcipResponseException $e) {
 				return null;

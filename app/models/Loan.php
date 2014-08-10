@@ -107,6 +107,7 @@ class Loan extends Eloquent {
 		if ($thing->id == 1) {
 
 			$ncip = App::make('ncip.client');
+			Log::info('[NCIP] Lånte ut ' . $dokid . ' til ' . $ltid);
 			$response = $ncip->checkOutItem($ltid, $dokid);
 
 			// BIBSYS sometimes returns an empty response on successful checkouts.
@@ -170,6 +171,7 @@ class Loan extends Eloquent {
 			$dokid = $this->document->dokid;
 
 			$ncip = App::make('ncip.client');
+			Log::info('[NCIP] Leverte ' . $dokid);
 			$response = $ncip->checkInItem($dokid);
 
 			if (!$response->success) {
@@ -206,9 +208,9 @@ class Loan extends Eloquent {
 			if ($response->success) {
 				$this->as_guest = false;
 				$this->save();
-				Log::info('Overførte lånet av ' . $dokid . ' til ' . $ltid . ' i BIBSYS');
+				Log::info('[NCIP] Overførte lånet av ' . $dokid . ' til ' . $ltid . ' i BIBSYS');
 			} else {
-				Log::error('Klarte ikke å overføre lånet av ' . $dokid . ' til ' . $tlid . ' i BIBSYS');
+				Log::error('[NCIP] Klarte ikke å overføre lånet av ' . $dokid . ' til ' . $tlid . ' i BIBSYS');
 				return $response->error;
 			}
 		}
