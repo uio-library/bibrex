@@ -107,7 +107,7 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 
-		'Danmichaelo\Ncip\NcipServiceProvider',
+		'Scriptotek\Ncip\NcipServiceProvider',
 		'Schickling\Backup\BackupServiceProvider',
 		'Aws\Laravel\AwsServiceProvider',
 		'App\Services\Providers\ValidatorServiceProvider',
