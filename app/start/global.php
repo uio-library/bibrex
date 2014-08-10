@@ -33,14 +33,13 @@ ClassLoader::addDirectories(array(
 
 $monolog = Log::getMonoLog();
 
-$handler = new Monolog\Handler\RotatingFileHandler(
-	storage_path('logs/bibrex-' . get_current_user() . '.log'),
-	90  // days, one file a day
+$handler = new Monolog\Handler\StreamHandler(
+	storage_path('logs/bibrex.log')
 );
 $monolog->pushHandler($handler);
 
 $h = new Monolog\Handler\PushoverHandler(
-	Config::get('pushover.api_token'),
+	Config::get('pushover.app_token'),
 	Config::get('pushover.users'),
 	'BibRex',
 	$monolog::INFO
