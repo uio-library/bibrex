@@ -40,7 +40,8 @@ $handler = new Monolog\Handler\RotatingFileHandler(
 $monolog->pushHandler($handler);
 
 $handler2 = new Monolog\Handler\HipChatHandler(
-	Config::get('hipchat.token'),
+    Config::get('hipchat.token'),
+    'Scriptotek',
 	'BibRex',
 	true,
 	$monolog::INFO
