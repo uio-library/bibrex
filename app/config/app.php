@@ -107,8 +107,6 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 
-		'Way\Generators\GeneratorsServiceProvider',
-		'Profiler\ProfilerServiceProvider',
 		'Danmichaelo\Ncip\NcipServiceProvider',
 		'Schickling\Backup\BackupServiceProvider',
         'Aws\Laravel\AwsServiceProvider',
