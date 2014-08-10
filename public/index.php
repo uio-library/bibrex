@@ -6,6 +6,9 @@
  * @author   Taylor Otwell <taylorotwell@gmail.com>
  */
 
+if (get_magic_quotes_gpc()) {
+       die("Turn magic quotes off now!");
+}
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader
