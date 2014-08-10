@@ -12,7 +12,8 @@ class Document extends Eloquent {
 
 	public function loans()
 	{
-		return $this->hasMany('Loan');
+		return $this->hasMany('Loan')
+			->with('user');
 	}
 
 	public function allLoans()
@@ -20,7 +21,7 @@ class Document extends Eloquent {
 		$library_id = Auth::user()->id;
 
 		return $this->hasMany('Loan')
-			->with('document.thing', 'user')
+			->with('user')
 			->withTrashed()
 			->where('library_id', $library_id)
 			->orderBy('created_at', 'desc');

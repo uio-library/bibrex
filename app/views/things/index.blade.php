@@ -65,7 +65,7 @@
           <a href="{{ URL::action('ThingsController@getShow', $thing->id) }}">
             {{ $thing->name }}
           </a>
-          ({{ count($thing->loans) }} utlånt nå{{ $thing->disabled ? ', nye utlån tillates ikke' : '' }})
+          ({{ count($thing->activeLoans()) }} utlånt nå{{ $thing->disabled ? ', nye utlån tillates ikke' : '' }})
         </li>
       @endforeach
     </ul>
