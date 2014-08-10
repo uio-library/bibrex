@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\MessageBag;
-use Danmichaelo\Ncip\UserResponse;
-use Danmichaelo\Ncip\InvalidNcipResponseException;
+use Scriptotek\Ncip\UserResponse;
+use Scriptotek\Ncip\InvalidNcipResponseException;
 class User extends Eloquent {
 
 	/**
@@ -66,7 +66,7 @@ class User extends Eloquent {
 	/**
 	 * Make a lookupUser request to the NCIP service
 	 *
-	 * @return Danmichaelo\Ncip\UserResponse
+	 * @return Scriptotek\Ncip\UserResponse
 	 */
 	public function ncipLookup() {
 		if ($this->ltid) {
@@ -121,7 +121,7 @@ class User extends Eloquent {
 	/**
 	 * Merge in NCIP UserResponse data
 	 *
-	 * @param  Danmichaelo\Ncip\UserResponse  $response
+	 * @param  Scriptotek\Ncip\UserResponse  $response
 	 * @return void
 	 */
 	public function mergeFromUserResponse(UserResponse $response)

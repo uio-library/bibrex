@@ -15,11 +15,11 @@ if ($scenario->running()) {
 	$ncipMock = Mockery::mock();
 	App::instance('ncip.client', $ncipMock);
 
-	$response1 = new Danmichaelo\Ncip\CheckOutResponse(null);
+	$response1 = new Scriptotek\Ncip\CheckOutResponse(null);
 	$ncipMock->shouldReceive('checkOutItem')
 		->andReturn($response1);
 
-	$response2 = new Danmichaelo\Ncip\CheckInResponse(null);
+	$response2 = new Scriptotek\Ncip\CheckInResponse(null);
 	$response2->success = true;
 	$ncipMock->shouldReceive('checkInItem')
 		->andReturn($response2);
