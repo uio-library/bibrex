@@ -34,7 +34,7 @@ ClassLoader::addDirectories(array(
 $monolog = Log::getMonoLog();
 
 $handler = new Monolog\Handler\RotatingFileHandler(
-	storage_path('logs/bibrex.log'),
+	storage_path('logs/bibrex-' . get_current_user() . '.log'),
 	90  // days, one file a day
 );
 $monolog->pushHandler($handler);
