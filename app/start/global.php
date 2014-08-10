@@ -39,26 +39,14 @@ $handler = new Monolog\Handler\RotatingFileHandler(
 );
 $monolog->pushHandler($handler);
 
-$handler2 = new HipChatHandler(
-    Config::get('hipchat.token'),
-    'Scriptotek',
+$h = new Monolog\Handler\PushoverHandler(
+	Config::get('pushover.api_token'),
+	Config::get('pushover.users'),
 	'BibRex',
-	true,
 	$monolog::INFO
 );
-$monolog->pushHandler($handler2);
+$monolog->pushHandler($h);
 
-// if (App::environment() == 'testing') {
-// 	$monolog = Log::getMonoLog();
-// 	$redis = new Predis\Client();
-// 	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog-testing');
-// 	$monolog->pushHandler($handler);
-// } else {
-// 	$monolog = Log::getMonoLog();
-// 	$redis = new Predis\Client();
-// 	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog');
-// 	$monolog->pushHandler($handler);
-// }
 
 /*
 |--------------------------------------------------------------------------
