@@ -119,6 +119,7 @@
 
     @endif
 
+    {{--
     <div class="well" style="border: 1px solid #aaa; border-radius:3px; background: white; padding: 10px;margin-bottom: 20px; background: #ffffef;">
       17.1.2014: BIBSYS har stengt beta-versjonen av
       <a href="http://www.ncip.info/">NCIP</a>-tjenesten sin, fordi den var usikret,
@@ -128,6 +129,7 @@
         <hr>
       25.1.2014: Utlån av dingser fungerer nå igjen, men låntakerinformasjon må skrives inn manuelt første gang for hver bruker.
     </div>
+    --}}
 
     @yield('content')
 
