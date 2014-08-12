@@ -1,6 +1,5 @@
 [![Build Status](http://img.shields.io/travis/scriptotek/bibrex.svg?style=flat)](https://travis-ci.org/scriptotek/bibrex)
 [![Coverage Status](http://img.shields.io/coveralls/scriptotek/bibrex.svg?style=flat)](https://coveralls.io/r/scriptotek/bibrex?branch=master)
-
 [![Stories in Ready](https://badge.waffle.io/scriptotek/bibrex.svg?label=ready&title=Ready&style=flat)](http://waffle.io/scriptotek/bibrex)
 
 ## BIBREX
