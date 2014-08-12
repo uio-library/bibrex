@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"require": {
         "php": ">= 5.3",
-		"laravel/framework": "4.1.*",
+		"laravel/framework": "~4.1",
         "danmichaelo/ncip": "~0.2.1",
         "shuber/curl": "dev-master",
         "schickling/backup": "dev-master",
