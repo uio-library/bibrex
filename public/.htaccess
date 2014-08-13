@@ -1,9 +1,10 @@
 <IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews
-    </IfModule>
+    #<IfModule mod_negotiation.c>
+    #    Options -MultiViews
+    #</IfModule>
 
     RewriteEngine On
+    RewriteBase /ub/bibrex/
 
     # Redirect Trailing Slashes...
     RewriteRule ^(.*)/$ /$1 [L,R=301]

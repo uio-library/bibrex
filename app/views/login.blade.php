@@ -7,10 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Complete CSS (Responsive, With Icons) -->
-  <link rel="stylesheet" type="text/css" href="/components/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" type="text/css" href="/site.css">
+  <link rel="stylesheet" type="text/css" href="{{ URL::to('/components/bootstrap/dist/css/bootstrap.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ URL::to('/site.css') }}">
   <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" type="text/css" href="/halflings.css">
+  <link rel="stylesheet" type="text/css" href="{{ URL::to('/halflings.css') }}">
   <style type="text/css">
   html,body {
     height: 100%;
@@ -67,7 +67,7 @@ input {
               Brukernavnet eller passordet var feil.
             </p>
             @endif
-            <form method="POST" action="/libraries/login">
+            <form method="POST" action="{{ URL::action('LibrariesController@postLogin') }}">
               <div class="form-group">
                 <label class="sr-only" for="library">Bibliotek</label>
                 <input type="library" id="library" name="library" class="form-control" placeholder="Bibliotek" value="{{ Input::old('library') }}">

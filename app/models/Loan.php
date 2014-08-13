@@ -125,7 +125,7 @@ class Loan extends Eloquent {
 				}
 				Log::info($logmsg);
 			} else {
-				Log::info('Dokumentet [[Document:' . $dokid . ']] kunne ikke lånes ut i BIBSYS: ' . $response->error);
+				Log::info('Dokumentet "' . $dokid . '" kunne ikke lånes ut i BIBSYS: ' . $response->error);
 				$this->errors->add('checkout_error', 'Dokumentet kunne ikke lånes ut i BIBSYS: ' . $response->error);
 				return false;
 			}
