@@ -6,7 +6,7 @@
 	"require": {
         "php": ">= 5.3",
 		"laravel/framework": "4.1.*",
-        "danmichaelo/ncip": "~0.2.1",
+        "danmichaelo/ncip": "~0.2.3",
         "shuber/curl": "dev-master",
         "schickling/backup": "dev-master",
         "itsgoingd/clockwork": "1.*",
