@@ -10,7 +10,7 @@ if (get_magic_quotes_gpc()) {
        die("Turn magic quotes off now!");
 }
 // Allow PHP Web Server requests that resemble file requests
-if (file_exists(__DIR__ . $_SERVER["REQUEST_URI"])) return false;
+if (($_SERVER["REQUEST_URI"] != '/') && file_exists(__DIR__ . $_SERVER["REQUEST_URI"])) return false;
 
 /*
 |--------------------------------------------------------------------------
