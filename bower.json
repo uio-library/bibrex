@@ -1,6 +1,7 @@
 {
   "name": "bibrex",
   "version": "0.1.0",
+  "private": true,
   "author": {
     "name": "Dan Michael Heggø",
     "email": "danmichaelo@gmail.com"
