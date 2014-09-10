@@ -1,5 +1,7 @@
 <?php
 
+use Dubture\Monolog\Reader\LogReader;
+
 class LogsController extends BaseController {
 
 	/**
@@ -10,7 +12,17 @@ class LogsController extends BaseController {
 	public function getIndex()
 	{
 
+		$reader = new LogReader(storage_path('logs/bibrex.log'));
+
 		$items = array();
+
+		foreach ($reader as $log) {
+			if (is_array($log) && isset($log['date'])) {
+				$items[] = $log;
+			}
+	        //echo sprintf("The log entry was written at %s. \n", $log['date']->format('Y-m-d h:i:s'));
+	    }
+	    $items = array_reverse($items);
 		// $redis = new Predis\Client();
 		// $len = $redis->llen('monolog');
 		// $items = array();

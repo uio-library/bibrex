@@ -76,14 +76,13 @@ class Thing extends Eloquent {
         return $this->hasMany('Document');
     }
 
-
     public function activeLoans()
     {
         $library_id = Auth::user()->id;
 
         $loans = array();
         foreach ($this->documents as $doc) {
-            foreach ($doc->loans()->where('library_id', $library_id)->get() as $loan) {
+            foreach ($doc->loans as $loan) {
                 $loans[] = $loan;
             }
         }

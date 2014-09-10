@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/scriptotek/bibrex.png?branch=master)](https://travis-ci.org/scriptotek/bibrex)
-[![Dependencies Status](https://depending.in/scriptotek/bibrex.png)](http://depending.in/scriptotek/bibrex)
-[![Stories in Ready](https://badge.waffle.io/scriptotek/bibrex.png?label=ready)](http://waffle.io/scriptotek/bibrex)
+[![Build Status](http://img.shields.io/travis/scriptotek/bibrex.svg?style=flat)](https://travis-ci.org/scriptotek/bibrex)
+[![Coverage Status](http://img.shields.io/coveralls/scriptotek/bibrex.svg?style=flat)](https://coveralls.io/r/scriptotek/bibrex?branch=master)
+[![Stories in Ready](https://badge.waffle.io/scriptotek/bibrex.svg?label=ready&title=Ready&style=flat)](http://waffle.io/scriptotek/bibrex)
 
 ## BIBREX
 

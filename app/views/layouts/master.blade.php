@@ -12,10 +12,10 @@
   <![endif]-->
  
   <!-- Complete CSS (Responsive, With Icons) -->
-  <link rel="stylesheet" type="text/css" href="/components/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" type="text/css" href="/site.css">
+  <link rel="stylesheet" type="text/css" href="{{ URL::to('/components/bootstrap/dist/css/bootstrap.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ URL::to('/site.css') }}">
   <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" type="text/css" href="/halflings.css">
+  <link rel="stylesheet" type="text/css" href="{{ URL::to('/halflings.css') }}">
 </head>
 <body>
 
@@ -119,6 +119,7 @@
 
     @endif
 
+    {{--
     <div class="well" style="border: 1px solid #aaa; border-radius:3px; background: white; padding: 10px;margin-bottom: 20px; background: #ffffef;">
       17.1.2014: BIBSYS har stengt beta-versjonen av
       <a href="http://www.ncip.info/">NCIP</a>-tjenesten sin, fordi den var usikret,
@@ -128,6 +129,7 @@
         <hr>
       25.1.2014: Utlån av dingser fungerer nå igjen, men låntakerinformasjon må skrives inn manuelt første gang for hver bruker.
     </div>
+    --}}
 
     @yield('content')
 
@@ -135,11 +137,11 @@
 
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
 
-  <script type="text/javascript" src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="{{ URL::to('/components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
-  <script type="text/javascript" src="/hogan-2.0.0.js"></script>
-  <script type="text/javascript" src="/typeahead.js/typeahead.min.js"></script>
-  <script type="text/javascript" src="/components/select2/select2.js"></script>
+  <script type="text/javascript" src="{{ URL::to('/hogan-2.0.0.js') }}"></script>
+  <script type="text/javascript" src="{{ URL::to('/typeahead.js/typeahead.min.js') }}"></script>
+  <script type="text/javascript" src="{{ URL::to('/components/select2/select2.js') }}"></script>
   <!--
   <script src="//cdnjs.cloudflare.com/ajax/libs/css3finalize/3.4.0/jquery.css3finalize.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>

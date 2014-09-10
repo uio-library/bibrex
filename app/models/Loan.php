@@ -111,11 +111,11 @@ class Loan extends Eloquent {
 
 			// BIBSYS sometimes returns an empty response on successful checkouts.
 			// We will therefore threat an empty response as success... for now...
-			$logmsg = 'Lånte ut [[Document:' . $dokid . ']] til ' . $ltid . '';
+			$logmsg = '[NCIP] Lånte ut ' . $dokid . ']] til ' . $ltid . '';
 			if ($this->as_guest) {
 				$logmsg .= ' (midlertidig lånekort)';
 			}
-			$logmsg .= ' i NCIP-tjeneste.';
+			$logmsg .= ' i BIBSYS.';
 			if ((!$response->success && $response->error == 'Empty response') || ($response->success)) {
 				if ($response->dueDate) {
 					$this->due_at = $response->dueDate;
@@ -125,7 +125,7 @@ class Loan extends Eloquent {
 				}
 				Log::info($logmsg);
 			} else {
-				Log::info('Dokumentet [[Document:' . $dokid . ']] kunne ikke lånes ut i BIBSYS: ' . $response->error);
+				Log::info('Dokumentet "' . $dokid . '" kunne ikke lånes ut i BIBSYS: ' . $response->error);
 				$this->errors->add('checkout_error', 'Dokumentet kunne ikke lånes ut i BIBSYS: ' . $response->error);
 				return false;
 			}
@@ -173,9 +173,10 @@ class Loan extends Eloquent {
 			$response = $ncip->checkInItem($dokid);
 
 			if (!$response->success) {
+				Log::error('Dokumentet ' . $dokid . ' kunne ikke leveres inn i BIBSYS: ' . $response->error);
 				dd("Dokumentet kunne ikke leveres inn i BIBSYS: " . $response->error);
 			}
-			Log::info('Returnerte [[Document:' . $dokid . ']] i BIBSYS');
+			Log::info('[NCIP] Returnerte ' . $dokid . ' i BIBSYS');
 		}
 		$this->delete();
 	}
@@ -206,9 +207,9 @@ class Loan extends Eloquent {
 			if ($response->success) {
 				$this->as_guest = false;
 				$this->save();
-				Log::info('Overførte lånet av ' . $dokid . ' til ' . $ltid . ' i BIBSYS');
+				Log::info('[NCIP] Overførte lånet av ' . $dokid . ' til ' . $ltid . ' i BIBSYS');
 			} else {
-				Log::error('Klarte ikke å overføre lånet av ' . $dokid . ' til ' . $tlid . ' i BIBSYS');
+				Log::error('[NCIP] Klarte ikke å overføre lånet av ' . $dokid . ' til ' . $tlid . ' i BIBSYS');
 				return $response->error;
 			}
 		}

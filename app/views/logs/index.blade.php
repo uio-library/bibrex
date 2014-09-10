@@ -6,22 +6,22 @@
 
 	<table style="width:100%;">
     @foreach ($items as $item)
-    	<tr data-content="{{{ $item[0] }}}">
+    	<tr>
     		<td valign="top" style="white-space:nowrap">
-    			<small style="white-space:nowrap">{{ $item[1]['date'] }}</small>
+    			<small style="white-space:nowrap">{{ $item['date']->format('Y-m-d H:i:s') }}</small>
     		</td>
     		<td valign="top" style="white-space:nowrap">
-    			<span class="label label-{{ strtolower($item[1]['level']) != 'error' ? strtolower($item[1]['level']) : 'danger' }}">{{ $item[1]['level'] }}</span>
+    			<span class="label label-{{ strtolower($item['level']) != 'error' ? strtolower($item['level']) : 'danger' }}">{{ $item['level'] }}</span>
     		</td>
     		<td>
     			<?php
-                    if (strpos($item[1]['message'], PHP_EOL) !== false) {
-                        $spl = explode(PHP_EOL, $item[1]['message']);
+                    if (strpos($item['message'], PHP_EOL) !== false) {
+                        $spl = explode(PHP_EOL, $item['message']);
                         $i0 = array_shift($spl);
                         echo '<div><a href="#" onclick="$(this).parent().next(\'.message-collapsed\').toggle(); return false;"">' . $i0 . '</a></div>';
                         echo '<div class="message-collapsed" style="display:none;">' . implode('<br />', $spl) . '</div>';
                     } else {
-                        echo $item[1]['message'];
+                        echo $item['message'];
                     }
                 ?>
     		</td>

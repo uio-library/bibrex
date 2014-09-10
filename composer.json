@@ -5,10 +5,12 @@
 	"license": "MIT",
 	"require": {
         "php": ">= 5.3",
-		"laravel/framework": "4.1.*",
+		"laravel/framework": "~4.1",
         "danmichaelo/ncip": "~0.2.3",
         "shuber/curl": "dev-master",
-        "schickling/backup": "dev-master"
+        "schickling/backup": "dev-master",
+        "itsgoingd/clockwork": "1.*",
+        "ddtraceweb/monolog-parser": "1.*"
 	},
     "require-dev": {
         "phpunit/phpunit": "3.7.*",

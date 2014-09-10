@@ -159,7 +159,7 @@
     $('.user .typeahead')
     .typeahead([{
         name: 'brukere',
-        prefetch: '/users',
+        prefetch: '{{ URL::to('/users') }}',
          template: [
             '<p class="repo-ltid">{'+'{ltid}'+'}</p><p class="repo-name">{'+'{lastname}'+'}, {'+'{firstname}'+'}</p>',
           ].join(''),

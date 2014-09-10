@@ -33,31 +33,19 @@ ClassLoader::addDirectories(array(
 
 $monolog = Log::getMonoLog();
 
-$handler = new Monolog\Handler\RotatingFileHandler(
-	storage_path('logs/bibrex.log'),
-	90  // days, one file a day
+$handler = new Monolog\Handler\StreamHandler(
+	storage_path('logs/bibrex.log')
 );
 $monolog->pushHandler($handler);
 
-$handler2 = new Monolog\Handler\HipChatHandler(
-	Config::get('hipchat.token'),
+$h = new Monolog\Handler\PushoverHandler(
+	Config::get('pushover.app_token'),
+	Config::get('pushover.users'),
 	'BibRex',
-	true,
 	$monolog::INFO
 );
-$monolog->pushHandler($handler2);
+$monolog->pushHandler($h);
 
-// if (App::environment() == 'testing') {
-// 	$monolog = Log::getMonoLog();
-// 	$redis = new Predis\Client();
-// 	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog-testing');
-// 	$monolog->pushHandler($handler);
-// } else {
-// 	$monolog = Log::getMonoLog();
-// 	$redis = new Predis\Client();
-// 	$handler = new Monolog\Handler\RedisHandler($redis, 'monolog');
-// 	$monolog->pushHandler($handler);
-// }
 
 /*
 |--------------------------------------------------------------------------

@@ -155,7 +155,7 @@ class LoansControllerTest extends TestCase {
 
 		$this->ncip->shouldReceive('lookupUser')->never();
 
-		$c = new Danmichaelo\Ncip\CheckOutResponse(null);
+		$c = new Scriptotek\Ncip\CheckOutResponse(null);
 		$this->ncip->shouldReceive('checkOutItem')->once()
 			->with($ltid, $dokid)
 			->andReturn($c);
@@ -187,7 +187,7 @@ class LoansControllerTest extends TestCase {
 				return '{"objektid":"","dokid":"' . $dokid .'","heftid":""}';
 			});
 
-		$u = new Danmichaelo\Ncip\UserResponse;
+		$u = new Scriptotek\Ncip\UserResponse;
 		$u->exists = true;
 		$u->userId = $ltid;
 		$u->firstName = 'Donald';
@@ -197,7 +197,7 @@ class LoansControllerTest extends TestCase {
 			->with($ltid)
 			->andReturn($u);
 
-		$c = new Danmichaelo\Ncip\CheckOutResponse(null);
+		$c = new Scriptotek\Ncip\CheckOutResponse(null);
 		$this->ncip->shouldReceive('checkOutItem')->once()
 			->with($ltid, $dokid)
 			->andReturn($c);

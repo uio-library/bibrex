@@ -65,7 +65,7 @@ return array(
 	|
 	*/
 
-	'key' => 'wHeQ4ISNxkjs)"?ls=+?.2A/shdg9)H',
+	'key' => 'MY_SECRET_KEY',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -109,8 +109,9 @@ return array(
 
 		'Scriptotek\Ncip\NcipServiceProvider',
 		'Schickling\Backup\BackupServiceProvider',
-        'Aws\Laravel\AwsServiceProvider',
-        'App\Services\Providers\ValidatorServiceProvider',
+		'Aws\Laravel\AwsServiceProvider',
+		'App\Services\Providers\ValidatorServiceProvider',
+		'Clockwork\Support\Laravel\ClockworkServiceProvider',
 	),
 
 	/*
@@ -178,6 +179,7 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 		'Profiler'        => 'Profiler\Facades\Profiler',
 		'AWS'             => 'Aws\Laravel\AwsFacade',
+		'Clockwork'       => 'Clockwork\Support\Laravel\Facade',
 
 	),
 
