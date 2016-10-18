@@ -38,8 +38,8 @@ class Anonymize extends Command {
 	 * @return void
 	 */
 	public function fire()
-	{
-		foreach (Loan::with('document','user','library')->get() as $loan) {
+    {
+		foreach (Loan::withTrashed()->with('user')->get() as $loan) {
 			if (!is_null($loan->deleted_at)) {
 				$loan->user_id = $this->anon_user_id;
 				$loan->save();

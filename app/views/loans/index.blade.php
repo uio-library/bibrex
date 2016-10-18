@@ -82,6 +82,10 @@
       <h3 class="panel-title">Utlån (<span id="loancount">{{ count($loans) }}</span>)</h3>
     </div>
 
+    <div class="panel-body">
+      <p>Merk: Utlånshistorikk for returnerte ting anonymiseres hver natt.</p>
+    </div>
+
     <!--<div class="panel-body">
       Vis bare 
       <input type="checkbox" id="onlyLoansAsGuest">
