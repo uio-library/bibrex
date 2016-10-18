@@ -12,3 +12,4 @@
 */
 
 Artisan::add(new NcipSync);
+Artisan::add(new Anonymize);

@@ -14,6 +14,12 @@ Simple lending system using NCIP to connect to a library system.
 4. `php artisan db:seed` to seed initial database data
 5. Make sure `app/storage` is writable by the www user.
 
+### Anonymizing returned loans
+
+	php artisan anonymize
+
+will anonymize all returned loans by moving them to an anonymous user.
+
 ### Større endringer
 
 * [4.11](https://github.com/scriptotek/bibrex/commit/d8377cd1e2aa8feec105d2a106a0f172d7cba908) Institusjonsbasert pålogging, med mulighet for autopålogging fra bestemte IP-adresser.
