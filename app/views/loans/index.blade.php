@@ -65,11 +65,6 @@
 
         </div>
 
-      <p style="padding: 15px 0;">
-        For bøker med RFID-brikker må du manuelt sette RFID-programmet i utlåns-modus for at boka skal bli avalarmisert.
-        BIBREX snakker dessverre ikke med RFID-programmet (enda). 
-      </p>
-
       {{ Form::submit('Lån ut!', array(
           'class' => 'btn btn-success'
       )) }}
@@ -87,13 +82,13 @@
       <h3 class="panel-title">Utlån (<span id="loancount">{{ count($loans) }}</span>)</h3>
     </div>
 
-    <div class="panel-body">
+    <!--<div class="panel-body">
       Vis bare 
       <input type="checkbox" id="onlyLoansAsGuest">
         <label for="onlyLoansAsGuest">utlån på gjestekort</label>
       <input type="checkbox" id="onlyOverdue">
         <label for="onlyOverdue">forfalt</label>
-    </div>
+    </div>-->
 
     <ul class="list-group">
     @foreach ($loans as $loan)
