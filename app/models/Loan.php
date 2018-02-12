@@ -1,8 +1,12 @@
 <?php
 
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
+use Carbon\Carbon;
+
 class Loan extends Eloquent {
+    use SoftDeletingTrait;
+
 	protected $guarded = array();
-	protected $softDelete = true;
 	public $errors;
 
 	public function user()
@@ -64,6 +68,51 @@ class Loan extends Eloquent {
 		if ($d == -1)
 			return '<span style="color:red;">Forfalt i går</span>';
 		return'<span style="color:red;">Forfalt for ' . abs($d) . ' dager siden</span>';
+	}
+
+	public function relativeCreationTimeHours() {
+		Carbon::setLocale('no');
+		$hours = $this->created_at->diffInHours(Carbon::now());
+		return $hours;
+	}
+
+	public function relativeCreationTime() {
+    	if ($this->user->lang == 'eng') {
+			Carbon::setLocale('en');
+			$msgs = [
+				'justnow' => 'less than an hour ago',
+				'today' => '{hours} hour(s) ago',
+				'yesterday' => 'yesterday',
+				'2days' => 'two days ago',
+				'generic' => '{diff} ago',
+			];
+		} else {
+			Carbon::setLocale('no');
+			$msgs = [
+				'justnow' => 'for under en time siden',
+				'today' => 'for {hours} time(r) siden',
+				'yesterday' => 'i går',
+				'2days' => 'i forgårs',
+				'generic' => 'for {diff} siden',
+			];
+		}
+
+		$now = Carbon::now();
+		$diffHours = $this->created_at->diffInHours($now);
+		if ($diffHours < 1) {
+			return $msgs['justnow'];
+		}
+		if ($now->dayOfYear - $this->created_at->dayOfYear == 1) {
+			return $msgs['yesterday'];
+		}
+		if ($now->dayOfYear - $this->created_at->dayOfYear == 2) {
+			return $msgs['2days'];
+		}
+		if ($diffHours < 48) {
+			return str_replace('{hours}', $diffHours, $msgs['today']);
+		}
+		return str_replace('{diff}', $this->created_at->diffForHumans(Carbon::now(), true),
+			               $msgs['generic']);
 	}
 
 	private function ncipCheckout() {
@@ -149,9 +198,9 @@ class Loan extends Eloquent {
 			$this->library_id = Auth::user()->id;
 
 			// Checkout in NCIP service
-			if (!$this->ncipCheckout()) {
-				return false;
-			}
+			// if (!$this->ncipCheckout()) {
+			// 	return false;
+			// }
 		}
 
 		parent::save($options);
@@ -186,14 +235,14 @@ class Loan extends Eloquent {
 	 *
 	 * @return bool|null
 	 */
-	public function restore()
-	{
-		if (!$this->ncipCheckout()) {
-			return false;
-		}
-		parent::restore();
-		return true;
-	}
+	// public function restore()
+	// {
+	// 	// if (!$this->ncipCheckout()) {
+	// 	// 	return false;
+	// 	// }
+	// 	parent::restore();
+	// 	return true;
+	// }
 
 	public function transfer()
 	{

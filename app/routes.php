@@ -32,6 +32,9 @@ Route::get('/libraries/login', 'LibrariesController@getLogin');
 Route::post('/libraries/login', 'LibrariesController@postLogin');
 Route::get('/logout', 'LibrariesController@getLogout');
 
+Route::get('/available/{library}.json', 'ThingsController@getAvailableJson');
+Route::get('/available/{library}', 'ThingsController@getAvailable');
+
 Route::group(array('before' => 'auth'), function()
 {
 

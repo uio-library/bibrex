@@ -2,6 +2,8 @@
 
 return array(
 
+	'alma_key' => $_ENV['ALMA_KEY'],
+
 	/*
 	|--------------------------------------------------------------------------
 	| Application Debug Mode
@@ -13,7 +15,7 @@ return array(
 	|
 	*/
 
-	'debug' => true,
+	'debug' => false,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -26,7 +28,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://rex.biblionaut.net',
+	'url' => 'https://rex.biblionaut.net',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -65,7 +67,7 @@ return array(
 	|
 	*/
 
-	'key' => 'MY_SECRET_KEY',
+	'key' => $_ENV['ENCRYPTION_KEY'],
 
 	/*
 	|--------------------------------------------------------------------------
@@ -107,7 +109,7 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 
-		'Scriptotek\Ncip\NcipServiceProvider',
+		// 'Scriptotek\Ncip\NcipServiceProvider',
 		'Schickling\Backup\BackupServiceProvider',
 		'Aws\Laravel\AwsServiceProvider',
 		'App\Services\Providers\ValidatorServiceProvider',

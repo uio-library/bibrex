@@ -42,19 +42,16 @@ class LoansController extends BaseController {
 			->orderBy('created_at','desc')->get();
 
 		// A list of all things for the select box
-		$things = array();
-		$q = Thing::where('disabled', false)
+		$things = Thing::where('disabled', false)
             ->where(function($query) use ($library_id) {
                 $query->where('library_id', $library_id)
                       ->orWhere('library_id', NULL);
-              });
-		foreach ($q->get() as $thing) {
-			$things[$thing->id] = $thing->name;
-        }
+              })
+            ->orderBy('name');
 
 		$r = Response::view('loans.index', array(
 			'loans' => $loans,
-			'things' => $things,
+			'things' => $things->get(),
 			'loan_ids' => Session::get('loan_ids', array())
 		));
 		$r->header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');
@@ -108,7 +105,7 @@ class LoansController extends BaseController {
 		$messagebag = $validator->getMessageBag();
 
 		// Check if Document exists, create if not
-		$thing = Thing::where('id','=',Input::get('thing'))->first();
+		$thing = Thing::where('id','=',Input::get('thing_id'))->first();
 		if (!$thing) {
 			$messagebag->add('thing_not_found', 'Tingen finnes ikke');
 			return Redirect::action('LoansController@getIndex')
@@ -255,13 +252,16 @@ class LoansController extends BaseController {
 			$loan_ids[] = $loan->id;
 		}
 
+		Log::info('Lånte ut <a href="'. URL::action('LoansController@getShow', $loan_ids[0]) . '">' . $thing->name . '</a>.');
+
+
 		if ($new_user) {
 			if ($user->in_bibsys) {
 				return Redirect::action('UsersController@getEdit', $user->id)
-					->with('status', 'Utlånet er lagret. Siden dette er en ny BIBREX-låner må du kontrollere og lagre opplysningene importert fra BIBSYS.');
+					->with('status', 'Utlånet er lagret. Siden dette er en ny BIBREX-låner må du kontrollere og lagre opplysningene importert fra Alma.');
 			} else {
 				return Redirect::action('UsersController@getEdit', $user->id)
-					->with('status', 'Utlånet er lagret. Siden dette er en ny låner må du registrere litt informasjon om vedkommende.');
+					->with('status', 'Utlånet er lagret. VIKTIG: Siden dette er en ny låner må du registrere litt informasjon om vedkommende.');
 			}
 		} else {
 			return Redirect::action('LoansController@getIndex')
@@ -299,6 +299,43 @@ class LoansController extends BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
+	public function getLost($id)
+	{
+		$loan = Loan::find($id);
+		if (!$loan) {
+			// App::abort(404);
+			return Response::view('errors.missing', array('what' => 'Lånet'), 404);
+		}
+
+		Log::info('<a href="'. URL::action('LoansController@getShow', $loan->id) . '">Utlån</a> av ' . $loan->document->thing->name . ' ble markert som tapt.');
+
+		$repr = $loan->representation();
+		$docid = $loan->document->id;
+		$user = $loan->user->name();
+
+		$loan->is_lost = true;
+		$loan->save();
+
+		$loan->checkIn();
+
+		$returnTo = Input::get('returnTo', 'documents.show');
+
+		switch ($returnTo) {
+			case 'loans.index':
+				$redir = Redirect::action('LoansController@getIndex');
+				break;
+			default:
+				$redir = Redirect::action('DocumentsController@getShow', $docid);
+		}
+		return $redir->with('status', $repr .' ble markert som rotet bort. <a href="' . URL::action('LoansController@getRestore', $id) . '" class="alert-link">Angre</a>');
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
 	public function getDestroy($id)
 	{
 		$loan = Loan::find($id);
@@ -306,6 +343,9 @@ class LoansController extends BaseController {
 			// App::abort(404);
 			return Response::view('errors.missing', array('what' => 'Lånet'), 404);
 		}
+
+		Log::info('Returnerte <a href="'. URL::action('LoansController@getShow', $loan->id) . '">' . $loan->document->thing->name . '</a>.');
+
 		$repr = $loan->representation();
 		$docid = $loan->document->id;
 		$user = $loan->user->name();
@@ -320,7 +360,7 @@ class LoansController extends BaseController {
 			default:
 				$redir = Redirect::action('DocumentsController@getShow', $docid);
 		}
-		return $redir->with('status', $repr .' ble levert inn for ' . $user . '. <a href="' . URL::action('LoansController@getRestore', $id) . '" class="alert-link">Angre</a>');	    	
+		return $redir->with('status', $repr .' ble levert inn for ' . $user . '. <a href="' . URL::action('LoansController@getRestore', $id) . '" class="alert-link">Angre</a>');
 	}
 
 	/**
@@ -336,9 +376,15 @@ class LoansController extends BaseController {
 			// App::abort(404);
 			return Response::view('errors.missing', array('what' => 'Lånet'), 404);
 		}
-		$docid = $loan->document->id;
+
+		Log::info('Returen av <a href="'. URL::action('LoansController@getShow', $loan->id) . '">utlånet</a> av ' . $loan->document->thing->name . ' ble angret.');
+
 		$loan->restore();
-		return Redirect::action('DocumentsController@getShow', $docid)
+
+		$loan->is_lost = false;
+		$loan->save();
+
+		return Redirect::action('LoansController@getIndex')
 			->with('status', 'Innleveringen ble angret.');
 	}
 

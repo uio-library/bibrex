@@ -22,11 +22,50 @@ class ThingsController extends BaseController {
 			->with('documents.loans')
 			->where('library_id', null)
 			->orWhere('library_id', $library_id)
+			->orderBy('name')
 			->get();
 
 		return Response::view('things.index', array(
 			'things' => $things
 		));
+	}
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function getAvailableJson($library_id)
+	{
+		$things = $this->thingFactory
+			->with('documents.loans')
+			->where('library_id', null)
+			->orWhere('library_id', $library_id)
+			->get();
+
+		$out = [];
+		foreach ($things as $t) {
+			$out[] = [
+				'name' => $t->name,
+				'disabled' => $t->disabled,
+				'num_items' => $t->num_items,
+				'available_items' => $t->availableItems(),
+			];
+		}
+
+		return Response::JSON($out);
+	}
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function getAvailable($library_id)
+	{
+		return Response::view('things.available', [
+			'library_id' => $library_id,
+		]);
 	}
 
 	/**
@@ -45,7 +84,7 @@ class ThingsController extends BaseController {
 				->withInput();
 		}
 
-		return Redirect::action('ThingsController@getIndex')
+		return Redirect::action('ThingsController@getEdit', $thing->id)
 			->with('status', 'Tingen ble lagret!');
 	}
 
@@ -65,7 +104,7 @@ class ThingsController extends BaseController {
 			return Response::view('errors.missing', array('what' => 'Tingen'), 404);
 		}
 		return Response::view('things.show', array(
-			'thing' => $thing
+			'thing' => $thing,
 		));
 	}
 
@@ -77,9 +116,16 @@ class ThingsController extends BaseController {
 	 */
 	public function getEdit($id)
 	{
+		if ($id == '_new') {
+			return Response::view('things.edit', array(
+				'thing' => new Thing(),
+				'thing_id' => $id,
+			));
+		}
 		$thing = $this->thingFactory->find($id);
 		return Response::view('things.edit', array(
-			'thing' => $thing
+			'thing' => $thing,
+			'thing_id' => $id,
 		));
 	}
 
@@ -91,16 +137,26 @@ class ThingsController extends BaseController {
 	 */
 	public function postUpdate($id)
 	{
-		$thing = $this->thingFactory->find($id);
+		if ($id == '_new') {
+			$thing = new Thing();
+		} else {
+			$thing = $this->thingFactory->find($id);
+		}
 		if (!$thing) {
 			return Response::view('errors.missing', array('what' => 'Tingen'), 404);
 		}
 
 		$thing->name = Input::get('name');
+		$thing->email_name_nor = Input::get('email_name_nor');
+		$thing->email_name_eng = Input::get('email_name_eng');
+		$thing->email_name_definite_nor = Input::get('email_name_definite_nor');
+		$thing->email_name_definite_eng = Input::get('email_name_definite_eng');
+		$thing->num_items = Input::get('num_items');
 		$thing->disabled = Input::get('disabled') == 'on';
+		$thing->send_reminders = Input::get('send_reminders') == 'on';
 
 		if (!$thing->save()) {
-			return Redirect::action('ThingsController@getEdit', $thing->id)
+			return Redirect::action('ThingsController@getEdit', $id)
 				->withErrors($thing->errors)
 				->withInput();
 		}

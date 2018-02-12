@@ -15,8 +15,9 @@ class CreateRemindersTable extends Migration {
 		Schema::create('reminders', function(Blueprint $table) {
 			$table->increments('id');
 			$table->integer('loan_id')->unsigned();
-			$table->enum('medium', array('sms', 'email'));
-			$table->text('comment');
+			$table->enum('medium', array('sms', 'email'))->default('email');
+			$table->text('subject');
+			$table->text('body');
 			$table->timestamps();
 
 			$table->foreign('loan_id')

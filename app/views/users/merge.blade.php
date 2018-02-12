@@ -53,7 +53,7 @@
             ?>
           </td>
           <td>
-            <input type="text" name="ltid" value="{{ $merged['ltid'] }}" readonly />
+            <input type="text" name="ltid" value="{{ $merged['ltid'] }}" />
           </td>
         </tr>
 
@@ -141,15 +141,12 @@
 
     <div class="panel-footer">
       @if (!empty($user1->ltid) && !empty($user2->ltid) && ($user1->ltid != $user2->ltid))
-        <p>
-          <i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i> Beklager, kan ikke flette to brukere med ulike LTID.
+        <p style="padding:1em 0;">
+          <i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i> OBS: Ulike LTID!
         </p>
-        <a href="{{ URL::action('UsersController@getShow', $user1->id) }}" class="btn btn-default">Avbryt</a>
-        {{ Form::submit('Lagre', array('class' => 'btn btn-success', 'disabled' => 'disabled')) }}
-      @else
-        <a href="{{ URL::action('UsersController@getShow', $user1->id) }}" class="btn btn-default">Avbryt</a>
-        {{ Form::submit('Lagre', array('class' => 'btn btn-success')) }}
       @endif
+      <a href="{{ URL::action('UsersController@getShow', $user1->id) }}" class="btn btn-default">Avbryt</a>
+      {{ Form::submit('Lagre', array('class' => 'btn btn-success')) }}
     </div>
 
   </form>

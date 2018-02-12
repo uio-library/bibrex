@@ -5,12 +5,7 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
- 
-  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-  <!--[if lt IE 9]>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6/html5shiv.min.js"></script>
-  <![endif]-->
- 
+
   <!-- Complete CSS (Responsive, With Icons) -->
   <link rel="stylesheet" type="text/css" href="{{ URL::to('/components/bootstrap/dist/css/bootstrap.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ URL::to('/site.css') }}">
@@ -73,7 +68,7 @@
 
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                Logget inn som {{ Auth::user()->name }}
+                Innlogget som {{ Auth::user()->name }}
                 <b class="caret"></b>
               </a>
               <ul class="dropdown-menu">
@@ -135,12 +130,12 @@
 
   </div>
 
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handlebars@1.3.0/dist/handlebars.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/typeahead.js@0.11.1/dist/typeahead.bundle.min.js"></script>
 
   <script type="text/javascript" src="{{ URL::to('/components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
-  <script type="text/javascript" src="{{ URL::to('/hogan-2.0.0.js') }}"></script>
-  <script type="text/javascript" src="{{ URL::to('/typeahead.js/typeahead.min.js') }}"></script>
   <script type="text/javascript" src="{{ URL::to('/components/select2/select2.js') }}"></script>
   <!--
   <script src="//cdnjs.cloudflare.com/ajax/libs/css3finalize/3.4.0/jquery.css3finalize.min.js"></script>
@@ -159,6 +154,23 @@
 
       //parent.postMessage("Hello","*");
 
+      var idleStart;
+      function resetIdleTime() {
+        idleStart = new Date();
+      }
+      function tick() {
+        var now = new Date();
+        // 5 minutter
+        if (now - idleStart > 1000 * 60 * 5) {
+          location.reload();
+        }
+
+        setTimeout(tick, 1000);
+      }
+      resetIdleTime();
+      document.body.addEventListener('mousemove', resetIdleTime, true);
+      document.body.addEventListener('keydown', resetIdleTime, true);
+      setTimeout(tick, 1000);
     });
   </script>
 

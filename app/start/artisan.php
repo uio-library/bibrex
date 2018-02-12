@@ -13,3 +13,4 @@
 
 Artisan::add(new NcipSync);
 Artisan::add(new Anonymize);
+Artisan::add(new SendReminders);

@@ -80,10 +80,17 @@ class UsersController extends BaseController {
 		if (!$user) {
 			return Response::json(array('exists' => false));
 		}
-		$data = $user->ncipLookup();
+		$data = $user->almaLookup();
+		$user->mergeFromUserResponse($data);
+		$user->save();
 
-		return Response::json($data);
+		if ($user->in_bibsys) {
+			return Redirect::back()->withStatus('Data hentet inn fra Alma');
+		} else {
+			return Redirect::back()->withStatus('Brukeren ble ikke funnet i Alma');
+		}
 	}
+
 	/**
 	 * Show the form for editing the specified resource.
 	 *

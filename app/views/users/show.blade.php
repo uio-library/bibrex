@@ -19,8 +19,8 @@
           </th>
           <td>
             {{ $user->ltid ? $user->ltid : '<em>Intet LTID</em>' }}
-            : <span>{{ $user->in_bibsys ? 'finnes i BIBSYS' : 'finnes ikke i BIBSYS' }}</span>
-            (<a href="#">Sjekk på nytt</a>)
+            : <span>{{ $user->in_bibsys ? 'finnes i Alma' : 'finnes ikke i Alma' }}</span>
+            (<a href="{{ URL::action('UsersController@getNcipLookup', $user->id) }}">Re-importer</a>)
           </td>
         </tr>
         <tr>

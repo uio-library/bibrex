@@ -22,30 +22,35 @@
           'class' => 'form-inline'
           )) }}
 
-        <div class="row">
+        <div style="display:flex">
 
-          <div class="col-sm-5">
+          <div style="flex:1 0 auto;margin-right:1em;">
+            {{ Form::label('thing', 'Hva?') }}
+            <div class="thing">
+                {{ Form::text('thing', null, array(
+                  'placeholder' => 'Ting',
+                  'class' => 'form-control typeahead',
+                  'style' => 'display:block',
+                  'tabindex' => '1',
+                )) }}
+                {{ Form::hidden('thing_id') }}
+            </div>
+          </div>
+
+          <div style="flex:1 0 auto;margin-right:1em;">
             {{ Form::label('ltid', 'Til hvem?') }}
-            <small>Etternavn, fornavn eller LTID</small>
+            <small>Scann kort eller skriv inn</small>
             <div class="user">
                 {{ Form::text('ltid', null, array(
-                  'placeholder' => 'Etternavn, fornavn eller LTID', 
+                  'placeholder' => 'Etternavn, fornavn eller låntaker-ID', 
                   'class' => 'form-control typeahead',
-                  'style' => 'display:block'
+                  'style' => 'display:block;width:100%;'
                 )) }}
                 {{ Form::hidden('user_id') }}
             </div>
           </div>
 
-          <div class="col-sm-3">
-            {{ Form::label('thing', 'Hva?') }}<br />
-            {{ Form::select('thing', $things, null, array(
-                'class' => 'form-control',
-                'style' => 'display:block'
-            )) }}
-          </div>
-
-          <div id="bibsysdok_extras" class="col-sm-3">
+          <div id="bibsysdok_extras" style="flex:1 0 auto; display:none;">
             {{ Form::label('dokid', 'DOKID:') }}<br />
             {{ Form::text('dokid', null, array(
                 'placeholder' => 'DOKID',
@@ -54,7 +59,7 @@
             )) }}
           </div>
 
-          <div id="other_extras" class="col-sm-3" style="display:none;">
+          <div id="other_extras" style="width:80px;margin-right:1em;">
             {{ Form::label('count', 'Antall:') }}<br />
             {{ Form::text('count', '1', array(
                 'placeholder' => 'Antall',
@@ -62,14 +67,21 @@
                 'style' => 'display:block'
             )) }}
           </div>
+          <div>
+            <div style="margin-bottom:5px;">&nbsp;</div>
+            {{ Form::submit('Lån ut!', array(
+                'class' => 'btn btn-success'
+            )) }}
+          </div>
+      </div>
 
-        </div>
+      <p style="padding-top:1em; float:right;">
+        <a href="{{ URL::action('ThingsController@getAvailable', Auth::user()->id) }}">Oversikt over tilgjengelige ting</a> (beta)
+      </p>
 
-      {{ Form::submit('Lån ut!', array(
-          'class' => 'btn btn-success'
-      )) }}
-
-      <span class="spinner" style="padding-left:10px; font-style:italic;">Et øyeblikk...</span>
+      <div style="padding-top:1em;">
+        &nbsp;<span class="spinner" style="padding-left:5px; font-style:italic;">Et øyeblikk...</span>
+      </div>
 
       {{ Form::close() }}
     </div>
@@ -97,26 +109,51 @@
     <ul class="list-group">
     @foreach ($loans as $loan)
 
-      <li class="list-group-item{{ in_array($loan->id, $loan_ids) ? ' added' : '' }}" data-asguest="{{ $loan->as_guest ? 1 : 0 }}" data-overdue="{{ $loan->daysLeft() < 0 ? 1 : 0 }}">
-        <h4 class="list-group-item-heading">
-          <a href="{{ URL::action('LoansController@getShow', $loan->id) }}">
-            {{ $loan->representation() }}
+      <li class="list-group-item{{ in_array($loan->id, $loan_ids) ? ' added' : '' }}"
+          data-asguest="{{ $loan->as_guest ? 1 : 0 }}"
+          data-overdue="{{ $loan->daysLeft() < 0 ? 1 : 0 }}"
+          style="display:flex">
+        <div style="flex: 1 0 auto">
+          <h4 class="list-group-item-heading">
+            <a href="{{ URL::action('LoansController@getShow', $loan->id) }}">
+              {{ $loan->representation() }}
 
-          </a>
-          utlånt til
-          <a href="{{ URL::action('UsersController@getShow', $loan->user->id) }}">
-            {{ $loan->user->lastname }},
-            {{ $loan->user->firstname }}
-
-          </a>
-        </h4>
-        <p class="list-group-item-text">
-          Utlånt {{ $loan->created_at }}.
-          {{ ($d = $loan->daysLeftFormatted()) ? "$d." : "" }}
-          <a href="{{ URL::action('LoansController@getDestroy', $loan->id) }}?returnTo=loans.index">
+            </a>
+            utlånt til
+            <a href="{{ URL::action('UsersController@getShow', $loan->user->id) }}">
+              {{ $loan->user->lastname }},
+              {{ $loan->user->firstname }}
+            </a>
+            @if($loan->user->in_bibsys)
+              <em class="glyphicon glyphicon-ok text-success" title="Bruker finnes i Alma"></em>
+            @else
+              <a href="{{ URL::action('UsersController@getNcipLookup', $loan->user->id) }}">
+                <em class="glyphicon glyphicon-refresh text-warning" title="Sjekk om bruker finnes i Alma"></em>
+              </a>
+            @endif
+          </h4>
+          <p class="list-group-item-text" style="{{ $loan->relativeCreationTimeHours() > 12 ? 'font-weight: bold; color:red;' : ''; }}">
+            Utlånt for {{ $loan->relativeCreationTime() }} siden.
+            {{ ($d = $loan->daysLeftFormatted()) ? "$d." : "" }}
+          </p>
+          @if (empty($loan->user->email))
+            <div class="text-danger">OBS: Ingen e-postadresse registrert!</div>
+          @endif
+          @foreach ($loan->reminders as $reminder)
+            <div class="text-danger">
+              <a class="text-danger" href="{{ URL::action('RemindersController@getShow', $reminder->id) }}">Påminnelse</a>
+              sendt {{ $reminder->created_at }}
+            </div>
+          @endforeach
+        </div>
+        <div>
+          <a class="btn btn-success" href="{{ URL::action('LoansController@getDestroy', $loan->id) }}?returnTo=loans.index">
             Returnér
           </a>
-        </p>
+          <a class="btn btn-danger" href="{{ URL::action('LoansController@getLost', $loan->id) }}?returnTo=loans.index">
+            Merk somt tapt
+          </a>
+        </div>
       </li>
     @endforeach
 
@@ -146,7 +183,7 @@
     var $ltid = $('input[name="ltid"]'),
       $dokid = $('input[name="dokid"]');
 
-    setTimeout(function() { $('#ltid').focus(); }, 100)
+    // setTimeout(function() { $('#thing').focus(); }, 100)
 
     $('.spinner').hide();
 
@@ -155,21 +192,91 @@
       localStorage.clear(); // to get a fresh list of names
     }
 
+
+    var users = new Bloodhound({
+      prefetch: '{{ URL::to('/users') }}',
+      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+    });
+
     $('.user .typeahead')
-    .typeahead([{
-        name: 'brukere',
-        prefetch: '{{ URL::to('/users') }}',
-         template: [
-            '<p class="repo-ltid">{'+'{ltid}'+'}</p><p class="repo-name">{'+'{lastname}'+'}, {'+'{firstname}'+'}</p>',
-          ].join(''),
-          engine: Hogan
-      }])
+    .typeahead({
+      highlight: true,
+    }, {
+      name: 'brukere',
+      source: users,
+      display: function(item) {
+        return item.value ;
+      },
+      templates: {
+        suggestion: Handlebars.compile('<div><span class="right">{'+'{ltid}'+'}</span><span class="main">{'+'{value}'+'}</span></div>'),
+      }
+    })
+    .on('input', function(evt, datum) {
+      $('input[name="user_id"]').val('');
+    })
     .on('typeahead:autocompleted', function(evt, datum) {
       $('input[name="user_id"]').val(datum.id);
+      $('#count').focus();
     })
     .on('typeahead:selected', function(evt, datum) {
       $('input[name="user_id"]').val(datum.id);
+      $('#count').focus();
+    });
+
+
+    var allThings = [
+    @foreach ($things as $thing)
+      {
+        'id': '{{$thing->id}}',
+        'value': '{{$thing->name}}',
+        'avail': '{{ $thing->num_items ? $thing->availableItems() . ' tilgjengelig' : '' }}',
+      },
+    @endforeach
+    ];
+    var things = new Bloodhound({
+      datumTokenizer: Bloodhound.tokenizers.obj.nonword( 'value'),
+      queryTokenizer: Bloodhound.tokenizers.nonword,
+      local: allThings,
+    });
+
+    function thingsWithDefaults(q, sync) {
+      if (q === '') {
+        sync(allThings);
+      } else {
+        things.search(q, sync);
+      }
+    }
+
+
+    $('.thing .typeahead')
+    .typeahead({
+      minLength: 0,
+      highlight: true,
+    }, {
+      name: 'ting',
+      source: thingsWithDefaults,
+      limit: 100,
+      display: function(item) {
+        return item.value;
+      },
+      templates: {
+        suggestion: Handlebars.compile('<div><span class="right">{'+'{avail}'+'}</span><span class="main">{'+'{value}'+'}</span></div>'),
+      }
     })
+    .on('input', function(evt, datum) {
+      $('input[name="thing_id"]').val('');
+    })
+    .on('typeahead:autocomplete', function(evt, datum) {
+      $('input[name="thing_id"]').val(datum.id);
+      $('#ltid').focus();
+    })
+    .on('typeahead:select', function(evt, datum) {
+      $('input[name="thing_id"]').val(datum.id);
+      $('#ltid').focus();
+    });
+
+
 /*
     var ltidLength = 0;
     var popovervisible = false;

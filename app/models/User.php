@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\MessageBag;
-use Scriptotek\Ncip\UserResponse;
-use Scriptotek\Ncip\InvalidNcipResponseException;
+use Scriptotek\Alma\Client as AlmaClient;
+
 class User extends Eloquent {
 
 	/**
@@ -81,6 +81,43 @@ class User extends Eloquent {
 		return null;
 	}
 
+	public function almaLookup() {
+		if (!$this->ltid) {
+			return null;
+		}
+		$alma = new AlmaClient(Config::get('app.alma_key'), 'eu');
+		$users = $alma->users->search('ALL~' . $this->ltid);
+		try {
+			foreach ($users as $u) {
+				break;
+			}
+		} catch (\ErrorException $e) {
+			return null;
+		}
+
+		$email = '';
+		$phone = '';
+		foreach ($u->contact_info->email as $e) {
+			if ($e->preferred) $email = $e->email_address;
+		}
+		foreach ($u->contact_info->phone as $e) {
+			if ($e->preferred) $phone = $e->phone_number;
+		}
+		if (in_array($u->preferred_language->value, ['no', 'nb', 'nn'])) {
+			$lang = 'nor';
+		} else {
+			$lang = 'eng';
+		}
+		return [
+			'first_name' => $u->first_name,
+			'last_name' => $u->last_name,
+			'phone' => $phone,
+			'email' => $email,
+			'lang' => $lang,
+		];
+
+	}
+
 	/**
 	 * Save the model to the database.
 	 *
@@ -92,45 +129,51 @@ class User extends Eloquent {
 		if (!$this->validate()) {
 			return false;
 		}
-		if (!$this->exists) {
+		$isNew = !$this->exists;
+		if ($isNew) {
 			$this->in_bibsys = false;
 			if ($this->ltid) {
-				$response = $this->ncipLookup();
-				if (!is_null($response)) {
-					$this->in_bibsys = $response->exists;
-					if ($response->exists) {
-						$this->mergeFromUserResponse($response);
-						Log::info('Fant [[User:' . $this->ltid . ']] i BIBSYS');
-					} else {
-						Log::info('Fant ikke [[User:' . $this->ltid . ']] i BIBSYS');
-					}
+				$almaUser = $this->almaLookup();
+				if (!is_null($almaUser)) {
+					$this->mergeFromUserResponse($almaUser);
+					Log::info('Fant User:' . $this->ltid . ' i Alma.');
+				} else {
+					Log::info('Fant ikke User:' . $this->ltid . ' i Alma.');
 				}
 			}
-			Log::info('Opprettet ny bruker i BIBREX');
 		} else {
-			Log::info('Oppdaterte opplysningene for bruker [[User:' . $this->id . ']].');
 
 			// TODO: Hva hvis LTID endres fra et nr. til et annet og brukeren har lån?
 			//       Da må lånene overføres
 
 		}
 		parent::save($options);
+		if ($isNew) {
+			Log::info('Opprettet ny bruker: User:' . $this->id . '.');
+		} else {
+			Log::info('Oppdaterte opplysningene for bruker User:' . $this->id . '.');
+		}
+
 		return true;
 	}
 
 	/**
-	 * Merge in NCIP UserResponse data
+	 * Merge in UserResponse data
 	 *
-	 * @param  Scriptotek\Ncip\UserResponse  $response
 	 * @return void
 	 */
-	public function mergeFromUserResponse(UserResponse $response)
+	public function mergeFromUserResponse($response)
 	{
-		$this->lastname = $response->lastName;
-		$this->firstname = $response->firstName;
-		$this->email = $response->email;
-		$this->phone = $response->phone;
-		//$this->lang = $response->lang;  // WAIT: Seems like BIBSYS currently always returns "eng"
+		if (is_null($response)) {
+			$this->in_bibsys = false;
+			return;
+		}
+		$this->in_bibsys = true;
+		$this->lastname = $response['last_name'];
+		$this->firstname = $response['first_name'];
+		$this->email = $response['email'];
+		$this->phone = $response['phone'];
+		$this->lang = $response['lang'];
 	}
 
 	protected function mergeAttribute($key, User $user)
@@ -172,13 +215,14 @@ class User extends Eloquent {
 		// Validate
 		$errors = new MessageBag();
 		$ltid = $data['ltid'];
-		if (!empty($ltid) && !empty($user->ltid) && ($ltid != $user->ltid)) {
-			$errors->add('ltid_conflict', "Kan ikke flette nytt LTID $ltid med eksisterende $user->ltid.");
-		}
 
-		if (!empty($ltid) && !empty($this->ltid) && ($ltid != $this->ltid)) {
-			$errors->add('ltid_conflict', "Kan ikke flette nytt LTID $ltid med eksisterende $this->ltid.");
-		}
+		// if (!empty($ltid) && !empty($user->ltid) && ($ltid != $user->ltid)) {
+		// 	$errors->add('ltid_conflict', "Kan ikke flette nytt LTID $ltid med eksisterende $user->ltid.");
+		// }
+
+		// if (!empty($ltid) && !empty($this->ltid) && ($ltid != $this->ltid)) {
+		// 	$errors->add('ltid_conflict', "Kan ikke flette nytt LTID $ltid med eksisterende $this->ltid.");
+		// }
 
 		if ($errors->count() > 0) {
 			return $errors;

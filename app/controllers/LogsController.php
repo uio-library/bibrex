@@ -18,6 +18,13 @@ class LogsController extends BaseController {
 
 		foreach ($reader as $log) {
 			if (is_array($log) && isset($log['date'])) {
+				$log['message'] = preg_replace_callback(
+					'/\bUser:(.+?)\b/i',
+					function ($m) {
+						return '<a href="' . URL::action('UsersController@getShow', strtolower($m[1]) ) . '">' . strtolower($m[1]) . '</a>';
+					},
+					$log['message']
+				);
 				$items[] = $log;
 			}
 	        //echo sprintf("The log entry was written at %s. \n", $log['date']->format('Y-m-d h:i:s'));
@@ -38,13 +45,6 @@ class LogsController extends BaseController {
 		// 		$matches['message']
 		// 	);
 
-		// 	$matches['message'] = preg_replace_callback(
-		// 		'/\[\[User:(.+?)\]\]/i',
-		// 		function ($m) {
-		// 			return '<a href="' . URL::action('UsersController@getShow', strtolower($m[1]) ) . '">' . strtolower($m[1]) . '</a>';
-		// 		},
-		// 		$matches['message']
-		// 	);
 
 		// 	$items[] = array($item, $matches);
 		// }

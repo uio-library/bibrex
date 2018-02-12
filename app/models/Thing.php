@@ -10,7 +10,9 @@ class Thing extends Eloquent {
      * @static array
      */
     public static $rules = array(
-        'name' => 'required|unique:things,name,:id:'
+        'name' => 'required|unique:things,name,:id:',
+        'email_name_nor' => 'required',
+        'email_name_eng' => 'required',
     );
 
     /**
@@ -20,7 +22,9 @@ class Thing extends Eloquent {
      */
     public static $messages = array(
         'name.required' => 'Navn må fylles ut',
-        'name.unique' => 'Tingen finnes allerede'
+        'name.unique' => 'Tingen finnes allerede',
+        'email_name_nor.required' => 'Norsk purrenavn må fylles ut',
+        'email_name_eng.required' => 'Engelsk purrenavn må fylles ut',
     );
 
     /**
@@ -87,6 +91,11 @@ class Thing extends Eloquent {
             }
         }
         return $loans;
+    }
+
+    public function availableItems()
+    {
+        return $this->num_items - count($this->activeLoans());
     }
 
     public function allLoans()

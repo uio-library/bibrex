@@ -9,37 +9,12 @@
 
     <div class="panel-body">
 
-      {{ Form::model(new Thing(), array(
-          'action' => 'ThingsController@postStore',
-          'class' => 'form-inline'
-          )) }}
-
-        Navn:
-        {{ Form::text('thing', null, array(
-            'placeholder' => 'Navn', 
-            'class' => 'form-control',
-            'style' => 'width:120px'
-        )) }}
-
-        <button type="submit" class="btn btn-success">
-          Lagre ny ting
-        </button>
-
-        <img src="/img/spinner2.gif" class="spinner" />
-
-      {{ Form::close() }}
-
-      <h3>Hva med klikkere?</h3>
-
-      <p style="margin:10px 0;">
-        Klikkere skal ikke legges til. Klikkere har HEFTID festet 
-        på baksiden og lånes ut som normalt i BIBSYS. Det er per i dag 
-        ikke teknisk mulig for BIBREX å låne ut dokumenter med HEFTID, 
-        så hvis bruker ikke har gyldig LTID har man et problem. En 
-        løsning kan være å låne ut på «Midlertid låner» (umn1002157) 
-        i BIBSYS og skrive personopplysninger om låneren i 
-        utlånskommentaren.
+      <p>
+        Finner du ikke tingen din?
       </p>
+
+      <a class="btn btn-success" href="{{ URL::action('ThingsController@getEdit', '_new') }} ">Opprett en ny ting!</a>
+
     </div>
 
   </div>
@@ -61,11 +36,32 @@
     <!-- List group -->
     <ul class="list-group">
       @foreach ($things as $thing)
-        <li class="list-group-item">
-          <a href="{{ URL::action('ThingsController@getShow', $thing->id) }}">
-            {{ $thing->name }}
-          </a>
-          ({{ count($thing->activeLoans()) }} utlånt nå{{ $thing->disabled ? ', nye utlån tillates ikke' : '' }})
+        <li class="list-group-item" style="display:flex; {{ $thing->disabled ? 'background: #eee; color: #999': ''}}">
+          <div style="flex: 1 0 auto">
+            <a href="{{ URL::action('ThingsController@getShow', $thing->id) }}">
+              {{ $thing->name }}
+            </a>
+            @if ($thing->disabled)
+              – Nye utlån tillates ikke
+            @endif
+            <div>
+              @if ($thing->send_reminders)
+                Ubestemt form: {{ $thing->email_name_nor }} / {{ $thing->email_name_eng }}<br>
+                Bestemt form: {{ $thing->email_name_definite_nor }} / {{ $thing->email_name_definite_eng }}
+              @else
+                <em>Purres ikke</em>
+              @endif
+            </div>
+          </div>
+          <div>
+            @if (count($thing->activeLoans()))
+              <strong>{{ count($thing->activeLoans()) }} {{ $thing->num_items ? 'av ' . $thing->num_items : '' }} utlånt nå</strong>
+            @else
+             <span style="color:#999">
+              {{ count($thing->activeLoans()) }} {{ $thing->num_items ? 'av ' . $thing->num_items : '' }} utlånt nå
+            </span>
+            @endif
+          </div>
         </li>
       @endforeach
     </ul>
@@ -76,7 +72,7 @@
 
 @section('scripts')
 
-<script type='text/javascript'>     
+<script type='text/javascript'>
 
   $(document).ready(function() {
     $('.spinner').hide();

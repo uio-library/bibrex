@@ -25,9 +25,6 @@
                     }
                 ?>
     		</td>
-            <td>
-                <a href="#" class="del-link">Slett</a>
-            </td>
     	</tr>
     @endforeach
 	</table>

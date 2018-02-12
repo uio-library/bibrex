@@ -20,7 +20,7 @@
             Ting:
           </th>
           <td>
-            {{ $loan->document->thing->name }}
+            <a href="{{ URL::action('ThingsController@getShow', $loan->document->thing->id) }}">{{ $loan->document->thing->name }}</a>
           </td>
         </tr>
 
@@ -79,7 +79,7 @@
         </tr>
 
         <tr>
-          <th>
+          <th valign="top">
             Påminnelser:
           </th>
           <td>
@@ -90,13 +90,13 @@
             @else
               @foreach ($loan->reminders as $reminder)
                 <div>
-                  Påminnelse per {{ $reminder->medium == 'sms' ? 'SMS' : 'e-post' }} sendt {{ $reminder->date_created }}
+                  <a href="{{ URL::action('RemindersController@getShow', $reminder->id) }}">Påminnelse</a> per {{ $reminder->medium == 'sms' ? 'SMS' : 'e-post' }} sendt {{ $reminder->created_at }}
                 </div>
               @endforeach
             @endif
             <div>
               <a href="{{ URL::action('RemindersController@getCreate') . '?loan_id=' . $loan->id }}">
-                Send påminnelse
+                Manuell påminnelse
               </a>
             </div>
           </td>

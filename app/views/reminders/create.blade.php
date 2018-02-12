@@ -9,21 +9,47 @@
   )) }}
 
     <div class="panel-heading">
-      <h3 class="panel-title">Send påminnelse</h3>
+      <h3 class="panel-title">Send ny påminnelse</h3>
     </div>
 
-    <div class="form-group">
-      Til: {{ Form::radio('medium', 'sms', false, array('id' => 'medium-sms')) }}
-      {{ Form::label('medium-sms', 'SMS: ' . $loan->user->phone) }}
-      {{ Form::radio('medium', 'epost', true, array('id' => 'medium-epost')) }}
-      {{ Form::label('medium-epost', 'E-post: ' . $loan->user->email) }}
+    <div class="panel-body form-horizontal">
+
+      <div class="form-group">
+        <label for="recipient" class="col-sm-2 control-label">Til:</label>
+        <div class="col-sm-10">
+          <p class="form-control-static">
+            <input type="hidden" name="medium" value="email">
+            {{ $loan->user->email }}
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="recipient" class="col-sm-2 control-label">Emne:</label>
+        <div class="col-sm-10">
+          <p class="form-control-static">
+            {{ $subject }}
+          </p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="recipient" class="col-sm-2 control-label">Melding:</label>
+        <div class="col-sm-10">
+          <p class="form-control-static">
+            {{ $body }}
+          </p>
+        </div>
+      </div>
+
     </div>
 
-    <textarea style="width: 600px; height: 60px;">Oi, oi, oi, "{{ $loan->representation(true) }}" har forfalt.</textarea>
+    <!--<textarea name="comment" style="width: 600px; height: 60px;">Oi, oi, oi, "{{ $loan->representation(true) }}" har forfalt.</textarea>-->
+    <input type="hidden" name="loan_id" value="{{ $loan->id }}">
 
     <div class="panel-footer">
       <a href="{{ URL::action('LoansController@getShow', $loan->id) }}" class="btn">Avbryt</a>
-      {{ Form::submit('Lagre', array('class' => 'btn btn-success')) }}
+      {{ Form::submit('Send påminnelse', array('class' => 'btn btn-success')) }}
     </div>
 
   {{ Form::close() }}
