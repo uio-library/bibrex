@@ -11,12 +11,14 @@ class BaseController extends Controller {
     {
         View::composer('layouts.master', function($view){
             $view->with('status', Session::get('status'));
+            $view->with('error', Session::get('error'));
         });
 
 		if ( ! is_null($this->layout))
 		{
             $this->layout = View::make($this->layout)
-                ->with('status', Session::get('status'));
+                ->with('status', Session::get('status'))
+                ->with('error', Session::get('error'));
 		}
 	}
 

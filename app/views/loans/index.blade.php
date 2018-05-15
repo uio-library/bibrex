@@ -128,21 +128,31 @@
               <em class="glyphicon glyphicon-ok text-success" title="Bruker finnes i Alma"></em>
             @else
               <a href="{{ URL::action('UsersController@getNcipLookup', $loan->user->id) }}">
-                <em class="glyphicon glyphicon-refresh text-warning" title="Sjekk om bruker finnes i Alma"></em>
+                <em class="glyphicon glyphicon-refresh text-warning" title="Prøv å importere brukeropplysninger fra Alma"></em>
               </a>
             @endif
           </h4>
-          <p class="list-group-item-text" style="{{ $loan->relativeCreationTimeHours() > 12 ? 'font-weight: bold; color:red;' : ''; }}">
-            Utlånt for {{ $loan->relativeCreationTime() }} siden.
+          <p class="list-group-item-text {{ $loan->relativeCreationTimeHours() > 12 ? 'text-danger' : '' }}">
+            Utlånt {{ $loan->relativeCreationTime() }}.
             {{ ($d = $loan->daysLeftFormatted()) ? "$d." : "" }}
           </p>
           @if (empty($loan->user->email))
-            <div class="text-danger">OBS: Ingen e-postadresse registrert!</div>
+            <div class="text-danger">
+              <em class="glyphicon glyphicon-warning-sign"></em>
+              OBS: Ingen e-postadresse registrert på brukeren!
+            </div>
+          @endif
+          @if ($loan->user->note)
+            <div>
+              <em class="glyphicon glyphicon-user"></em>
+              {{ $loan->user->note }}
+            </div>
           @endif
           @foreach ($loan->reminders as $reminder)
             <div class="text-danger">
-              <a class="text-danger" href="{{ URL::action('RemindersController@getShow', $reminder->id) }}">Påminnelse</a>
-              sendt {{ $reminder->created_at }}
+              <a class="text-danger" href="{{ URL::action('RemindersController@getShow', $reminder->id) }}">
+                <em class="glyphicon glyphicon-envelope text-danger"></em>
+                Påminnelse</a> ble sendt {{ $reminder->created_at }}.
             </div>
           @endforeach
         </div>

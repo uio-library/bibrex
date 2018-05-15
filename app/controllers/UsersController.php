@@ -85,9 +85,9 @@ class UsersController extends BaseController {
 		$user->save();
 
 		if ($user->in_bibsys) {
-			return Redirect::back()->withStatus('Data hentet inn fra Alma');
+			return Redirect::back()->with('status', 'Brukeropplysninger ble oppdatert fra Alma');
 		} else {
-			return Redirect::back()->withStatus('Brukeren ble ikke funnet i Alma');
+			return Redirect::back()->with('error', 'Brukeren ble ikke funnet i Alma! Kanskje brukeren har fått nytt låntaker-ID?');
 		}
 	}
 
@@ -134,6 +134,7 @@ class UsersController extends BaseController {
 		$user->firstname = Input::get('firstname');
 		$user->phone = Input::get('phone') ? Input::get('phone') : null;
 		$user->email = Input::get('email') ? Input::get('email') : null;
+		$user->note = Input::get('note') ? Input::get('note') : null;
 		$user->lang = Input::get('lang');
 		$user->save();
 

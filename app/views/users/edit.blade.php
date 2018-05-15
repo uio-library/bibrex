@@ -40,6 +40,11 @@
       </div>
 
       <div class="form-group">
+        {{ Form::label('note', 'Merknad') }}
+        {{ Form::text('note', $user->note, array('class' => 'form-control')) }}
+      </div>
+
+      <div class="form-group">
         {{ Form::radio('lang', 'eng', false, array('id' => 'lang-eng')) }}
         {{ Form::label('lang-eng', 'engelsk') }}
         {{ Form::radio('lang', 'nor', true, array('id' => 'lang-nor')) }}

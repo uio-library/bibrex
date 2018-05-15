@@ -241,7 +241,7 @@ class LoansController extends BaseController {
 		// Create new loan(s)
 		$loan_ids = array();
 		for ($i=0; $i < $count; $i++) {
-			$loan = new Loan;
+			$loan = new Loan();
 			$loan->user_id = $user->id;
 			$loan->document_id = $dok->id;
 			if (!$loan->save()) {
@@ -250,6 +250,9 @@ class LoansController extends BaseController {
 					->withInput();
 			}
 			$loan_ids[] = $loan->id;
+
+			$user->loan_count += 1;
+			$user->save();
 		}
 
 		Log::info('Lånte ut <a href="'. URL::action('LoansController@getShow', $loan_ids[0]) . '">' . $thing->name . '</a>.');

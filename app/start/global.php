@@ -38,13 +38,13 @@ $handler = new Monolog\Handler\StreamHandler(
 );
 $monolog->pushHandler($handler);
 
-$h = new Monolog\Handler\PushoverHandler(
-	Config::get('pushover.app_token'),
-	Config::get('pushover.users'),
-	'BibRex',
-	$monolog::INFO
-);
-$monolog->pushHandler($h);
+// $h = new Monolog\Handler\PushoverHandler(
+// 	Config::get('pushover.app_token'),
+// 	Config::get('pushover.users'),
+// 	'BibRex',
+// 	$monolog::INFO
+// );
+// $monolog->pushHandler($h);
 
 
 /*

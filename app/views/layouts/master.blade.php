@@ -101,6 +101,13 @@
       </div>
     @endif
 
+    @if (!empty($error))
+      <div class="alert alert-danger" style="display:none;">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{$error}}
+      </div>
+    @endif
+
     @if ($e = $errors->all('<li>:message</li>'))
       <div class="alert alert-danger" style="display:none;">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

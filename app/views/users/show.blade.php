@@ -63,6 +63,14 @@
             {{ $user->created_at }}
           </td>
         </tr>
+        <tr>
+          <th>
+            Merknad:
+          </th>
+          <td>
+            {{ $user->note }}
+          </td>
+        </tr>
       </table>
 
     </div>
