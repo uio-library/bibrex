@@ -33,10 +33,6 @@ class CreateLibrariesTable extends Migration {
 		});
 
 		Schema::table('things', function(Blueprint $table) {
-
-			$table->integer('library_id')
-				->unsigned()->nullable();
-
 			$table->foreign('library_id')
 				->references('id')->on('libraries')
 				->onDelete('restrict');
