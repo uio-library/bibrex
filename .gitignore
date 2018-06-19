@@ -14,3 +14,4 @@ composer.lock
 /app/tests/unit/CodeGuy.php
 app/config/packages/danmichaelo
 app/config/packages/aws
+/node_modules

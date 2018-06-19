@@ -14,6 +14,15 @@ Simple lending system using NCIP to connect to a library system.
 4. `php artisan db:seed` to seed initial database data
 5. Make sure `app/storage` is writable by the www user.
 
+
+### Development
+
+Refresh database:
+
+Disable logging to database when refreshing the database:
+
+    LOG_CHANNEL=single php artisan migrate:refresh
+
 ### Anonymizing returned loans
 
 	php artisan anonymize

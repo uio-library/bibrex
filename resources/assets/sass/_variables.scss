@@ -1,0 +1,16 @@
+
+// Body
+$body-bg: #f5f8fa;
+
+// Typography
+$font-family-sans-serif: "Raleway", sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+
+$theme-colors: (
+  "primary": darken(#428bca, 6.5%),
+  "danger": #d9534f,
+  "success": #5cb85c,
+  "info": #5bc0de,
+  "warning": #f0ad4e
+);
