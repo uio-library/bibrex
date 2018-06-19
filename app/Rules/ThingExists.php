@@ -52,6 +52,6 @@ class ThingExists implements Rule
      */
     public function message()
     {
-        return 'Thing not found! Might it be an imaginary thing?';
+        return 'Tingen ble ikke funnet! Kanskje du ser etter tingen i seg selv?';
     }
 }
