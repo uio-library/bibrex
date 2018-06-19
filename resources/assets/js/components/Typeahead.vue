@@ -48,10 +48,15 @@ import Bloodhound from 'corejs-typeahead'
                 type: Boolean,
                 default: false,
             },
+            minLength: {
+              type: Number,
+              default: 4
+            }
         },
         data: () => {
             return {
                 selectedId: '',
+                waitingTimer: null,
                 waitingSince: null,
                 currentValue: '',
             };
@@ -85,16 +90,16 @@ import Bloodhound from 'corejs-typeahead'
                 var $el = $(this.$refs.container.querySelector('.tt-pending'));
 
                 if (dt < 2000) {
-                    $el.html('Venter på Alma...');
+                    $el.html('Venter på Alma... (' + Math.round(dt/1000) + ')');
                 } else if (dt < 4000) {
-                    $el.html('Og vi venter fortsatt på Alma...');
+                    $el.html('Venter fortsatt på Alma... (' + Math.round(dt/1000) + ')');
                 } else if (dt < 6000) {
-                    $el.html('Aaaaaalma, svar da!');
+                    $el.html('Aaaaaalma, svar da! (' + Math.round(dt/1000) + ')');
                 } else if (dt < 8000) {
-                    $el.html('Et godt API svarer innen 1 sekund. Alma har nå brukt ' + Math.round(dt/1000) ) ;
+                    $el.html('Et respektabelt API svarer innen 1 sekund... Nå har vi ventet ' + Math.round(dt/1000) ) ;
                 }
 
-                setTimeout(this.stillWaiting.bind(this), 500);
+                this.waitingTimer = setTimeout(this.stillWaiting.bind(this), 500);
 
             },
 
@@ -123,19 +128,16 @@ import Bloodhound from 'corejs-typeahead'
             let hound = new Bloodhound(options);
 
             $(this.$refs.textinput).typeahead({
-              minLength: 0,
+              minLength: this.minLength,
               // highlight: true,
             }, {
               name: this.name,
               source: (query, sync, async) => {
                 if (query === '') {
-                    sync(hound.all());
-                } else if (query.length < 4) {
-                    // search local index only
-                    sync(hound.sorter(hound.index.search(query)));
+                  sync(hound.all());
+                  async([]);
                 } else {
-                    // search remote
-                    hound.search(query, sync, async);
+                  hound.search(query, sync, async);
                 }
               },
               display: item => item.name,
@@ -144,16 +146,17 @@ import Bloodhound from 'corejs-typeahead'
                     ? `<div><span class="right">${d.id}</span><span class="main">${d.name} - ${d.group}</span></div>`
                     : `<div><span class="main">${d.name}</span></div>`,
                 notFound: this.hideIfNoMatches ? null : '<div class="tt-empty"><span>No matches</span></div>',
-                pending: '<div class="tt-pending"></div>',
+                pending: '<div class="tt-pending">Waiting...</div>',
               }
             })
             .on('typeahead:asyncrequest', (u) => {
-                if (this.currentValue.length >= 4) {
-                    this.waitingSince = new Date().getTime();
-                    this.stillWaiting();
-                }
+                console.log('typeahead:asyncrequest');
+                this.waitingSince = new Date().getTime();
+                this.stillWaiting();
             })
             .on('typeahead:asynccancel typeahead:asyncreceive', () => {
+                console.log('typeahead:asynccancel typeahead:asyncreceive');
+                clearTimeout(this.waitingTimer);
                 this.waitingSince = null;
             })
             .on('input', (ev) => {
@@ -163,10 +166,12 @@ import Bloodhound from 'corejs-typeahead'
                 this.currentValue = ev.currentTarget.value;
             })
             .on('typeahead:select', (ev, datum) => {
+              console.log('typeahead:select');
                 this.selectedId = datum.id;
                 this.focusNextElement();
             })
             .on('typeahead:autocomplete', (ev, datum) => {
+              console.log('typeahead:autocomplete');
                 this.selectedId = datum.id;
                 this.focusNextElement();
             })

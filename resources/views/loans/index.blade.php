@@ -30,15 +30,17 @@
 
           <div class="col-sm-5 px-2">
             <label for="thing">Hva?</label>
-            <typeahead name="thing" :tabindex="1" value="{{ old('thing') }}" prefetch="/things?mine=1" :hide-if-no-matches="true"></typeahead>
-            <small class="form-text text-muted"></small>
+            <typeahead name="thing" :tabindex="1" value="{{ old('thing') }}" prefetch="/things?mine=1" :hide-if-no-matches="true" :min-length="0"></typeahead>
+            <small class="form-text text-muted">
+              Scann eller velg ting
+            </small>
           </div>
 
           <div class="col-sm-5 px-2">
             <label for="user">Til hvem?</label>
-            <typeahead name="user" :tabindex="2" value="{{ old('user') }}" prefetch="/users" remote="/users/search-alma" placeholder="Til hvem?"></typeahead>
+            <typeahead name="user" :tabindex="2" value="{{ old('user') }}" prefetch="/users" remote="/users/search-alma" placeholder="Til hvem?" :min-length="4"></typeahead>
             <small class="form-text text-muted">
-                Etternavn, fornavn eller låntaker-ID
+                Navn eller låne-ID
             </small>
           </div>
 
