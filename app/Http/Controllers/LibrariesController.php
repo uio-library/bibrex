@@ -155,13 +155,11 @@ class LibrariesController extends Controller
      */
     public function postLogin(Request $request)
 	{
-        $credentials = array(
-			'name' => $request->input('library'),
-			'password' => $request->input('password')
-		);
+        $credentials = $request->only('email', 'password');
 
 		if (Auth::attempt($credentials, true)) {
 			Session::put('iplogin', false);
+
 			return redirect()->intended('/');
 		} else {
 			return back()

@@ -68,8 +68,8 @@ input {
             <form method="POST" action="{{ action('LibrariesController@postLogin') }}">
                 {{ csrf_field() }}
               <div class="form-group">
-                <label class="sr-only" for="library">Bibliotek</label>
-                <input type="library" id="library" name="library" class="form-control" placeholder="Bibliotek" value="{{ old('library') }}">
+                <label class="sr-only" for="email">Brukernavn (e-post)</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="Brukernavn (e-post)" value="{{ old('email') }}">
               </div>
               <div class="form-group">
                 <label class="sr-only" for="password">Passord</label>

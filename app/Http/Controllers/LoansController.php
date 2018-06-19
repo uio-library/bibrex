@@ -16,6 +16,15 @@ use Scriptotek\Alma\Client as AlmaClient;
 
 class LoansController extends Controller
 {
+    /**
+     * Validation error messages.
+     *
+     * @static array
+     */
+    protected $messages = array(
+        'user.required' => 'Mangler låntaker.',
+        'thing.required' => 'Uten ting blir det bare ingenting.',
+    );
 
 	/*
 	 * Factory for Laravel Auth
@@ -105,7 +114,7 @@ class LoansController extends Controller
             'thing' => [new ThingExists()],
             'count' => ['integer', 'between:1,10'],
             // 'dokid' => ['regex:/^[0-9a-zA-Z]{9}$/'],
-        ]);
+        ], $this->messages);
 
         $lib = \Auth::user();
 
