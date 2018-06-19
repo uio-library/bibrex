@@ -15,6 +15,13 @@ class Loan extends Model {
 
     public $errors;
 
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['due_at', 'deleted_at'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

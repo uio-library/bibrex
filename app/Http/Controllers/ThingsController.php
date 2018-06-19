@@ -144,6 +144,7 @@ class ThingsController extends Controller {
             'email_name_eng' => 'required',
             'email_name_definite_nob' => 'required',
             'email_name_definite_eng' => 'required',
+            'loan_time' => 'required|numeric|gte:1|lte:36500',
         ], $this->messages)->validate();
 
         $thing->name = $request->input('name');
@@ -153,6 +154,7 @@ class ThingsController extends Controller {
         $thing->email_name_definite_eng = $request->input('email_name_definite_eng');
         $thing->num_items = $request->input('num_items') ?: 0;
         $thing->disabled = $request->input('disabled') == 'on';
+        $thing->loan_time = $request->input('loan_time');
         $thing->send_reminders = $request->input('send_reminders') == 'on';
 
         if (!$thing->save()) {

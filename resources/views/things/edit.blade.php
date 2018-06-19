@@ -33,6 +33,19 @@
         </li>
 
         <li class="list-group-item">
+            <div class="row">
+                <label for="name" class="col-sm-3 col-form-label">Lånetid:</label>
+                <div class="col-sm-9">
+                    @component('components.text', ['name' => 'loan_time', 'value' => $thing->loan_time])
+                    @endcomponent
+                    <p class="form-text text-muted">
+                      Antall dager. Minimum er «1», som betyr det at tingen purres neste morgen.
+                    </p>
+                </div>
+            </div>
+        </li>
+
+        <li class="list-group-item">
 
               <h5 class="card-title">Purringer</h5>
 

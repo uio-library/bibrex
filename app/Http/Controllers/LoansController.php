@@ -9,6 +9,7 @@ use App\Rules\StartsWithUo;
 use App\Rules\ThingExists;
 use App\Thing;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
@@ -205,6 +206,8 @@ class LoansController extends Controller
         }
 
         if (is_null($user)) {
+	        \Log::info('Ingen lokal bruker funnet for: "' . $user_input . '"');
+
             // Try lookup by primary id first. Since Alma allows the primary id
             // to be *anything*, it can overlap with names, etc.
             $query = 'primary_id~' . $user_input;
@@ -224,10 +227,15 @@ class LoansController extends Controller
                     'user' => ['Mer enn én bruker ble funnet i Alma.'],
                 ]);
             } elseif (count($users) == 1) {
-                $user = new User();
+            	$barcode = $users[0]->getBarcode();
+            	$univId = $users[0]->getUniversityId();
+            	$user = User::where('barcode', '=', $barcode)->orWhere('university_id', '=', $univId)->first();
+            	if (is_null($user)) {
+            		$user = new User();
+            	}
                 $user->mergeFromUserResponse($users[0]);
                 $user->save();
-                \Log::info('Importerte bruker fra Alma: "' . $user->lastname . ', ' . $user->firstname. '"');
+                \Log::info('Importerte bruker fra Alma: "' . $users[0]->id. '"');
             } else {
                 if (strpos($user_input, ',') !== false) {
 
@@ -295,6 +303,7 @@ class LoansController extends Controller
 			$loan = new Loan();
 			$loan->user_id = $user->id;
 			$loan->item_id = $item->id;
+			$loan->due_at = Carbon::now()->addDays($thing->loan_time)->setTime(0, 0, 0);
             $loan->as_guest = false;
 			if (!$loan->save()) {
 				return redirect()->action('LoansController@getIndex')

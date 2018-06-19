@@ -124,6 +124,7 @@
             <th>Ting</th>
             <th>Bruker</th>
             <th>Utlånt</th>
+            <th>Forfaller</th>
             <th>Merknader</th>
             <th>Knapper</th>
         </thead>
@@ -159,6 +160,9 @@
                     @else
                         {{ $loan->relativeCreationTime() }}
                     @endif
+                </td>
+                <td data-order="{{ $loan->due_at }}">
+                    {{ $loan->due_at->diffForHumans() }}
                 </td>
 
 
