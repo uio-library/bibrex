@@ -25,7 +25,7 @@ class Library extends Authenticatable {
      */
     public function things()
     {
-        return $this->belongsToMany('App\Things');
+        return $this->belongsToMany(Thing::class);
     }
 
 	public function getOptionsAttribute($value)

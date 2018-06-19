@@ -103,6 +103,9 @@ class UsersController extends Controller {
 	 */
 	public function getNcipLookup(AlmaClient $alma, User $user)
 	{
+		if (!$user->barcode) {
+			return back()->with('error', 'Du må registrere Låne-ID for brukeren før du kan importere.');
+		}
         $query = 'ALL~' . $user->barcode;
         $users = collect($alma->users->search($query, ['limit' => 1]))->map(function($u) {
             return new AlmaUser($u);

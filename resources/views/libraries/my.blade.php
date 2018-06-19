@@ -48,6 +48,28 @@
 
         <li class="list-group-item">
             <div class="form-group row">
+                <label for="guestcard_for_cardless_loans" class="col-sm-2 col-form-label">Lokale brukere:</label>
+                <div class="col-sm-10">
+                    {{ Form::checkbox(
+                          'guestcard_for_cardless_loans',
+                          'true',
+                          array_get($library->options, 'guestcard_for_cardless_loans') ? true : false,
+                          array('id' => 'guestcard_for_cardless_loans')
+                        )}}
+                        {{ Form::label(
+                          'guestcard_for_cardless_loans',
+                          'Opprett lokale brukere ved behov.'
+                        )}}
+
+                      <p class="text-muted">
+                        Hvis søk på «Etternavn, Fornavn» gir 0 treff i Alma, tillat at det opprettes en lokal bruker.
+                      </p>
+                </div>
+            </div>
+        </li>
+
+        <li class="list-group-item">
+            <div class="form-group row">
                 <label for="guest_ltid" class="col-sm-2 col-form-label">Gjestekort:</label>
                 <div class="col-sm-10">
                     @component('components.text', ['name' => 'guest_ltid', 'value' => $library->guest_ltid])
@@ -68,20 +90,6 @@
                           'Bruk gjestekort hvis brukers kort ikke virker'
                         )}}
                         (typisk studentkort som ikke har blitt importert enda)
-                    </div>
-
-                    <div>
-                        {{ Form::checkbox(
-                          'guestcard_for_cardless_loans',
-                          'true',
-                          array_get($library->options, 'guestcard_for_cardless_loans') ? true : false,
-                          array('id' => 'guestcard_for_cardless_loans')
-                        )}}
-                        {{ Form::label(
-                          'guestcard_for_cardless_loans',
-                          'Bruk gjestekort for kortløse utlån'
-                        )}}
-                        (kortløse utlån kan brukes f.eks. for å slippe å opprette nytt kort til en person som kommer til å få studentkort i løpet av de nærmeste dagene.)
                     </div>
 
                 </div>

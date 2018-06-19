@@ -83,21 +83,21 @@
   @show
 
   @if (Session::has('status'))
-  <div class="alert alert-info" style="display:none;">
+  <div class="alert alert-success">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
     {!! Session::get('status') !!}
   </div>
   @endif
 
   @if (Session::has('error'))
-  <div class="alert alert-danger" style="display:none;">
+  <div class="alert alert-danger">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
     {!! Session::get('error') !!}
   </div>
   @endif
 
   @if ($e = $errors->all('<li>:message</li>'))
-  <div class="alert alert-danger" style="display:none;">
+  <div class="alert alert-danger">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
     Kunne ikke lagre fordi:
     <ul>
@@ -121,7 +121,7 @@
   $(document).ready(function() {
 
     if ($('.container > .alert').length != 0) {
-      $('.container > .alert').hide().slideDown();
+      $('.container > .alert').addClass('visible');
     }
 
       //parent.postMessage("Hello","*");

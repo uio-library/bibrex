@@ -69,12 +69,21 @@ a:hover *, a:focus * {
 
 .alert {
     margin: 1em 0;
-    border-width:3px;
-    box-shadow: 2px 2px 5px #888888;
+    border-width:5px;
+    font-weight: bold;
+    font-size: 120%;
+    opacity: 0;
+    transition: all .5s ease-out;
+
 }
 .alert-danger {
     font-weight: bold;
-    font-size: 110%;
+    font-size: 120%;
+}
+
+.alert.visible {
+  display: block;
+  opacity: 1;
 }
 
 

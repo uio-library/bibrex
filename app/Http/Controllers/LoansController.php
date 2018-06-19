@@ -43,24 +43,17 @@ class LoansController extends Controller
 	 */
 	public function getIndex()
 	{
-		$library_id = \Auth::user()->id;
+		$library = \Auth::user();
+		$things = $library->things()->orderBy('name')->get();
 
 		// A list of all loans for the current library
 		$loans = Loan::with('item.thing','user')
-			->where('library_id', $library_id)
+			->where('library_id', $library->id)
 			->orderBy('created_at','desc')->get();
-
-		// A list of all things for the select box
-		$things = Thing::where('disabled', false)
-            ->where(function($query) use ($library_id) {
-                $query->where('library_id', $library_id)
-                      ->orWhere('library_id', NULL);
-              })
-            ->orderBy('name');
 
 		$r = response()->view('loans.index', array(
 			'loans' => $loans,
-			'things' => $things->get(),
+			'things' => $things,
 			'loan_ids' => \Session::get('loan_ids', array())
 		));
 		$r->header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');
@@ -240,7 +233,7 @@ class LoansController extends Controller
 
                     if (!array_get($lib->options, 'guestcard_for_cardless_loans', false)) {
                         throw ValidationException::withMessages([
-                            'user' => ['Kortløse utlån er ikke aktivert for dette biblioteket. Det kan aktiveres i <a href="' . action('LibrariesController@getMyAccount') . '">kontoinnstillingene</a>.'],
+                            'user' => ['Brukeren ble ikke funnet i Alma og opprettelse av lokale brukere er ikke aktivert for dette biblioteket. Det kan aktiveres i <a href="' . action('LibrariesController@getMyAccount') . '">kontoinnstillingene</a>.'],
                         ]);
                     }
 

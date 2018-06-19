@@ -9,6 +9,19 @@
     </div>
   @endif
 
+    @if (!count($things))
+
+<div class="card text-danger border-danger mb-3">
+<div class="card-body">
+  <p class="card-text">
+    Ingen ting er aktivert enda. Gå til <a href="/things">ting</a> for å sette opp noen ting.
+  </p>
+</div>
+</div>
+
+    @else
+
+
   <div class="card">
 
     <div class="card-header">
@@ -86,6 +99,7 @@
     </div>
 
   </div>
+  @endif
 
   <div class="card my-3">
 

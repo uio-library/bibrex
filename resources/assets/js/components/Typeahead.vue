@@ -146,13 +146,13 @@ import Bloodhound from 'corejs-typeahead'
                     ? `<div><span class="right">${d.id}</span><span class="main">${d.name} - ${d.group}</span></div>`
                     : `<div><span class="main">${d.name}</span></div>`,
                 notFound: this.hideIfNoMatches ? null : '<div class="tt-empty"><span>No matches</span></div>',
-                pending: '<div class="tt-pending">Waiting...</div>',
+                pending: '<div class="tt-pending"></div>',
               }
             })
             .on('typeahead:asyncrequest', (u) => {
                 console.log('typeahead:asyncrequest');
                 this.waitingSince = new Date().getTime();
-                this.stillWaiting();
+                setTimeout(this.stillWaiting.bind(this));
             })
             .on('typeahead:asynccancel typeahead:asyncreceive', () => {
                 console.log('typeahead:asynccancel typeahead:asyncreceive');
