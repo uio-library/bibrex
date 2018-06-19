@@ -15,3 +15,6 @@ composer.lock
 app/config/packages/danmichaelo
 app/config/packages/aws
 /node_modules
+/public/css
+/public/js
+/public/mix-manifest.json
