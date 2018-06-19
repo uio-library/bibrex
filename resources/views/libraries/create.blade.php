@@ -13,8 +13,9 @@
 
  <div class="card-body">
 
-    <div class="form-group">
-	    <label for="name" class="col-sm-2 control-label">Navn</label>
+    <div class="form-group row">
+
+	    <label for="name" class="col-sm-2 control-label">Norsk navn</label>
 	    <div class="col-sm-10">
 	      {{ Form::text('name', null, array(
 	      	'id' => 'name',
@@ -23,8 +24,18 @@
 	    </div>
 	  </div>
 
-	   <div class="form-group">
-	    <label for="email" class="col-sm-2 control-label">Epost </label>
+    <div class="form-group row">
+        <label for="name" class="col-sm-2 control-label">Engelsk navn</label>
+        <div class="col-sm-10">
+          {{ Form::text('name_eng', null, array(
+            'id' => 'name_eng',
+            'class' => 'form-control'
+        )) }}
+        </div>
+    </div>
+
+    <div class="form-group row">
+	    <label for="email" class="col-sm-2 control-label">E-post </label>
 	    <div class="col-sm-10">
 	      {{ Form::text('email', null, array(
 	      	'id' => 'email',
@@ -33,7 +44,7 @@
 	    </div>
 	  </div>
 
-	  <div class="form-group">
+    <div class="form-group row">
 	    <label for="password" class="col-sm-2 control-label">Passord </label>
 	    <div class="col-sm-10">
 	      {{ Form::password('password',  array(
@@ -43,7 +54,7 @@
 	    </div>
 	  </div>
 
-	   <div class="form-group">
+    <div class="form-group row">
 	    <label for="password2" class="col-sm-2 control-label">Gjenta passord </label>
 	    <div class="col-sm-10">
 	      {{ Form::password('password2', array(
@@ -54,7 +65,7 @@
 	  </div>
 
     <button type="submit" class="btn btn-success">
-      Lagre nytt bibliotek
+      Lagre bibliotek
     </button>
 
     <img src="/img/spinner2.gif" class="spinner" />

@@ -9,7 +9,24 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
-class LibrariesController extends Controller {
+class LibrariesController extends Controller
+{
+
+    /**
+     * Validation error messages.
+     *
+     * @static array
+     */
+    protected $messages = array(
+        'name.required' => 'Norsk navn må fylles ut',
+        'name.unique' => 'Norsk navn må være unikt',
+        'name_eng.required' => 'Engelsk navn må fylles ut',
+        'name_eng.unique' => 'Engelsk navn må være unikt',
+        'email.required' => 'E-post må fylles ut',
+        'email.unique' => 'E-post må være unik',
+        'email.email' => 'E-post må være en gyldig epostadresse',
+        'guest_ltid.regex' => 'LTID må være et gyldig LTID',
+    );
 
 	protected $lib;
 
@@ -42,6 +59,30 @@ class LibrariesController extends Controller {
 	}
 
     /**
+     * Sets a new password. Note that it does *not store the model*.
+     *
+     * @param  string    $password
+     * @param  string    $passwordRepeated
+     * @return bool
+     */
+    protected function validateAndHashPassword($password, $passwordRepeated)
+    {
+        if (mb_strlen($password) < 8) {
+            throw ValidationException::withMessages([
+                'password' => ['Passordet er for kort (kortere enn 8 tegn).'],
+            ]);
+        }
+
+        if ($password != $passwordRepeated) {
+            throw ValidationException::withMessages([
+                'password' => ['Du gjentok ikke passordet likt.'],
+            ]);
+        }
+
+        return \Hash::make($password);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param Request $request
@@ -49,15 +90,18 @@ class LibrariesController extends Controller {
      */
 	public function postStore(Request $request)
 	{
+        $rules = array(
+            'name' => 'required|unique:libraries,name',
+            'name_eng' => 'required|unique:libraries,name_eng',
+            'email' => 'required|email|unique:libraries,email',
+        );
+        \Validator::make($request->all(), $rules, $this->messages)->validate();
+
 		$lib = new $this->libFactory();
 
-		if (!$lib->setPassword($request->input('password'), $request->input('password2'))) {
-			return redirect()->back()
-				->withErrors($lib->errors)
-				->withInput();
-		}
-
+        $lib->password = $this->validateAndHashPassword($request->input('password'), $request->input('password2'));
 		$lib->name = $request->input('name');
+        $lib->name_eng = $request->input('name_eng');
 		$lib->email = $request->input('email');
 
 		if (!$lib->save()) {
@@ -198,11 +242,7 @@ class LibrariesController extends Controller {
 			return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
 		}
 
-		if (!$lib->setPassword($request->input('password'), $request->input('password1'))) {
-			return redirect()->back()
-				->withErrors($lib->errors)
-				->withInput();
-		}
+        $lib->password = $this->validateAndHashPassword($request->input('password'), $request->input('password1'));
 		$lib->save();
 
 		return redirect()->action('LibrariesController@getShow', $lib->id)
