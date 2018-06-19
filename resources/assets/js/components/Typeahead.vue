@@ -51,7 +51,11 @@ import Bloodhound from 'corejs-typeahead'
             minLength: {
               type: Number,
               default: 4
-            }
+            },
+            limit: {
+              type: Number,
+              default: 5
+            },
         },
         data: () => {
             return {
@@ -140,6 +144,7 @@ import Bloodhound from 'corejs-typeahead'
                   hound.search(query, sync, async);
                 }
               },
+              limit: this.limit,
               display: item => item.name,
               templates: {
                 suggestion: d => d.group
