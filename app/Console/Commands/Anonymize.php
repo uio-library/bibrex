@@ -39,7 +39,10 @@ class Anonymize extends Command
      */
     public function handle()
     {
-        $anonUser = User::where(['lastname' => '(anonymisert)', 'firstname' => '(anonymisert)'])->firstOrCreate();
+        $anonUser = User::firstOrCreate([
+            'lastname' => '(anonymisert)',
+            'firstname' => '(anonymisert)',
+        ]);
         foreach (Loan::withTrashed()->with('user')->get() as $loan) {
             if (!is_null($loan->deleted_at)) {
                 $loan->user_id = $anonUser->id;

@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration {
 			$table->string('firstname')->nullable();
 			$table->string('phone')->nullable();
 			$table->string('email')->nullable();
-			$table->boolean('in_alma');
+			$table->boolean('in_alma')->default(0);
 			$table->date('birth')->nullable();
 			$table->enum('lang', array('nob', 'nno', 'eng'))->nullable();
 			$table->string('note')->nullable();
