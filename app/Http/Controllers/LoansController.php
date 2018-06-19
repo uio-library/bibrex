@@ -234,7 +234,7 @@ class LoansController extends Controller
                 $user = new User();
                 $user->mergeFromUserResponse($users[0]);
                 $user->save();
-                \Log::info('Importert bruker fra Alma: ' . $user->lastname . ', ' . $user->firstname);
+                \Log::info('Importerte bruker fra Alma: "' . $user->lastname . ', ' . $user->firstname. '"');
             } else {
                 if (strpos($user_input, ',') !== false) {
 
@@ -257,9 +257,6 @@ class LoansController extends Controller
                 }
             }
         }
-
-        \Log::info('got user:'. $user->id);
-
 
 		// if ($this->isLTID($user_input)) {
 		// 	$ltid = $user_input;
@@ -316,7 +313,6 @@ class LoansController extends Controller
             $user->loan_count += 1;
             $user->save();
 		}
-        \Log::info('got loan:'. $loan->id);
 
 		\Log::info('Lånte ut <a href="'. action('LoansController@getShow', $loan_ids[0]) . '">' . $thing->name . '</a>.');
 
