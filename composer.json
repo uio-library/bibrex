@@ -13,7 +13,7 @@
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.6",
         "php-http/guzzle6-adapter": "^1.1",
-        "scriptotek/alma-client": "^0.6.1"
+        "scriptotek/alma-client": "dev-master"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
