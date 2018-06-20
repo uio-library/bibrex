@@ -332,30 +332,40 @@ class LoansController extends Controller
 
 	}
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function getEdit($id)
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param Loan $loan
+     * @return Response
+     */
+	public function edit(Loan $loan)
 	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function postUpdate($id)
-	{
-		//
+		return response()->view('loans.edit', ['loan' => $loan]);
 	}
 
     /**
-     * Remove the specified resource from storage.
+     * Update the specified resource in storage.
+     *
+     * @param Loan $loan
+     * @param Request $request
+     * @return void
+     */
+	public function update(Loan $loan, Request $request)
+	{
+		$request->validate([
+            'due_at' => 'required|date',
+        ]);
+
+		$loan->due_at = Carbon::parse($request->due_at);
+		$loan->note = $request->note;
+		$loan->save();
+
+		return redirect()->action('LoansController@getShow', $loan->id)
+			->with('status', 'Lånet ble oppdatert');
+	}
+
+    /**
+     * Mark the specified resource as lost.
      *
      * @param Loan $loan
      * @param Request $request

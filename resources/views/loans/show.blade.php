@@ -39,6 +39,23 @@
         <li class="list-group-item">
             <div class="row">
                 <div class="col-sm-2">
+                    Merknad:
+                </div>
+                <div class="col">
+                    @if ($loan->note)
+                        <strong>{{ $loan->note }}</strong>
+                    @else
+                        –
+                    @endif
+
+                    <a href="{{ action('LoansController@edit', $loan->id) }}">[Rediger]</a>
+                </div>
+            </div>
+        </li>
+
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-sm-2">
                     Låntaker:
                 </div>
                 <div class="col">
@@ -79,9 +96,11 @@
                     Forfaller:
                 </div>
                 <div class="col">
-                    {{ $loan->due_at }}
+                    {{ $loan->due_at->toDateString() }}
                     @if (!$loan->trashed())
                         {!! ($d = $loan->daysLeftFormatted()) ? "($d)" : "ukjent / aldri" !!}
+
+                        <a href="{{ action('LoansController@edit', $loan->id) }}">[Rediger]</a>
                     @endif
                 </div>
             </div>

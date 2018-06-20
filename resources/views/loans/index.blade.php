@@ -79,7 +79,7 @@
 
           <div class="col px-2">
             <label>&nbsp;</label>
-            <button class="btn btn-success" type="submit" style="display: block; width: 100%;" tabindex="4">
+            <button class="btn btn-success checkout" type="submit" style="display: block; width: 100%;" tabindex="4">
                 <i class="far fa-paper-plane"></i>
                 Lån ut!
             </button>
@@ -121,10 +121,10 @@
 
     <table id="myTable" class="table table-striped" style="width:100%">
         <thead>
-            <th>Ting</th>
+            <th>Lån</th>
             <th>Bruker</th>
             <th>Utlånt</th>
-            <th>Forfaller</th>
+            <th>Forfall</th>
             <th>Merknader</th>
             <th>Knapper</th>
         </thead>
@@ -162,17 +162,14 @@
                     @endif
                 </td>
                 <td data-order="{{ $loan->due_at }}">
-                    {{ $loan->due_at->diffForHumans() }}
+                    <a title="Rediger forfallsdato" href="{{ action('LoansController@edit', $loan->id) }}">
+                      {!! $loan->daysLeftFormatted() !!}
+                      <i class="far fa-pencil"></i>
+                    </a>
                 </td>
 
 
                 <td>
-                    @if ($loan->relativeCreationTimeHours() > 12)
-                        <div class="text-danger">
-                            Forfalt! tbd {{ $loan->relativeCreationTime() }}.
-                            {{ ($d = $loan->daysLeftFormatted()) ? "$d." : "" }}
-                        </div>
-                    @endif
                     @if (empty($loan->user->barcode))
                         <div class="text-danger">
                             <em class="fas fa-exclamation-triangle"></em>
@@ -189,6 +186,24 @@
                         <div class="text-info">
                             <i class="far fa-comment"></i>
                             {{ $loan->user->note }}
+                        </div>
+                    @endif
+                    @if ($loan->note)
+                        <div class="text-info" v-b-tooltip.hover title="Merknad på lånet">
+                            <i class="far fa-comment"></i>
+                            {{ $loan->note }}
+                        </div>
+                    @endif
+                    @if ($loan->item->note)
+                        <div class="text-info" v-b-tooltip.hover title="Merknad på eksemplaret">
+                            <i class="far fa-comment"></i>
+                            {{ $loan->item->note }}
+                        </div>
+                    @endif
+                    @if ($loan->item->thing->note)
+                        <div class="text-info" v-b-tooltip.hover title="Merknad på tingen">
+                            <i class="far fa-comment"></i>
+                            {{ $loan->item->thing->note }}
                         </div>
                     @endif
                     @foreach ($loan->reminders as $reminder)
@@ -420,7 +435,7 @@
 
       isWorking = true;
       $('.spinner').show();
-      $('input[type="button"]').prop('disabled', true);
+      $('.checkout').prop('disabled', true);
       return true;
     });
 

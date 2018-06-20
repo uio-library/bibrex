@@ -77,14 +77,14 @@ class Loan extends Model {
         if ($d == 999999)
             return '';
         if ($d > 1)
-            return '<span style="color:green;">Forfaller om ' . $d . ' dager</span>';
+            return '<span style="color:green;">om ' . $d . ' dager</span>';
         if ($d == 1)
-            return '<span style="color:orange;">Forfaller i morgen</span>';
+            return '<span style="color:orange;">i morgen</span>';
         if ($d == 0)
-            return '<span style="color:orange;">Forfaller i dag</span>';
+            return '<span style="color:orange;">i dag</span>';
         if ($d == -1)
-            return '<span style="color:red;">Forfalt i går</span>';
-        return'<span style="color:red;">Forfalt for ' . abs($d) . ' dager siden</span>';
+            return '<span style="color:red;">i går</span>';
+        return'<span style="color:red;">for ' . abs($d) . ' dager siden</span>';
     }
 
     public function relativeCreationTimeHours() {

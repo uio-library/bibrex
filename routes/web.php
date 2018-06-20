@@ -65,7 +65,8 @@ Route::middleware(['auth'])->group(function()
     Route::get('/loans/lost/{loan}', 'LoansController@getLost');
     Route::get('/loans/destroy/{loan}', 'LoansController@getDestroy');
     Route::get('/loans/restore/{loan}', 'LoansController@getRestore');
-
+    Route::get('/loans/edit/{loan}', 'LoansController@edit');
+    Route::post('/loans/{loan}', 'LoansController@update');
 
     // --[[ ITEM ]]--
     Route::get('/items', 'ItemsController@index');
