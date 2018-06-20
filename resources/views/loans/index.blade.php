@@ -394,6 +394,18 @@
   });*/
 
 
+  window.addEventListener('keydown', evt => {
+    if (evt.altKey || evt.ctrlKey || evt.metaKey) return;
+      if (evt.target == document.body && evt.key) {
+        setTimeout(() => {
+          let inp = document.querySelector('input[tabindex="1"]');
+          inp.value += evt.key;
+          inp.focus();
+        });
+      }
+    });
+
+
     $('.added').addClass('focus');
     setTimeout(function() {
       $('.added').removeClass('added').removeClass('focus');
