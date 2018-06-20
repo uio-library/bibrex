@@ -30,7 +30,9 @@ class Library extends Authenticatable {
      */
     public function things()
     {
-        return $this->belongsToMany(Thing::class);
+        return $this->belongsToMany(Thing::class)
+            ->withPivot('require_item', 'send_reminders')
+            ->using(LibraryThing::class);
     }
 
 	public function getOptionsAttribute($value)

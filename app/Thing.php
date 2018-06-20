@@ -46,8 +46,10 @@ class Thing extends Model {
      */
     public function libraries()
     {
-        return $this->belongsToMany('App\Library')
-            ->withPivot('require_item');
+        return $this->belongsToMany(Library::class)
+            ->withPivot('require_item', 'send_reminders')
+            ->using(LibraryThing::class);
+            //->withPivot('require_item');
     }
 
     /**
@@ -57,7 +59,9 @@ class Thing extends Model {
      */
     public function getAtMyLibraryAttribute()
     {
-        return !is_null($this->library_settings);
+        return $lib = $this->libraries()
+            ->where('library_id', \Auth::user()->id)
+            ->first() ? true : false;
     }
 
     public function getLibrarySettingsAttribute()
@@ -65,7 +69,7 @@ class Thing extends Model {
         $lib = $this->libraries()
             ->where('library_id', \Auth::user()->id)
             ->first();
-        return $lib ? $lib->pivot->only('require_item') : null;
+        return $lib ? $lib->pivot->only('require_item', 'send_reminders') : [];
     }
 
     public function availableItems()

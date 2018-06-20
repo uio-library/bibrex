@@ -113,8 +113,8 @@ class ItemsController extends Controller
 
         $item->save();
 
-        return redirect()->action('ItemsController@show', $item->id)
-            ->with('status', 'Eksemplaret ble lagret!');
+        return redirect()->action('ThingsController@getShow', $item->thing->id)
+            ->with('status', 'Eksemplaret ' . $item->dokid . ' ble lagret!');
     }
 
     /**
@@ -126,6 +126,11 @@ class ItemsController extends Controller
      */
     public function deleteForm(Item $item, Request $request)
     {
+        if ($item->loans()->count()) {
+            return redirect()->action('ItemsController@show', $item->id)
+                ->with('error', 'Kan ikke slette utlånt eksemplar.');
+        }
+
         return response()->view('items.delete', array(
             'item' => $item,
         ));
@@ -140,6 +145,11 @@ class ItemsController extends Controller
      */
     public function delete(Item $item, Request $request)
     {
+        if ($item->loans()->count()) {
+            return redirect()->action('ItemsController@show', $item->id)
+                ->with('error', 'Kan ikke slette utlånt eksemplar.');
+        }
+
         $item->delete();
 
         return redirect()->action('ItemsController@show', $item->id)

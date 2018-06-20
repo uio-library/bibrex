@@ -9,8 +9,8 @@
 
             @if ($item->trashed())
 
-              <h5 class="col mb-0">
-                <s>Eksempler #{{ $item->id }}</s> (slettet)
+              <h5 class="col mb-0 text-danger">
+                <i class="fas fa-trash-alt"></i> <s>Eksempler #{{ $item->id }}</s> ( Dette eksemplaret er slettet)
               </h5>
 
               <a class="btn btn-warning col col-auto mx-1" href="{{ URL::action('ItemsController@restore', $item->id) }}">

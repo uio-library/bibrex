@@ -40,14 +40,14 @@ class ThingsController extends Controller {
      */
     public function getIndex(Request $request)
     {
-        $library_id = \Auth::user()->id;
+        $libraryId = \Auth::user()->id;
 
         $things = $this->thingFactory
             ->with('items.loans');
 
         if ($request->input('mine')) {
-            $things->whereHas('libraries', function ($query) use ($library_id) {
-                $query->where('library_id', '=', $library_id);
+            $things->whereHas('libraries', function ($query) use ($libraryId) {
+                $query->where('library_id', '=', $libraryId);
             });
         }
 
@@ -176,14 +176,14 @@ class ThingsController extends Controller {
      */
     public function getDestroy(Thing $thing)
     {
-        if (count($thing->allLoans()) != 0) {
+        if (count($thing->activeLoans()) != 0) {
             return redirect()->action('ThingsController@getShow', $thing->id)
-                ->with('status', 'Beklager, kan bare slette ting som ikke har blitt lånt ut enda.');
+                ->with('error', 'Kan ikke slette ting med aktive lån.');
         }
 
         $thing->delete();
 
-        return redirect()->action('ThingsController@getIndex')
+        return redirect()->action('ThingsController@getShow', $thing->id)
             ->with('status', 'Tingen «' . $thing->name . '» ble slettet.');
     }
 
@@ -209,29 +209,37 @@ class ThingsController extends Controller {
      */
     public function toggle(Thing $thing, Request $request)
     {
-        $library_id = \Auth::user()->id;
+        $libraryId = \Auth::user()->id;
 
         if ($request->input('value')) {
-            $thing->libraries()->attach($library_id);
+            $thing->libraries()->attach($libraryId);
+            $thing->libraries()->updateExistingPivot($libraryId, [ 'require_item' => true ]);
         } else {
-            $thing->libraries()->detach($library_id);
+            $thing->libraries()->detach($libraryId);
         }
 
-        return response()->json(['status' => 'ok']);
+        return response()->json([
+            'status' => 'ok',
+            'library_settings' => $thing->library_settings,
+        ]);
     }
 
     /**
-     * Toggle item requirement for my library
+     * Toggle setting for my library
      *
      * @param Thing $thing
      * @return Response
      */
-    public function toggleRequireItem(Thing $thing, Request $request)
+    public function updateSetting(Thing $thing, Request $request)
     {
         $libraryId = \Auth::user()->id;
-        $thing->libraries()->updateExistingPivot($libraryId, ['require_item' => !!$request->input('value') ]);
-
-        return response()->json(['status' => 'ok']);
+        $thing->libraries()->updateExistingPivot($libraryId, [
+            $request->input('key') => $request->input('value'),
+        ]);
+        return response()->json([
+            'status' => 'ok',
+            'library_settings' => $thing->library_settings,
+        ]);
     }
 
 }

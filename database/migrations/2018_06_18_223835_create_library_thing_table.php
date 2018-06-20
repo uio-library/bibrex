@@ -17,7 +17,9 @@ class CreateLibraryThingTable extends Migration
             $table->increments('id');
             $table->integer('library_id')->unsigned();
             $table->integer('thing_id')->unsigned();
-            $table->boolean('require_item')->default(false);
+
+            $table->boolean('require_item')->default(true);
+            $table->boolean('send_reminders')->default(true);
 
             $table->foreign('library_id')
                 ->references('id')->on('libraries')

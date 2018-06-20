@@ -14,10 +14,6 @@
                     Gjenopprett
                 </a>
             @else
-                <a href="{{ action('ItemsController@editForm', ['id' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
-                    <i class="far fa-plus-hexagon"></i>
-                    Registrer eksemplar med strekkode
-                </a>
                 <a class="btn btn-primary col-auto mx-1" href="{{ URL::action('ThingsController@getEdit', $thing->id) }}">
                     <i class="far fa-pencil-alt"></i>
                     Rediger
@@ -93,7 +89,17 @@
   <div class="card mb-3">
 
     <div class="card-header">
-      <h5>Aktive eksemplarer</h5>
+        <div class="row align-items-center">
+            <h5 class="col mb-0">
+                Aktive eksemplarer
+            </h5>
+            @if (!$thing->trashed())
+                <a href="{{ action('ItemsController@editForm', ['id' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
+                    <i class="far fa-plus-hexagon"></i>
+                    Nytt eksemplar
+                </a>
+            @endif
+        </div>
     </div>
 
     <ul class="list-group list-group-flush">

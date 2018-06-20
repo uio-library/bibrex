@@ -82,7 +82,7 @@ Route::middleware(['auth'])->group(function()
     Route::get('/things/{thing}', 'ThingsController@getShow');
     Route::get('/things/edit/{thing}', 'ThingsController@getEdit');
     Route::post('/things/toggle/{thing}', 'ThingsController@toggle');
-    Route::post('/things/toggle-require-item/{thing}', 'ThingsController@toggleRequireItem');
+    Route::post('/things/settings/{thing}', 'ThingsController@updateSetting');
     Route::post('/things/{thing}', 'ThingsController@postUpdate');
     Route::get('/things/destroy/{thing}', 'ThingsController@getDestroy');
     Route::get('/things/restore/{thing}', 'ThingsController@getRestore');

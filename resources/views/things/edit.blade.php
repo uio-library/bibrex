@@ -119,6 +119,8 @@
               </div>
         </li>
 
+        {{--
+
         <li class="list-group-item">
 
               <h5 class="card-title">Forekomster</h5>
@@ -140,6 +142,7 @@
                 </div>
               </div>
         </li>
+        --}}
 
     </ul>
 
