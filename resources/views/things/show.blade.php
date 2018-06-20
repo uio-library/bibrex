@@ -14,7 +14,7 @@
                     Gjenopprett
                 </a>
             @else
-                <a href="{{ action('ItemsController@getEdit', ['id' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
+                <a href="{{ action('ItemsController@editForm', ['id' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
                     <i class="far fa-plus-hexagon"></i>
                     Registrer eksemplar med strekkode
                 </a>
@@ -104,7 +104,7 @@
       @endif
       @foreach ($thing->items()->whereNotNull('dokid')->get() as $item)
         <li class="list-group-item">
-            <a href="{{ action('ItemsController@getShow', $item->id) }}">{{ $item->dokid }}</a>
+            <a href="{{ action('ItemsController@show', $item->id) }}">{{ $item->dokid }}</a>
             {{ $item->note }}
         </li>
       @endforeach
@@ -126,7 +126,7 @@
       @endif
       @foreach ($thing->items()->onlyTrashed()->get() as $item)
         <li class="list-group-item">
-            <a href="{{ action('ItemsController@getShow', $item->id) }}">{{ $item->dokid }}</a>
+            <a href="{{ action('ItemsController@show', $item->id) }}">{{ $item->dokid }}</a>
             {{ $item->note }}
         </li>
       @endforeach

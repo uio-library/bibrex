@@ -3,7 +3,7 @@
 @section('content')
 
     {{ Form::model($item, array(
-        'action' => array( 'ItemsController@postUpdate', $item->id ?: '_new' ),
+        'action' => array( 'ItemsController@upsert', $item->id ?: '_new' ),
         'method' => 'post'
     )) }}
 
@@ -51,7 +51,7 @@
         </ul>
 
         <div class="card-footer">
-            <a href="{{ URL::action('ItemsController@getIndex') }}" class="btn btn-default">Avbryt</a>
+            <a href="{{ URL::action('ItemsController@index') }}" class="btn btn-default">Avbryt</a>
             {{ Form::submit('Lagre', array('class' => 'btn btn-success')) }}
         </div>
 

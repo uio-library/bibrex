@@ -68,14 +68,14 @@ Route::middleware(['auth'])->group(function()
 
 
     // --[[ ITEM ]]--
-    Route::get('/items', 'ItemsController@getIndex');
+    Route::get('/items', 'ItemsController@index');
     Route::get('/items/search', 'ItemsController@search');
-    Route::get('/items/{item}', 'ItemsController@getShow');
-    Route::get('/items/edit/{item}', 'ItemsController@getEdit');
-    Route::post('/items/{item}', 'ItemsController@postUpdate');
-    Route::get('/items/delete/{item}', 'ItemsController@getDelete');
-    Route::post('/items/delete/{item}', 'ItemsController@postDelete');
-    Route::get('/items/restore/{item}', 'ItemsController@getRestore');
+    Route::get('/items/{item}', 'ItemsController@show');
+    Route::get('/items/edit/{item}', 'ItemsController@editForm');
+    Route::post('/items/{item}', 'ItemsController@upsert');
+    Route::get('/items/delete/{item}', 'ItemsController@deleteForm');
+    Route::post('/items/delete/{item}', 'ItemsController@delete');
+    Route::get('/items/restore/{item}', 'ItemsController@restore');
 
     // --[[ THINGS ]]--
     Route::get('/things', 'ThingsController@getIndex');

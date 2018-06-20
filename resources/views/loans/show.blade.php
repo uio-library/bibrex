@@ -28,7 +28,7 @@
                 </div>
                 <div class="col">
                     @if ($loan->item->dokid)
-                        <a href="{{ URL::action('ItemsController@getShow', $loan->item->id) }}">{{ $loan->item->dokid }}</a>
+                        <a href="{{ URL::action('ItemsController@show', $loan->item->id) }}">{{ $loan->item->dokid }}</a>
                     @else
                         <em>ikke registrert</em>
                     @endif

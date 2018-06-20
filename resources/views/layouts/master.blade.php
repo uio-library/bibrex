@@ -46,7 +46,7 @@
           </li>
 
           <li class="nav-item {{ strpos($_SERVER['REQUEST_URI'], '/items') === 0 ? ' active':'' }}">
-            <a class="nav-link" href="{{ URL::action('ItemsController@getIndex') }}">Eksemplarer</a>
+            <a class="nav-link" href="{{ URL::action('ItemsController@index') }}">Eksemplarer</a>
           </li>
 
           <li class="nav-item {{ strpos($_SERVER['REQUEST_URI'], '/logs') === 0 ? ' active':'' }}">

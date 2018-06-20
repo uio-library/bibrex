@@ -384,7 +384,7 @@ class LoansController extends Controller
 				$redir = redirect()->action('LoansController@getIndex');
 				break;
 			default:
-				$redir = redirect()->action('ItemsController@getShow', $itemId);
+				$redir = redirect()->action('ItemsController@show', $itemId);
 		}
 		return $redir->with('status', $repr .' ble registrert som rotet bort. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
 	}
@@ -412,7 +412,7 @@ class LoansController extends Controller
 				$redir = redirect()->action('LoansController@getIndex');
 				break;
 			default:
-				$redir = redirect()->action('ItemsController@getShow', $itemId);
+				$redir = redirect()->action('ItemsController@show', $itemId);
 		}
 		return $redir->with('status', $repr .' ble levert inn for ' . $user . '. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
 	}

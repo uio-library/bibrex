@@ -12,7 +12,7 @@
     <ul class="list-group list-group-flush">
       @foreach ($items as $item)
         <li class="list-group-item">
-          <a href="{{ URL::action('ItemsController@getShow', $item->id) }}">
+          <a href="{{ URL::action('ItemsController@show', $item->id) }}">
               @if ($item->dokid)
                 {{$item->dokid}} {{$item->title}} ({{$item->thing->name}})
               @else

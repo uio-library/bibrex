@@ -27,7 +27,7 @@ class ItemsController extends Controller
 	 *
 	 * @return Response
 	 */
-	public function getIndex()
+	public function index()
 	{
 		$items = Item::with('loans', 'thing')->whereNotNull('dokid')->get();
 
@@ -52,6 +52,7 @@ class ItemsController extends Controller
                 return [
                     'id' => $item->id,
                     'name' => $item->dokid,
+                    'group' => $item->thing->name,
                 ];
             });
 
@@ -64,7 +65,7 @@ class ItemsController extends Controller
      * @param Item $item
      * @return Response
      */
-	public function getShow(Item $item)
+	public function show(Item $item)
 	{
 		return response()->view('items.show', array(
 			'item' => $item,
@@ -79,7 +80,7 @@ class ItemsController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function getEdit(Item $item, Request $request)
+    public function editForm(Item $item, Request $request)
     {
         if ($request->input('thing')) {
             $item->thing = Thing::find($request->input('thing'));
@@ -90,13 +91,13 @@ class ItemsController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update or create the specified resource in storage.
      *
      * @param Item $item
      * @param Request $request
      * @return Response
      */
-    public function postUpdate(Item $item, Request $request)
+    public function upsert(Item $item, Request $request)
     {
         \Validator::make($request->all(), [
             'dokid' => 'required|unique:items,dokid' . ($item->dokid ? ',' . $item->id : ''),
@@ -109,7 +110,7 @@ class ItemsController extends Controller
 
         $item->save();
 
-        return redirect()->action('ItemsController@getShow', $item->id)
+        return redirect()->action('ItemsController@show', $item->id)
             ->with('status', 'Eksemplaret ble lagret!');
     }
 
@@ -120,7 +121,7 @@ class ItemsController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function getDelete(Item $item, Request $request)
+    public function deleteForm(Item $item, Request $request)
     {
         return response()->view('items.delete', array(
             'item' => $item,
@@ -134,11 +135,11 @@ class ItemsController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function postDelete(Item $item, Request $request)
+    public function delete(Item $item, Request $request)
     {
         $item->delete();
 
-        return redirect()->action('ItemsController@getShow', $item->id)
+        return redirect()->action('ItemsController@show', $item->id)
             ->with('status', 'Eksemplaret ble slettet!');
     }
 
@@ -148,11 +149,11 @@ class ItemsController extends Controller
      * @param Item $item
      * @return Response
      */
-    public function getRestore(Item $item)
+    public function restore(Item $item)
     {
         $item->restore();
 
-        return redirect()->action('ItemsController@getShow', $item->id)
+        return redirect()->action('ItemsController@show', $item->id)
             ->with('status', 'Eksemplaret ble gjenopprettet.');
     }
 

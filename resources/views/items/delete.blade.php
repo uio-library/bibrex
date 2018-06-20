@@ -3,7 +3,7 @@
 @section('content')
 
     {{ Form::model($item, array(
-        'action' => array( 'ItemsController@postDelete', $item->id ),
+        'action' => array( 'ItemsController@delete', $item->id ),
         'method' => 'post'
     )) }}
 
@@ -18,7 +18,7 @@
         </div> 
 
         <div class="card-footer">
-            <a href="{{ URL::action('ItemsController@getIndex') }}" class="btn btn-secondary">Nei, jeg angrer!</a>
+            <a href="{{ URL::action('ItemsController@index') }}" class="btn btn-secondary">Nei, jeg angrer!</a>
             {{ Form::submit('Ja, slett', array('class' => 'btn btn-danger')) }}
         </div>
 

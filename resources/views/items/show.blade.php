@@ -13,7 +13,7 @@
                 <s>Eksempler #{{ $item->id }}</s> (slettet)
               </h5>
 
-              <a class="btn btn-warning col col-auto mx-1" href="{{ URL::action('ItemsController@getRestore', $item->id) }}">
+              <a class="btn btn-warning col col-auto mx-1" href="{{ URL::action('ItemsController@restore', $item->id) }}">
                 <i class="far fa-box-full"></i>
                 Gjenopprett
               </a>
@@ -22,12 +22,12 @@
 
               <h5 class="col mb-0">Eksempler #{{ $item->id }}</h5>
 
-              <a href="{{ URL::action('ItemsController@getEdit', $item->id) }}" class="col col-auto mx-2 btn btn-primary">
+              <a href="{{ URL::action('ItemsController@editForm', $item->id) }}" class="col col-auto mx-2 btn btn-primary">
                   <i class="far fa-pencil-alt"></i>
                   Rediger
               </a>
 
-              <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ItemsController@getDelete', $item->id) }}">
+              <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ItemsController@deleteForm', $item->id) }}">
                   <i class="far fa-trash"></i>
                   Slett
               </a>
