@@ -32,12 +32,6 @@ class CreateLibrariesTable extends Migration {
 				->onDelete('restrict');
 		});
 
-		Schema::table('things', function(Blueprint $table) {
-			$table->foreign('library_id')
-				->references('id')->on('libraries')
-				->onDelete('restrict');
-		});
-
 		Schema::table('loans', function(Blueprint $table) {
 			$table->integer('library_id')
 				->unsigned()->nullable();
@@ -56,11 +50,6 @@ class CreateLibrariesTable extends Migration {
 	{
 		Schema::table('users', function(Blueprint $table) {
 			$table->dropForeign('users_library_id_foreign');
-			$table->dropColumn('library_id');
-		});
-
-		Schema::table('things', function(Blueprint $table) {
-			$table->dropForeign('things_library_id_foreign');
 			$table->dropColumn('library_id');
 		});
 

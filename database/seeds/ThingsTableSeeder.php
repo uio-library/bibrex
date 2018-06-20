@@ -12,9 +12,9 @@ class ThingsTableSeeder extends Seeder
     public function run()
     {
         DB::table('things')->insert([
-            ['name' => 'BIBSYS-dokument', 'library_id' => NULL, 'created_at' => new DateTime, 'updated_at' => new DateTime],
-            ['name' => 'PS3-kontroller', 'library_id' => 1, 'created_at' => new DateTime, 'updated_at' => new DateTime],
-            ['name' => 'Skjøteledning', 'library_id' => 1, 'created_at' => new DateTime, 'updated_at' => new DateTime],
+            ['name' => 'BIBSYS-dokument', 'created_at' => new DateTime, 'updated_at' => new DateTime],
+            ['name' => 'PS3-kontroller', 'created_at' => new DateTime, 'updated_at' => new DateTime],
+            ['name' => 'Skjøteledning', 'created_at' => new DateTime, 'updated_at' => new DateTime],
         ]);
     }
 }
