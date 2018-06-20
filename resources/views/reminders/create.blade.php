@@ -17,12 +17,28 @@
         <li class="list-group-item">
             <div class="row">
                 <div class="col-sm-2">
+                    Fra:
+                </div>
+                <div class="col">
+                    @if ($reminder->sender_mail)
+                        <input type="hidden" name="medium" value="email">
+                        {{ $reminder->sender_mail}}
+                    @else
+                        <span class="text-danger">Oh my, no email registered</span>
+                    @endif
+                </div>
+            </div>
+        </li>
+
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-sm-2">
                     Til:
                 </div>
                 <div class="col">
-                    @if ($loan->user->email)
+                    @if ($reminder->receiver_mail)
                         <input type="hidden" name="medium" value="email">
-                        {{ $loan->user->email}}
+                        {{ $reminder->receiver_mail}}
                     @else
                         <span class="text-danger">Oh my, no email registered</span>
                     @endif

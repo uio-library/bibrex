@@ -17,8 +17,13 @@ class CreateRemindersTable extends Migration {
 			$table->increments('id');
 			$table->integer('loan_id')->unsigned();
 			$table->enum('medium', array('sms', 'email'))->default('email');
+			$table->string('type');
 			$table->text('subject');
 			$table->text('body');
+			$table->string('sender_name');
+			$table->string('sender_mail');
+			$table->string('receiver_name');
+			$table->string('receiver_mail');
 			$table->timestamps();
 
 			$table->foreign('loan_id')

@@ -8,27 +8,27 @@
 
     <div class="card-body form-horizontal">
 
-      <div class="form-group">
+      <div class="form-group row">
         <label for="recipient" class="col-sm-2 control-label">Fra:</label>
         <div class="col-sm-10">
           <p class="form-control-static">
             <input type="hidden" name="medium" value="email">
-            {{ $from }}
+            {{ $reminder->sender_name }} ({{ $reminder->sender_mail }})
           </p>
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group row">
         <label for="recipient" class="col-sm-2 control-label">Til:</label>
         <div class="col-sm-10">
           <p class="form-control-static">
             <input type="hidden" name="medium" value="email">
-            {{ $loan->user->email }}
+            {{ $reminder->receiver_name }} ({{ $reminder->receiver_mail }})
           </p>
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group row">
         <label for="recipient" class="col-sm-2 control-label">Dato:</label>
         <div class="col-sm-10">
           <p class="form-control-static">
@@ -37,7 +37,7 @@
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group row">
         <label for="recipient" class="col-sm-2 control-label">Emne:</label>
         <div class="col-sm-10">
           <p class="form-control-static">
@@ -46,11 +46,11 @@
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group row">
         <label for="recipient" class="col-sm-2 control-label">Melding:</label>
         <div class="col-sm-10">
           <p class="form-control-static">
-            {{ preg_replace('/\n/', '<br>', $reminder->body) }}
+            {!! preg_replace('/\n/', '<br>', $reminder->body) !!}
           </p>
         </div>
       </div>

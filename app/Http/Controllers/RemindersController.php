@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Loan;
+use App\Mail\FirstReminder;
 use App\Reminder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -13,20 +14,13 @@ class RemindersController extends Controller
     /**
      * Show a reminder.
      *
-     * @param $id
+     * @param Reminder $reminder
      * @return Response
      */
-	public function getShow($id)
+	public function getShow(Reminder $reminder)
 	{
-		$reminder = Reminder::find($id);
-		if (!$reminder) {
-			die('Oh noes, not found!');
-		}
-
 		return response()->view('reminders.show', array(
-			'from' => config('mail.from.address'),
 			'reminder' => $reminder,
-			'loan' => $reminder->loan,
 		));
 	}
 
@@ -44,7 +38,7 @@ class RemindersController extends Controller
 			die('Oh noes, no (valid) loan specified!');
 		}
 
-		$reminder = Reminder::fromLoan($loan);
+		$reminder = (new FirstReminder($loan))->getReminder();
 
 		return response()->view('reminders.create', array(
 			'reminder' => $reminder,
@@ -55,7 +49,7 @@ class RemindersController extends Controller
 	}
 
     /**
-     * Stores a new reminder.
+     * Sends a new reminder.
      *
      * @param Request $request
      * @return Response
@@ -65,10 +59,11 @@ class RemindersController extends Controller
 		$loan_id = intval($request->input('loan_id'));
 		$loan = Loan::find($loan_id);
 
-		$reminder = Reminder::fromLoan($loan);
-		$reminder->save();
+
+        \Mail::send((new FirstReminder($loan))->save());
+        \Log::info('Sendte påminnelse for <a href="'. \URL::action('LoansController@getShow', $loan->id) . '">lån</a>.');
 
 		return redirect()->action('LoansController@getShow', $loan->id)
-				->with('status', 'Påminnelse sendt.');
+				->with('status', 'Påminnelsen ble sendt.');
 	}
 }

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Loan;
+use App\Mail\FirstReminder;
 use App\Reminder;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -61,10 +62,11 @@ class SendReminders extends Command
                     $this->error('Cannot send reminder. No email set for user ' . $loan->user->id);
                     \Log::error('Cannot send reminder. No email set for user ' . $loan->user);
                 } else {
-                    \Log::info('Sending reminder to ' . $loan->user->email);
                     $this->info('Sending reminder to ' . $loan->user->email);
-                    $reminder = Reminder::fromLoan($loan);
-                    $reminder->save();
+
+                    \Mail::send((new FirstReminder($loan))->save());
+                    \Log::info('Sendte <a href="'. \URL::action('RemindersController@getShow', $reminder->id) . '">påminnelse</a> for lån.');
+
                     $n++;
                 }
             }
