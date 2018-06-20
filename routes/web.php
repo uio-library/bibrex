@@ -14,6 +14,9 @@
 Route::get('/', function() {
     return redirect()->action('LoansController@getIndex');
 });
+Route::get('/loans/index', function() {
+    return redirect()->action('LoansController@getIndex');
+});
 
 Route::get('/about', function() {
     return Response::view('hello');
