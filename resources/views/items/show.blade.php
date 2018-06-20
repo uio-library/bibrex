@@ -4,9 +4,38 @@
 
   <div class="card card-primary">
 
-    <h5 class="card-header">
-      Eksemplar #{{ $item->id }}
-    </h5>
+    <div class="card-header" >
+        <div class="row align-items-center">
+
+            @if ($item->trashed())
+
+              <h5 class="col mb-0">
+                <s>Eksempler #{{ $item->id }}</s> (slettet)
+              </h5>
+
+              <a class="btn btn-warning col col-auto mx-1" href="{{ URL::action('ItemsController@getRestore', $item->id) }}">
+                <i class="far fa-box-full"></i>
+                Gjenopprett
+              </a>
+
+            @else
+
+              <h5 class="col mb-0">Eksempler #{{ $item->id }}</h5>
+
+              <a href="{{ URL::action('ItemsController@getEdit', $item->id) }}" class="col col-auto mx-2 btn btn-primary">
+                  <i class="far fa-pencil-alt"></i>
+                  Rediger
+              </a>
+
+              <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ItemsController@getDelete', $item->id) }}">
+                  <i class="far fa-trash"></i>
+                  Slett
+              </a>
+
+            @endif
+
+        </div>
+    </div>
 
       <ul class="list-group list-group-flush">
 
@@ -20,18 +49,28 @@
                   </div>
               </div>
           </li>
-          @if ($item->dokid)
-              <li class="list-group-item">
-                  <div class="row">
-                      <div class="col-sm-2">
-                          Strekkode:
-                      </div>
-                      <div class="col">
-                          {{ $item->dokid }}
-                      </div>
+
+          <li class="list-group-item">
+              <div class="row">
+                  <div class="col-sm-2">
+                      Strekkode:
                   </div>
-              </li>
-          @endif
+                  <div class="col">
+                      {{ $item->dokid ?: '(ingen)' }}
+                  </div>
+              </div>
+          </li>
+
+          <li class="list-group-item">
+              <div class="row">
+                  <div class="col-sm-2">
+                      Merknad:
+                  </div>
+                  <div class="col">
+                      {{ $item->note }}
+                  </div>
+              </div>
+          </li>
 
       </ul>
 

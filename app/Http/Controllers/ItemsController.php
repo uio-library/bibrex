@@ -75,7 +75,7 @@ class ItemsController extends Controller
     public function postUpdate(Item $item, Request $request)
     {
         \Validator::make($request->all(), [
-            'dokid' => 'required|unique:items,dokid' . ($item->dokid ? ',' . $item->dokid : ''),
+            'dokid' => 'required|unique:items,dokid' . ($item->dokid ? ',' . $item->id : ''),
             'thing' => 'exists:things,id',
         ], $this->messages)->validate();
 
@@ -88,4 +88,48 @@ class ItemsController extends Controller
         return redirect()->action('ItemsController@getShow', $item->id)
             ->with('status', 'Eksemplaret ble lagret!');
     }
+
+    /**
+     * Show the form for deleting the specified resource.
+     *
+     * @param Item $item
+     * @param Request $request
+     * @return Response
+     */
+    public function getDelete(Item $item, Request $request)
+    {
+        return response()->view('items.delete', array(
+            'item' => $item,
+        ));
+    }
+
+    /**
+     * Delte the specified resource from storage.
+     *
+     * @param Item $item
+     * @param Request $request
+     * @return Response
+     */
+    public function postDelete(Item $item, Request $request)
+    {
+        $item->delete();
+
+        return redirect()->action('ItemsController@getShow', $item->id)
+            ->with('status', 'Eksemplaret ble slettet!');
+    }
+
+    /**
+     * Restore the specified resource.
+     *
+     * @param Item $item
+     * @return Response
+     */
+    public function getRestore(Item $item)
+    {
+        $item->restore();
+
+        return redirect()->action('ItemsController@getShow', $item->id)
+            ->with('status', 'Eksemplaret ble gjenopprettet.');
+    }
+
 }
