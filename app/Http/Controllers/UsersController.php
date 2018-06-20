@@ -39,6 +39,8 @@ class UsersController extends Controller {
         foreach (User::with('loans')->orderBy('lastname')->get() as $user) {
             $users[] = array(
                 'id' => $user->id,
+                'primaryId' => $user->alma_primary_id,
+                'group' => $user->alma_user_group,
                 'name' => $user->lastname . ', ' . $user->firstname,
                 'lastname' => $user->lastname,
                 'firstname' => $user->firstname,
@@ -114,7 +116,7 @@ class UsersController extends Controller {
             return back()->with('error', 'Brukeren ble ikke funnet i Alma. Kanskje hen har fått ny låntaker-ID?');
         }
 
-		$user->mergeFromUserResponse($users[0]);
+		$user->mergeFromAlmaResponse($users[0]);
 		$user->save();
 
         return back()->with('status', 'Brukeropplysninger ble oppdatert fra Alma.');

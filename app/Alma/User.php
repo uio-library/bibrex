@@ -6,13 +6,16 @@ use Scriptotek\Alma\Users\User as AlmaUser;
 
 class User
 {
-    public $id;
+    public $primaryId;
+    public $group;
     public $email;
     public $phone;
     public $lang;
     public $firstName;
     public $lastName;
     public $name;
+    public $barcode;
+    public $university_id;
 
     protected $user;
     protected $expanded = false;
@@ -46,7 +49,7 @@ class User
 
         $this->firstName = $user->first_name;
         $this->lastName = $user->last_name;
-        $this->id = $user->primary_id;
+        $this->primaryId = $user->primary_id;
         $this->group = $user->user_group->desc;
         $this->name = $this->lastName . ', ' . $this->firstName;
     }
@@ -61,8 +64,8 @@ class User
 
     public function getBarcode()
     {
-        if ($this->isLTID($this->id)) {
-            return $this->id;
+        if ($this->isLTID($this->primaryId)) {
+            return $this->primaryId;
         }
         $this->expand();
         return $this->barcode;
@@ -70,9 +73,6 @@ class User
 
     public function getUniversityId()
     {
-        if ($this->isLTID($this->id)) {
-            return $this->id;
-        }
         $this->expand();
         return $this->university_id;
     }

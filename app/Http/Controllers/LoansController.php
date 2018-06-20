@@ -201,9 +201,15 @@ class LoansController extends Controller
         if (strpos($user_input, ',') !== false) {
             $name = explode(',', $user_input);
             $name = array_map('trim', $name);
-            $user = User::where('lastname','=',$name[0])->where('firstname','=',$name[1])->first();
+            $user = User::where('lastname','=',$name[0])
+                ->where('firstname','=',$name[1])
+                ->first();
         } else {
-            $user = User::where('id','=',$user_input)->orWhere('barcode','=',$user_input)->orWhere('university_id','=',$user_input)->first();
+            $user = User::where('id','=',$user_input)
+                ->orWhere('barcode', '=', mb_strtolower($user_input))
+                ->orWhere('university_id','=',$user_input)
+                ->orWhere('alma_primary_id','=',$user_input)
+                ->first();
         }
 
         if (is_null($user)) {
@@ -230,13 +236,16 @@ class LoansController extends Controller
             } elseif (count($users) == 1) {
             	$barcode = $users[0]->getBarcode();
             	$univId = $users[0]->getUniversityId();
-            	$user = User::where('barcode', '=', $barcode)->orWhere('university_id', '=', $univId)->first();
+            	$user = User::where('barcode', '=', $barcode)
+                    ->orWhere('university_id', '=', $univId)
+                    ->orWhere('alma_primary_id', '=', $users[0]->primaryId)
+                    ->first();
             	if (is_null($user)) {
             		$user = new User();
             	}
-                $user->mergeFromUserResponse($users[0]);
+                $user->mergeFromAlmaResponse($users[0]);
                 $user->save();
-                \Log::info('Importerte bruker fra Alma: "' . $users[0]->id. '"');
+                \Log::info('Importerte bruker fra Alma: "' . $users[0]->primaryId. '"');
             } else {
                 if (strpos($user_input, ',') !== false) {
 

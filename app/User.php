@@ -72,11 +72,14 @@ class User extends Authenticatable {
     /**
      * Merge in UserResponse data
      *
+     * @param AlmaUser $au
      * @return void
      */
-    public function mergeFromUserResponse(AlmaUser $au)
+    public function mergeFromAlmaResponse(AlmaUser $au)
     {
         $this->in_alma = true;
+        $this->alma_primary_id = $au->primaryId;
+        $this->alma_user_group = $au->group;
         $this->barcode = $au->getBarcode();
         $this->university_id = $au->getUniversityId();
         $this->lastname = $au->lastName;

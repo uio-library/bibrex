@@ -232,3 +232,12 @@ a:hover *, a:focus * {
   }
 }
 
+input.busy {
+  background-image: url(/images/ajax-loader.gif);
+  background-position: 96% 50%;
+  background-repeat: no-repeat;
+}
+
+.checkout:disabled {
+  opacity: 0.2;
+}
