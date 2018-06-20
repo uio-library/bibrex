@@ -50,6 +50,7 @@ class ItemsController extends Controller
         $op = DbHelper::isPostgres() ? 'ILIKE' : 'LIKE';
         $q = $request->input('query') . '%';
         $items = Item::where('dokid', $op, $q)
+            ->where('library_id', '=', \Auth::user()->id)
             ->limit(10)
             ->get()->map(function($item) {
                 return [

@@ -43,7 +43,7 @@
 
           <div class="col-sm-5 px-2">
             <label for="thing">Hva?</label>
-            <typeahead name="thing" :tabindex="1" value="{{ old('thing') }}" prefetch="/things?mine=1" remote="/items/search" :hide-if-no-matches="true" :min-length="0" :limit="30"></typeahead>
+            <typeahead name="thing" :tabindex="1" value="{{ old('thing') }}" prefetch="/things?mine=1" remote="/items/search" :min-length="0" :limit="30"></typeahead>
             <small class="form-text text-muted">
               Scann eller velg ting
             </small>
