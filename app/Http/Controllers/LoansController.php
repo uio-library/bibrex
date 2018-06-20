@@ -314,6 +314,7 @@ class LoansController extends Controller
 			$loan_ids[] = $loan->id;
 
             $user->loan_count += 1;
+            $user->last_loan_at = Carbon::now();
             $user->save();
 		}
 
@@ -400,10 +401,14 @@ class LoansController extends Controller
 	{
 		\Log::info('Returnerte <a href="'. action('LoansController@getShow', $loan->id) . '">' . $loan->item->thing->name . '</a>.');
 
+		$user = $loan->user;
+
 		$repr = $loan->representation();
 		$itemId = $loan->item->id;
-		$user = $loan->user->getName();
 		$loan->checkIn();
+
+        $user->last_loan_at = Carbon::now();
+        $user->save();
 
 		$returnTo = $request->input('returnTo', 'items.show');
 
@@ -414,7 +419,7 @@ class LoansController extends Controller
 			default:
 				$redir = redirect()->action('ItemsController@show', $itemId);
 		}
-		return $redir->with('status', $repr .' ble levert inn for ' . $user . '. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
+		return $redir->with('status', $repr .' ble levert inn for ' . $user->getName() . '. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
 	}
 
     /**

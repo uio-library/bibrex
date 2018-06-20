@@ -21,6 +21,13 @@ class User extends Authenticatable {
      */
     protected $fillable = ['barcode', 'university_id', 'in_alma', 'firstname', 'lastname', 'phone', 'email', 'lang'];
 
+   /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['last_loan_at'];
+
     /**
      * Array of user-editable attributes (excluding machine-generated stuff)
      *
