@@ -69,6 +69,7 @@ Route::middleware(['auth'])->group(function()
 
     // --[[ ITEM ]]--
     Route::get('/items', 'ItemsController@getIndex');
+    Route::get('/items/search', 'ItemsController@search');
     Route::get('/items/{item}', 'ItemsController@getShow');
     Route::get('/items/edit/{item}', 'ItemsController@getEdit');
     Route::post('/items/{item}', 'ItemsController@postUpdate');

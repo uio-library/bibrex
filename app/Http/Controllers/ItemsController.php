@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Item;
+use App\Support\DbHelper;
 use App\Thing;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -34,6 +35,28 @@ class ItemsController extends Controller
 			'items' => $items
 		));
 	}
+
+    /**
+     * Search for resources.
+     *
+     * @param  Request $request
+     * @return Response
+     */
+    public function search(Request $request)
+    {
+        $op = DbHelper::isPostgres() ? 'ILIKE' : 'LIKE';
+        $q = $request->input('query') . '%';
+        $items = Item::where('dokid', $op, $q)
+            ->limit(10)
+            ->get()->map(function($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->dokid,
+                ];
+            });
+
+        return response()->json($items);
+    }
 
     /**
      * Display the specified resource.

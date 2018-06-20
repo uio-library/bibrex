@@ -56,6 +56,10 @@ import Bloodhound from 'corejs-typeahead'
               type: Number,
               default: 5
             },
+            alma: {
+              type: Boolean,
+              default: false
+            }
         },
         data: () => {
             return {
@@ -151,13 +155,15 @@ import Bloodhound from 'corejs-typeahead'
                     ? `<div><span class="right">${d.id}</span><span class="main">${d.name} - ${d.group}</span></div>`
                     : `<div><span class="main">${d.name}</span></div>`,
                 notFound: this.hideIfNoMatches ? null : '<div class="tt-empty"><span>No matches</span></div>',
-                pending: '<div class="tt-pending"></div>',
+                pending: '<div class="tt-pending">Looking...</div>',
               }
             })
             .on('typeahead:asyncrequest', (u) => {
                 console.log('typeahead:asyncrequest');
-                this.waitingSince = new Date().getTime();
-                setTimeout(this.stillWaiting.bind(this));
+                if (this.alma) {
+                    this.waitingSince = new Date().getTime();
+                    setTimeout(this.stillWaiting.bind(this));
+                }
             })
             .on('typeahead:asynccancel typeahead:asyncreceive', () => {
                 console.log('typeahead:asynccancel typeahead:asyncreceive');

@@ -10,7 +10,7 @@
           <th>Ting</th>
           <th>Purrenavn</th>
           <th>Aktiv?</th>
-          <th>Krev eks.?</th>
+          <th>Strekkode?</th>
         </tr>
       </thead>
       <tbody>
