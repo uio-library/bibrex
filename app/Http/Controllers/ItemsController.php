@@ -80,6 +80,7 @@ class ItemsController extends Controller
         ], $this->messages)->validate();
 
         $item->dokid = $request->input('dokid');
+        $item->note = $request->input('note');
         $item->thing_id = intval($request->input('thing'));
 
         $item->save();

@@ -80,7 +80,7 @@
                 </div>
                 <div class="col">
             {{ $loan->due_at }}
-            {{ ($d = $loan->daysLeftFormatted()) ? "($d)" : "ukjent / aldri" }}
+            {!! ($d = $loan->daysLeftFormatted()) ? "($d)" : "ukjent / aldri" !!}
                 </div>
             </div>
         </li>

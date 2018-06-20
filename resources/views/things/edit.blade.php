@@ -46,6 +46,19 @@
         </li>
 
         <li class="list-group-item">
+            <div class="row">
+                <label for="note" class="col-sm-3 col-form-label">Merknad:</label>
+                <div class="col-sm-9">
+                    @component('components.text', ['name' => 'note', 'value' => $thing->note])
+                    @endcomponent
+                    <p class="form-text text-muted">
+                      Vises i utlånsoversikten.
+                    </p>
+                </div>
+            </div>
+        </li>
+
+        <li class="list-group-item">
 
               <h5 class="card-title">Purringer</h5>
 

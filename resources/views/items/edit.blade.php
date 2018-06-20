@@ -38,6 +38,16 @@
                     </div>
                 </div>
             </li>
+
+            <li class="list-group-item">
+                <div class="row">
+                    {{ Form::label('note', 'Merknad: ', ['class' => 'col-sm-3 col-form-label']) }}
+                    <div class="col-sm-9">
+                        @component('components.text', ['name' => 'note', 'value' => $item->note])
+                        @endcomponent
+                    </div>
+                </div>
+            </li>
         </ul>
 
         <div class="card-footer">

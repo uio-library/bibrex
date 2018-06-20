@@ -16,6 +16,7 @@ class CreateThingsTable extends Migration {
 		Schema::create('things', function(Blueprint $table) {
 			$table->increments('id');
 			$table->string('name')->unique();
+			$table->string('note')->nullable();
 			$table->integer('loan_time')->unsigned()->default(1);
 			$table->timestamps();
             $table->dateTime('deleted_at')->nullable();

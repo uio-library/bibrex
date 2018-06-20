@@ -2,54 +2,118 @@
 
 @section('content')
 
-  <div class="card">
-
-        <div class="card-header">
-            <div class="row align-items-center">
-                <h5 class="col mb-0">
-                    {{ $thing->name }}
-                </h5>
-                @if ($thing->trashed())
-                    <a class="btn btn-warning col col-auto mx-1" href="{{ URL::action('ThingsController@getRestore', $thing->id) }}">
-                        <i class="far fa-box-full"></i>
-                        Gjenopprett
-                    </a>
-                @else
-                    <a href="{{ action('ItemsController@getEdit', ['id' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
-                        <i class="far fa-plus-hexagon"></i>
-                        Registrer eksemplar med strekkode
-                    </a>
-                    <a class="btn btn-primary col-auto mx-1" href="{{ URL::action('ThingsController@getEdit', $thing->id) }}">
-                        <i class="far fa-pencil-alt"></i>
-                        Rediger
-                    </a>
-                    <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ThingsController@getDestroy', $thing->id) }}">
-                        <i class="far fa-trash"></i>
-                        Slett
-                    </a>
-                @endif
-            </div>
+  <div class="card mb-3">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <h5 class="col mb-0">
+                {{ $thing->name }}
+            </h5>
+            @if ($thing->trashed())
+                <a class="btn btn-warning col col-auto mx-1" href="{{ URL::action('ThingsController@getRestore', $thing->id) }}">
+                    <i class="far fa-box-full"></i>
+                    Gjenopprett
+                </a>
+            @else
+                <a href="{{ action('ItemsController@getEdit', ['id' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
+                    <i class="far fa-plus-hexagon"></i>
+                    Registrer eksemplar med strekkode
+                </a>
+                <a class="btn btn-primary col-auto mx-1" href="{{ URL::action('ThingsController@getEdit', $thing->id) }}">
+                    <i class="far fa-pencil-alt"></i>
+                    Rediger
+                </a>
+                <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ThingsController@getDestroy', $thing->id) }}">
+                    <i class="far fa-trash"></i>
+                    Slett
+                </a>
+            @endif
         </div>
+    </div>
 
-        <h5>Ting</h5>
+    <ul class="list-group list-group-flush">
+
+      <li class="list-group-item">
+          <div class="row">
+              <div class="col-sm-3">
+                  Lånes ut i mitt bibliotek:
+              </div>
+              <div class="col">
+                  {{ $thing->at_my_library ? 'Ja' : 'Nei' }}
+              </div>
+          </div>
+      </li>
+
+      <li class="list-group-item">
+          <div class="row">
+              <div class="col-sm-3">
+                  Lånes ut m. strekkode:
+              </div>
+              <div class="col">
+                  {{ array_get($thing->library_settings, 'require_item') ? 'Ja' : 'Nei' }}
+              </div>
+          </div>
+      </li>
+
+      <li class="list-group-item">
+          <div class="row">
+              <div class="col-sm-3">
+                  Purres?
+              </div>
+              <div class="col">
+                  {{ array_get($thing->library_settings, 'send_reminders') ? 'Ja' : 'Nei' }}
+              </div>
+          </div>
+      </li>
+
+      <li class="list-group-item">
+          <div class="row">
+              <div class="col-sm-3">
+                  Merknad:
+              </div>
+              <div class="col">
+                  {{ $thing->note ?: '–' }}
+              </div>
+          </div>
+      </li>
+
+      <li class="list-group-item">
+          <div class="row">
+              <div class="col-sm-3">
+                  Lånetid (dager):
+              </div>
+              <div class="col">
+                  {{ $thing->loan_time }}
+              </div>
+          </div>
+      </li>
+    </ul>
+  </div>
 
 
+  <div class="card mb-3">
 
-        @if ($thing->items()->whereNotNull('dokid')->first())
-            <p>
-                Eksemplarer av denne tingen:
-            </p>
-            @foreach ($thing->items as $doc)
-                {{ $doc->dokid }}
-            @endforeach
-        @else
-            <p>
-                Denne tingen har ingen eksemplarer med strekkode.
-            </p>
-        @endif
+    <div class="card-header">
+      <h5>Eksemplarer</h5>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      @if ($thing->items()->whereNotNull('dokid')->count() == 0)
+        <li class="list-group-item">
+            <em>Ingen</em>
+        </li>
+      @endif
+      @foreach ($thing->items()->whereNotNull('dokid')->get() as $item)
+        <li class="list-group-item">
+            <a href="{{ action('ItemsController@getShow', $item->id) }}">{{ $item->dokid }}</a>
+            {{ $item->note }}
+        </li>
+      @endforeach
+    </ul>
+  </div>
+
+  {{--
 
 
-        </div>
 
         <div class="card-body">
 
@@ -117,7 +181,9 @@
 
     </div>
 
-  </div>
+  </div>--}}
+
+
 
 @stop
 

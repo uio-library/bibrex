@@ -26,6 +26,7 @@ class CreateItemsTable extends Migration {
 			$table->string('year')->nullable();
 			$table->string('cover_image')->nullable();
             $table->dateTime('deleted_at')->nullable();
+			$table->string('note')->nullable();
 
 
 			$table->foreign('thing_id')

@@ -155,6 +155,7 @@ class ThingsController extends Controller {
         $thing->num_items = $request->input('num_items') ?: 0;
         $thing->disabled = $request->input('disabled') == 'on';
         $thing->loan_time = $request->input('loan_time');
+        $thing->note = $request->input('note');
         $thing->send_reminders = $request->input('send_reminders') == 'on';
 
         if (!$thing->save()) {
