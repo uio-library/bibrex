@@ -16,9 +16,21 @@ class Item extends Model {
      */
     protected $dates = ['deleted_at'];
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['dokid', 'library_id'];
+
     public function thing()
     {
         return $this->belongsTo(Thing::class, 'thing_id');
+    }
+
+    public function library()
+    {
+        return $this->belongsTo(Library::class, 'library_id');
     }
 
 	public function loans()

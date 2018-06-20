@@ -20,6 +20,11 @@ class Library extends Authenticatable {
 		return $this->hasMany(Loan::class);
 	}
 
+	public function items()
+	{
+		return $this->hasMany(Item::class);
+	}
+
     /**
      * The things activated at the library.
      */

@@ -39,7 +39,7 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::bind('item', function ($value) {
             return $value == '_new'
-                ? new Item()
+                ? new Item([ 'library_id' => \Auth::user()->id ])
                 : Item::withTrashed()->find($value) ?? abort(404);
         });
 

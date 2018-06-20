@@ -53,6 +53,17 @@
           <li class="list-group-item">
               <div class="row">
                   <div class="col-sm-2">
+                      Bibliotek:
+                  </div>
+                  <div class="col">
+                      {{ $item->library->name }}
+                  </div>
+              </div>
+          </li>
+
+          <li class="list-group-item">
+              <div class="row">
+                  <div class="col-sm-2">
                       Strekkode:
                   </div>
                   <div class="col">
