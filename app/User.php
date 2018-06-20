@@ -42,11 +42,6 @@ class User extends Authenticatable {
             ->orderBy('created_at', 'desc');
     }
 
-    public function name()
-    {
-        return $this->firstname . ' ' . $this->lastname;
-    }
-
     /**
      * Mutuator for the barcode field
      *

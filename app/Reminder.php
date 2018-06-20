@@ -79,7 +79,7 @@ class Reminder extends Model {
 		parent::save($options);
 
 		if ($isNew) {
-            \Mail::to($this->loan->user)->send(new FirstReminder($this));
+			\Mail::send(new FirstReminder($this));
 
 			\Log::info('Sendte <a href="'. \URL::action('RemindersController@getShow', $this->id) . '">påminnelse</a> for lån.');
 		}
