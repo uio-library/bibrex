@@ -37,15 +37,4 @@ class Item extends Model {
 			->where('library_id', $library_id)
 			->orderBy('created_at', 'desc');
 	}
-
-	/**
-	 * Mutator for the dokid field
-	 *
-	 * @param  string  $value
-	 * @return void
-	 */
-	public function setDokidAttribute($value)
-	{
-		$this->attributes['dokid'] = strtolower($value);
-	}
 }
