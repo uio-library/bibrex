@@ -29,7 +29,7 @@ class ItemsController extends Controller
 	 */
 	public function getIndex()
 	{
-		$items = Item::with('loans', 'thing')->get();
+		$items = Item::with('loans', 'thing')->whereNotNull('dokid')->get();
 
 		return response()->view('items.index', array(
 			'items' => $items
