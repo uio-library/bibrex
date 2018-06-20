@@ -371,7 +371,7 @@ class LoansController extends Controller
 
 		$repr = $loan->representation();
 		$itemId = $loan->item->id;
-		$user = $loan->user->name();
+		$user = $loan->user->getName();
 
 		$loan->is_lost = true;
 		$loan->save();
@@ -409,7 +409,7 @@ class LoansController extends Controller
 
 		$repr = $loan->representation();
 		$itemId = $loan->item->id;
-		$user = $loan->user->name();
+		$user = $loan->user->getName();
 		$loan->checkIn();
 
 		$returnTo = $request->input('returnTo', 'items.show');
