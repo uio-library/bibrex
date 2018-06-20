@@ -67,7 +67,8 @@ class ItemsController extends Controller
 	public function getShow(Item $item)
 	{
 		return response()->view('items.show', array(
-			'item' => $item
+			'item' => $item,
+            'lastLoan' => $item->loans()->withTrashed()->orderBy('id', 'desc')->first(),
 		));
 	}
 

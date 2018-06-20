@@ -93,7 +93,7 @@
   <div class="card mb-3">
 
     <div class="card-header">
-      <h5>Eksemplarer</h5>
+      <h5>Aktive eksemplarer</h5>
     </div>
 
     <ul class="list-group list-group-flush">
@@ -103,6 +103,28 @@
         </li>
       @endif
       @foreach ($thing->items()->whereNotNull('dokid')->get() as $item)
+        <li class="list-group-item">
+            <a href="{{ action('ItemsController@getShow', $item->id) }}">{{ $item->dokid }}</a>
+            {{ $item->note }}
+        </li>
+      @endforeach
+    </ul>
+  </div>
+
+
+  <div class="card mb-3">
+
+    <div class="card-header">
+      <h5>Slettede/tapte eksemplarer</h5>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      @if ($thing->items()->onlyTrashed()->count() == 0)
+        <li class="list-group-item">
+            <em>Ingen</em>
+        </li>
+      @endif
+      @foreach ($thing->items()->onlyTrashed()->get() as $item)
         <li class="list-group-item">
             <a href="{{ action('ItemsController@getShow', $item->id) }}">{{ $item->dokid }}</a>
             {{ $item->note }}

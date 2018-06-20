@@ -79,8 +79,10 @@
                     Forfaller:
                 </div>
                 <div class="col">
-            {{ $loan->due_at }}
-            {!! ($d = $loan->daysLeftFormatted()) ? "($d)" : "ukjent / aldri" !!}
+                    {{ $loan->due_at }}
+                    @if (!$loan->trashed())
+                        {!! ($d = $loan->daysLeftFormatted()) ? "($d)" : "ukjent / aldri" !!}
+                    @endif
                 </div>
             </div>
         </li>
@@ -91,7 +93,15 @@
                     Returnert:
                 </div>
                 <div class="col">
-                    {{ $loan->deleted_at ?: 'ikke returnert enda' }}
+                    @if ($loan->is_lost)
+                        <span class="text-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Markert som tapt
+                            {{ $loan->deleted_at }}
+                        </span>
+                    @else
+                        {{ $loan->deleted_at ?: 'ikke returnert enda' }}
+                    @endif
                 </div>
             </div>
         </li>
@@ -113,11 +123,13 @@
                         </div>
                       @endforeach
                     @endif
-                    <div>
-                      <a href="{{ URL::action('RemindersController@getCreate') . '?loan_id=' . $loan->id }}">
-                        Send manuell påminnelse
-                      </a>
-                    </div>
+                    @if (!$loan->trashed())
+                        <div>
+                          <a href="{{ URL::action('RemindersController@getCreate') . '?loan_id=' . $loan->id }}">
+                            Send manuell påminnelse
+                          </a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </li>

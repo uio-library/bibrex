@@ -97,6 +97,7 @@ class LoansController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * @param AlmaClient $alma
      * @param Request $request
      * @return Response
      * @throws ValidationException
@@ -355,18 +356,12 @@ class LoansController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param Loan $loan
      * @param Request $request
-     * @param  int $id
      * @return Response
      */
-	public function getLost(Request $request, $id)
+	public function getLost(Loan $loan, Request $request)
 	{
-		$loan = Loan::find($id);
-		if (!$loan) {
-			// App::abort(404);
-			return response()->view('errors.404', array('what' => 'Lånet'), 404);
-		}
-
 		\Log::info('<a href="'. action('LoansController@getShow', $loan->id) . '">Utlån</a> av ' . $loan->item->thing->name . ' ble registrert som tapt.');
 
 		$repr = $loan->representation();
@@ -378,6 +373,10 @@ class LoansController extends Controller
 
 		$loan->checkIn();
 
+		if ($loan->item->dokid) {
+			$loan->item->delete();
+		}
+
 		$returnTo = $request->input('returnTo', 'items.show');
 
 		switch ($returnTo) {
@@ -387,24 +386,18 @@ class LoansController extends Controller
 			default:
 				$redir = redirect()->action('ItemsController@getShow', $itemId);
 		}
-		return $redir->with('status', $repr .' ble registrert som rotet bort. <a href="' . action('LoansController@getRestore', $id) . '" class="alert-link">Angre</a>');
+		return $redir->with('status', $repr .' ble registrert som rotet bort. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
 	}
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param Loan $loan
      * @param Request $request
-     * @param  int $id
      * @return Response
      */
-	public function getDestroy(Request $request, $id)
+	public function getDestroy(Loan $loan, Request $request)
 	{
-		$loan = Loan::find($id);
-		if (!$loan) {
-			// App::abort(404);
-			return response()->view('errors.404', array('what' => 'Lånet'), 404);
-		}
-
 		\Log::info('Returnerte <a href="'. action('LoansController@getShow', $loan->id) . '">' . $loan->item->thing->name . '</a>.');
 
 		$repr = $loan->representation();
@@ -421,23 +414,17 @@ class LoansController extends Controller
 			default:
 				$redir = redirect()->action('ItemsController@getShow', $itemId);
 		}
-		return $redir->with('status', $repr .' ble levert inn for ' . $user . '. <a href="' . action('LoansController@getRestore', $id) . '" class="alert-link">Angre</a>');
+		return $redir->with('status', $repr .' ble levert inn for ' . $user . '. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
 	}
 
-	/**
-	 * Restores the specified resource into storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function getRestore($id)
+    /**
+     * Restores the specified resource into storage.
+     *
+     * @param Loan $loan
+     * @return Response
+     */
+	public function getRestore(Loan $loan)
 	{
-		$loan = Loan::withTrashed()->find($id);
-		if (!$loan) {
-			// App::abort(404);
-			return response()->view('errors.404', array('what' => 'Lånet'), 404);
-		}
-
 		\Log::info('Returen av <a href="'. action('LoansController@getShow', $loan->id) . '">utlånet</a> av ' . $loan->item->thing->name . ' ble angret.');
 
 		$loan->restore();

@@ -2,7 +2,7 @@
 
 @section('content')
 
-  <div class="card card-primary">
+  <div class="card card-primary mb-3">
 
     <div class="card-header" >
         <div class="row align-items-center">
@@ -73,66 +73,39 @@
           </li>
 
       </ul>
-
-
-{{--
-      @if ($item->cover_image)
-        <img src="{{ $item->cover_image }}" style="float:right;" />
-      @endif
-        <strong>Objektid:</strong>
-        <a href="http://ask.bibsys.no/ask/action/show?pid={{ $item->objektid }}&amp;kid=biblio">
-          {{ $item->objektid }}
-        </a><br />
-
-        <strong>Tittel:</strong>
-        {{ $item->title }} {{ $item->subtitle }}<br />
-
-        <strong>Forfatter:</strong>
-        {{ $item->authors }}<br />
-
-      @endif--}}
-    </div>
-
-      {{--
-
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-            <h5>Lånehistorikk</h5>
-        </li>
-    </ul>
-
-      <table class="table">
-      @foreach ($loans = $item->allLoans as $nr => $loan)
-        <tr>
-          <td>
-            <span class="badge">{{ (count($loans) - $nr) }}</span>
-          </td>
-          <td>
-            <a href="{{ URL::action('UsersController@getShow', $loan->user->id) }}">
-              {{ $loan->user->lastname }},
-              {{ $loan->user->firstname }}
-            </a>
-          </td>
-          <td>
-            {{ $loan->created_at }}
-          </td>
-          <td>
-            {{ $loan->deleted_at }}
-          </td>
-        </tr>
-      @endforeach
-      </table>
-
-      @if (count($loans) == 0)
-        <em>Ingen utlån</em>
-      @endif
-
-    </div>
-      --}}
-
-
   </div>
 
+  <div class="card mb-3">
+
+    <div class="card-header">
+      <h5>Sist utlånt</h5>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      @if (is_null($lastLoan))
+        <li class="list-group-item">
+            <em>Aldri</em>
+        </li>
+      @else
+        <li class="list-group-item">
+          <a href="{{ action('LoansController@getShow', $lastLoan->id) }}">{{ $lastLoan->created_at->toDateString() }}</a>
+          @if ($lastLoan->trashed())
+            @if ($lastLoan->is_lost)
+              <span class="text-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                Markert som tapt
+                {{ $lastLoan->deleted_at }}
+              </span>
+            @else
+                returnert {{ $lastLoan->deleted_at }}
+            @endif
+          @else
+            (ikke returnert enda)
+          @endif
+        </li>
+      @endif
+    </ul>
+  </div>
 @stop
 
 

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Item;
+use App\Loan;
 use App\Thing;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -40,6 +41,10 @@ class RouteServiceProvider extends ServiceProvider
             return $value == '_new'
                 ? new Item()
                 : Item::withTrashed()->find($value) ?? abort(404);
+        });
+
+        Route::bind('loan', function ($value) {
+            return Loan::withTrashed()->find($value) ?? abort(404);
         });
     }
 
