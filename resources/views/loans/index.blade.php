@@ -22,7 +22,7 @@
     @else
 
 
-  <div class="card">
+  <div class="card mb-5">
 
     <div class="card-header">
         <div class="row align-items-center">
@@ -101,15 +101,7 @@
   </div>
   @endif
 
-  <div class="card my-3">
 
-    <h5 class="card-header">
-      Låneoversikt (<span id="loancount">{{ count($loans) }}</span>)
-    </h5>
-
-    <div class="card-body">
-      <p>Merk: Utlånshistorikk for returnerte ting anonymiseres hver natt.</p>
-    </div>
 
     <!--<div class="card-body">
       Vis bare
@@ -119,7 +111,7 @@
         <label for="onlyOverdue">forfalt</label>
     </div>-->
 
-    <table id="myTable" class="table table-striped" style="width:100%">
+    <table id="myTable" class="table" style="width:100%">
         <thead>
             <th>Lån</th>
             <th>Bruker</th>
@@ -231,6 +223,8 @@
         </tbody>
     </table>
 
+    <p class="text-muted">Merk: Utlånshistorikk for returnerte ting anonymiseres hver natt.</p>
+
     {{--
     <ul class="list-group list-group-flush">
     @foreach ($loans as $loan)
@@ -294,7 +288,6 @@
     </ul>
     --}}
 
-  </div>
 
 @stop
 
@@ -440,7 +433,38 @@
     });
 
     $('#myTable').DataTable({
-        order: [[ 2, "desc" ]]
+        order: [[ 2, "desc" ]],
+
+        paging: false,
+        info: false,
+
+        // Source: https://datatables.net/plug-ins/i18n/Norwegian-Bokmal
+        language: {
+            "sEmptyTable": "Ingen data tilgjengelig i tabellen",
+            "sInfo": "Viser _START_ til _END_ av _TOTAL_ linjer",
+            "sInfoEmpty": "Viser 0 til 0 av 0 linjer",
+            "sInfoFiltered": "(filtrert fra _MAX_ totalt antall linjer)",
+            "sInfoPostFix": "",
+            "sInfoThousands": " ",
+            "sLoadingRecords": "Laster...",
+            "sLengthMenu": "Vis _MENU_ eksemplarer",
+            "sLoadingRecords": "Laster...",
+            "sProcessing": "Laster...",
+            "sSearch": "S&oslash;k:",
+            "sUrl": "",
+            "sZeroRecords": "Ingen linjer matcher s&oslash;ket",
+            "oPaginate": {
+                "sFirst": "F&oslash;rste",
+                "sPrevious": "Forrige",
+                "sNext": "Neste",
+                "sLast": "Siste"
+            },
+            "oAria": {
+                "sSortAscending": ": aktiver for å sortere kolonnen stigende",
+                "sSortDescending": ": aktiver for å sortere kolonnen synkende"
+            }
+          },
+
     });
 </script>
 

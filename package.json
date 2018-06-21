@@ -15,15 +15,13 @@
         "bootstrap-vue": "^2.0.0-rc.11",
         "corejs-typeahead": "^1.2.1",
         "cross-env": "^5.2.0",
-        "datatables": "^1.10.17",
+        "datatables.net-bs4": "^1.10.18",
         "jquery": "^3.2",
         "laravel-mix": "^2.0",
         "lodash": "^4.17.4",
         "popper.js": "^1.12",
         "select2": "^4.0.6-rc.1",
-        "vue": "^2.5.7"
-    },
-    "dependencies": {
+        "vue": "^2.5.7",
         "vue-js-toggle-button": "^1.2.3"
     }
 }
