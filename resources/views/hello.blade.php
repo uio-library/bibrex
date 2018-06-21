@@ -2,124 +2,135 @@
 
 @section('content')
 
-<h2>Bibrex?</h2>
-<p>
-    Bibrex er et utlånssystem som
-    bygger videre på to tråder; 
-    <a href="http://instagram.com/p/Xcgf5MtMEW/">BIBCRAFT</a> (selvstendig utlånssystem)
-    og <abbr title="Hadde vi ikke et bilde av dette også..?">dingseutlånet</abbr>, 
-    og spinner inn en ny tråd:
-    kommunikasjon med Bibsys over <a href="http://www.ncip.info/">NCIP</a>-protokollen. 
-</p>
 
-<p>
-    Systemet kan i utgangspunktet håndtere <abbr title="Ikke utlån med REFID/HEFTID/INNID">nesten</abbr> alle utlån, men er mest meningsfullt å 
-    bruke der bruker og/eller utlånsobjekt ikke finnes i BIBSYS, f.eks. for
-    utlån til studenter som ikke enda er importert i BIBSYS og utlån 
-    av dingser.
-</p>
-
-<p>
-    Bibrex sjekker om bruker er i BIBSYS. Ved utlån av et BIBSYS-registrert 
-    dokument til en bruker som ikke er i BIBSYS blir lånet registrert på en 
-    forhåndsdefinert samlebruker («Midlertidig låner») i BIBSYS for å indikere 
-    at dokumentet er utlånt – Den nødvendig informasjonen for å identifisere 
-    låneren lagres istedet lokalt. Om brukeren (og dokumentet) derimot skulle 
-    være i BIBSYS blir lånet registrert på vedkommende som normalt.
-</p>
-
-<h2>Enkel brukerveiledning</h2>
-<ol>
-    <li>
-        I det første feltet skanner man kortnummer
-        eller oppgir navn på låner.
+<div class="card mb-3">
+    <div class="card-header">
+        <h5>Korleis fungerar Bibrex?</h5>
+    </div>
+    <div class="card-body">
         <ul>
             <li>
-                Hvis brukeren har et student/ansattkort skanner vi alltid dette. 
+                Bibrex inneholder ei samling av <em>ting</em>, og for kvar ting kan det finnast eit eller fleire <em>eksemplar</em>.
             </li>
             <li>
-                Hvis ikke skriver vi inn navn på formen «Etternavn, Fornavn».
+                Tinga delast for alle bibliotek, men kvart bibliotek kan velje hvilke dei vil aktivere.
+            </li>
+            <li>
+                Når du registrerer eit nytt eksemplar blir du bedt om å legge inn ein unik ID for eksemplaret.
+                Denne kan du ta frå ei strekkode eller dikte opp sjølv og registrere i ei RFID-brikke.
+                Bibrex bryr seg kun om at den er unik – og vil bjeffe på deg om han ikkje er det.
             </li>
         </ul>
-
-    </li>
-    <li>
-        Velg dings eller skann inn bokas DOKID/KNYTTID i det neste feltet ved 
-        å legge boka på RFID-plata. Pass på at RFID-programmet står i utlånsmodus
-        for at boka skal bli avalarmisert.
-        Bibrex fikser dessverre ikke dette på egenhånd.
-    </li>
-    <li>
-        Hvis brukeren ikke har lånt før og ikke finnes i BIBSYS vil Bibrex
-        be deg om å fylle inn personopplysninger manuelt. Man kan også
-        gå inn og redigere denne informasjonen i etterkant.
-    </li>
-</ol>
-
-<h2>Hjelp!</h2>
-<p>
-    Bibrex er et eksperiment i produksjon. 
-    Hvis du får en uforståelig feilmelding er det mest sannsynlig 
-    <em>ikke</em> du som har gjort noe galt.
-    <ol>
-        <li>
-            Skriv ned DOKID og nok informasjon til å identifisere låneren 
-            (navn, LTID og/eller telefon/epost)
-            på en lapp som du gir til Dan Michael. 
-        </li>
-        <li>
-            Gi boka til låneren med et smil :)
-        </li>
-    </ol>
-    Boka avalarmiseres med en gang du legger den på plata, så det
-    bør ikke være noe problem.
-</p>
-
-<h2>Men hva med...?</h2>
-<ul>
-    <li>
-        Reserveringer og bestillinger er ikke støttet. 
-    </li>
-    <li>
-        HEFTID/INNID/REFID er ikke støttet.
-    </li>
-    <li>
-        Hvis en bok utlånt i Bibrex blir returnert i Bibsys vil den
-        også bli returnert i Bibrex. Det kan imidlertid være et visst
-        etterslep.
-    </li>
-    <li>
-        Det er ikke mulig å sende ut purringer (enda).
-    <li>
-        Andre ting? Spør Dan Michael
-    </li>
-</ul>
-
-<h2>Se også</h2>
-<ul>
-    <li>
-        <a href="https://www.ub.uio.no/for-ansatte/publikumstjenester/veiledning/ureal/oppslagstavle/2013/nye-studenter-og-kort.html">«Nye studenter og låning/kort», bloggpost 9. august 2013</a>
-    </li>
-    <li>
-        <a href="https://www.ub.uio.no/for-ansatte/publikumstjenester/veiledning/ureal/oppslagstavle/2013/rex-spiser-dingser.html">«Rex har spist dingsene», bloggpost 13. august 2013</a>
-    </li>
-    <li>
-        <a href="https://www.ub.uio.no/for-ansatte/innlaan-utlaan/utlaan/ureal/lanekort.html">«Lånekort», svært nyttig guide, oppdatert 9. aug 2013</a>
-    </li>
-    <li>
-        <a href="https://www.ub.uio.no/for-ansatte/om-ubo/grupper/faste-grupper/bibsysgrupper/doksok/studiekort-fs-feide.html">«Studiekort, FS, FEIDE», 22. jan 2010</a>
-    </li>
-</ul>
-
-@stop
+    </div>
+</div>
 
 
-@section('scripts')
+<div class="card mb-3">
+    <div class="card-header">
+        <h5>Lånetid og påminningar?</h5>
+    </div>
+    <div class="card-body">
+        <ul>
+            <li>
+                Standard lånetid kan setjast for kvar ting, men merk at lånetida er felles for alle bibliotek!
+            </li>
+            <li>
+                Lånetida <em>rundast ned</em> til næraste natt.
+                Ei lånetid på 1 dag inneber dermed at tingen kan lånast ut dagen.
+            </li>
+            <li>
+                Neste morgon blir første påminning sendt.
+            </li>
+            <li>
+                Det blir ikkje sendt fleire påminningar automatisk, så blir ikkje tingen levert må ein følje opp manuelt
+                (Kan hende blir dette endra i framtida).
+            </li>
+            <li>
+                Du kan sjå om det har blitt sendt påminningar i utlånsoversikta.
+                Du kan òg trykkje på ei påminning for å sjå sjølve meldinga som blei sendt.
+            </li>
+        </ul>
+    </div>
+</div>
 
-<script type='text/javascript'>     
-  $(document).ready(function() {
-    $('#ltid').focus();              
-  });
-</script>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5>Tilgang</h5>
+    </div>
+    <div class="card-body">
+        <ul>
+            <li>
+                Kvart bibliotek har si eige pålogging.
+            </li>
+            <li>
+                Pålogging kan gjerast med brukarnamn eller automatisk basert på IP-adresse.
+            </li>
+            <li>
+                Kvart bibliotek sette sjølv opp <a href="/my/ips">hvilke IP-adressar</a> som skal loggast på automatisk.
+            </li>
+            <li>
+                Kven som helst kan opprette og slette ting
+                (men det fort gjort å gjenopprette ei ting om ho blir feilaktig sletta).
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5>Kva med personvern?</h5>
+    </div>
+    <div class="card-body">
+        <ul>
+            <li>
+                Fyrste gong ein brukar låner noko blir fylgjande importert frå Alma:
+                <ul>
+                    <li>
+                        Låne-ID og Feide-ID for å kunne identifisere brukaren. Låne-ID trengs for å kunne scanne lånekortet,
+                        medan Feide-ID trengs som stabil identifikator hvis brukaren får nytt kort.
+                    </li>
+                    <li>
+                        Fornavn, etternavn, gruppe («egne ansatte», «egne studenter») for å kunne identifisere brukaren
+                        og skilje hen frå andre brukare i søket.
+                    </li>
+                    <li>
+                        Føretrukket språk for å kunne sende påminningar på dette språket.
+                    </li>
+                    <li>
+                        Epost og telefon for å kunne sende påminningar.
+                    </li>
+                </ul>
+            </li>
+            <li>
+                Brukare importert frå Alma blir sletta eit år etter dei sist lånte noko.
+            </li>
+            <li>
+                Manuelt oppretta brukare blir sletta fem år etter dei sist lånte noko.
+            </li>
+            <li>
+                Lån anonymiserast fyrste natt etter tingen har blitt levert.
+            </li>
+            <li>
+                For statistikkføremål lagrar vi kor mange lån kvar brukar har gjort (men ikkje kva eller når).
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5>Kva gjer eg om eg får ei feilmelding?</h5>
+    </div>
+    <div class="card-body">
+        <ul>
+            <li>
+                Kontakt Dan Michael eller bibrex-diskusjon@ub.uio.no .
+            </li>
+        </ul>
+    </div>
+</div>
+
 
 @stop
