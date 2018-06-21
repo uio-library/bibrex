@@ -114,6 +114,10 @@
   @yield('content')
 </div>
 
+<script src="https://cdn.ravenjs.com/3.24.1/vue/raven.min.js" crossorigin="anonymous"></script>
+<script>
+  Raven.config('https://51e9cb7c8a32430fbfd160e1e5028860@sentry.io/1229992').install();
+</script>
 <script type="text/javascript" src="{{ mix('/js/app.js') }}"></script>
 
 @yield('scripts')
