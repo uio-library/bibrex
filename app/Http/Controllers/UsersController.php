@@ -11,21 +11,14 @@ use Scriptotek\Alma\Client as AlmaClient;
 
 class UsersController extends Controller {
 
-	private $rules = array(
-		'barcode' => 'nullable|regex:/^[0-9a-zA-Z]{10}$/',
-		'lastname' => 'required',
-		'firstname' => 'required',
-		'email' => 'requiredWithout:phone',
-		'lang' => 'required',
-	);
-
-	private $messages = array(
-		'barcode.regex' => 'LTID har ikke riktig format.',
+	private $messages = [
+		'barcode.regex' => 'Strekkoden er ikke på riktig format.',
+		'barcode.unique' => 'Det finnes allerede en annen bruker med denne strekkoden. Du kan eventuelt slå dem sammen i brukeroversikten.',
 		'lastname.required' => 'Etternavn må fylles inn.',
 		'firstname.required' => 'Fornavn må fylles inn.',
 		'email.required_without' => 'Enten e-post eller telefonnummer må fylles inn.',
 		'lang.required' => 'Språk må fylles inn.'
-	);
+	];
 
 	/**
 	 * Display a listing of the resource.
@@ -122,40 +115,36 @@ class UsersController extends Controller {
         return back()->with('status', 'Brukeropplysninger ble oppdatert fra Alma.');
 	}
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function getEdit($id)
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param User $user
+     * @return Response
+     */
+	public function getEdit(User $user)
 	{
-		$user = User::find($id);
 		return response()->view('users.edit', array(
-				'user' => $user
-			));
-
+		    'user' => $user
+        ));
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param User $user
      * @param  Request $request
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function putUpdate(Request $request, $id)
+     * @return Response
+     */
+	public function putUpdate(User $user, Request $request)
 	{
-		$validator = \Validator::make($request->input(), $this->rules, $this->messages);
+		\Validator::make($request->input(), [
+			'barcode' => 'nullable|regex:/^[0-9a-zA-Z]{10}$/|unique:users,barcode' . ($user->id ? ',' . $user->id : ''),
+			'lastname' => 'required',
+			'firstname' => 'required',
+			'email' => 'requiredWithout:phone',
+			'lang' => 'required',
+		], $this->messages)->validate();
 
-		if ($validator->fails())
-		{
-			return redirect()->action('UsersController@getEdit', $id)
-				->withErrors($validator)
-				->withInput();
-		}
-
-		$user = User::find($id);
 		$user->barcode = $request->input('barcode');
 		$user->lastname = $request->input('lastname');
 		$user->firstname = $request->input('firstname');
@@ -167,7 +156,7 @@ class UsersController extends Controller {
 		    dd('Oi');
         }
 
-		return redirect()->action('UsersController@getShow', $id)
+		return redirect()->action('UsersController@getShow', $user->id)
 			->with('status', 'Brukeren ble lagret.');
 	}
 
