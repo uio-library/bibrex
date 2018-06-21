@@ -135,15 +135,16 @@ class LibrariesController extends Controller
 	function getLogin()
 	{
 		if (isset($_SERVER)) {
-			$library_ip = LibraryIp::whereRaw('? LIKE ip', array(array_get($_SERVER, 'REMOTE_ADDR','')))->first();
+            $library_ip = LibraryIp::whereRaw('? LIKE ip', array(array_get($_SERVER, 'REMOTE_ADDR','')))->first();
 			if ($library_ip) {
-				$lib = $library_ip->library;
-				Auth::loginUsingId($lib->id);
+                $lib = $library_ip->library;
+                $s = Auth::login($lib);
 				Session::put('iplogin', true);
-				//Session::flash('logged_in_from_ip', true);
+                // Session::flash('logged_in_from_ip', true);
 				return redirect()->intended('/');
 			}
-		}
+        }
+
 		return response()->view('login');
 	}
 

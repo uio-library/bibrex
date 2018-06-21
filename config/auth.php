@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'libraries',
     ],
 
     /*
@@ -38,12 +38,12 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'libraries',
         ],
 
         'api' => [
             'driver' => 'token',
-            'provider' => 'users',
+            'provider' => 'libraries',
         ],
     ],
 
@@ -65,8 +65,9 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'libraries' => [
             'driver' => 'eloquent',
+            'table' => 'libraries',
             'model' => App\Library::class,
         ],
 
@@ -92,8 +93,8 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'libraries' => [
+            'provider' => 'libraries',
             'table' => 'password_resets',
             'expire' => 60,
         ],
