@@ -2,6 +2,15 @@
 
 @section('content')
 
+@if ((new \Jenssegers\Agent\Agent() )->browser() == 'IE')
+
+
+<div class="card bg-danger text-white">
+  Denne siden støttes ikke i IE, ihvertfall ikke enda.
+</div>
+
+@else
+
   <div class="card">
     <div class="card-header">
         <div class="row align-items-center">
@@ -16,6 +25,8 @@
     <!-- List group -->
     <Things></Things>
   </div>
+
+@endif
 
 @stop
 

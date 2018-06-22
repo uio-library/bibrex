@@ -2,6 +2,20 @@
 
 @section('content')
 
+@if ((new \Jenssegers\Agent\Agent() )->browser() == 'IE')
+
+  <div class="card bg-danger text-white mb-3">
+  <div class="card-body">
+    Bibrex fungerer til en viss grad i Internet Explorer,
+    men bruk helst heller Firefox eller Chrome, ihvertfall inntil videre.
+  </div>
+  </div>
+
+
+@endif
+
+
+
   @if (Auth::check() && is_null(Auth::user()->password))
     <div class="alert alert-danger">
       NB! Det er ikke satt noe passord for denne kontoen enda.
