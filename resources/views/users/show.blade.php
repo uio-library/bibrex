@@ -29,10 +29,13 @@
             Låne-ID:
           </th>
           <td>
-            {!! $user->barcode ? $user->barcode : '<em>Mangler</em>' !!}
+            @if ($user->barcode)
+              <samp>{{ $user->barcode }}</samp>
+            @else
+              <em>Mangler</em>
+            @endif
             @if ($user->barcode)
             : <span>{{ $user->in_alma ? 'finnes i Alma' : 'finnes ikke i Alma' }}</span>
-
             @endif
           </td>
         </tr>

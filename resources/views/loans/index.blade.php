@@ -143,7 +143,7 @@
                 <td>
                     <a href="{{ URL::action('LoansController@getShow', $loan->id) }}">{{ $loan->item->thing->name }}</a>
                     @if ($loan->item->dokid)
-                        (#{{ $loan->item->dokid }})
+                        (<samp>{{ $loan->item->dokid }}</samp>)
                     @endif
                 </td>
                 <td data-order="{{ $loan->user->lastname }}, {{ $loan->user->firstname }}">

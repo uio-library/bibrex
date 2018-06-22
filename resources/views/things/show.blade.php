@@ -108,9 +108,9 @@
             <em>Ingen</em>
         </li>
       @endif
-      @foreach ($thing->items()->whereNotNull('dokid')->get() as $item)
+      @foreach ($thing->items()->whereNotNull('dokid')->orderBy('dokid')->get() as $item)
         <li class="list-group-item">
-            <a href="{{ action('ItemsController@show', $item->id) }}">{{ $item->dokid }}</a>
+            <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->dokid }}</samp></a>
             {{ $item->note }}
         </li>
       @endforeach
@@ -132,7 +132,7 @@
       @endif
       @foreach ($thing->items()->onlyTrashed()->get() as $item)
         <li class="list-group-item">
-            <a href="{{ action('ItemsController@show', $item->id) }}">{{ $item->dokid }}</a>
+            <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->dokid }}</samp></a>
             {{ $item->note }}
         </li>
       @endforeach
