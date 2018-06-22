@@ -171,11 +171,11 @@ import Bloodhound from 'corejs-typeahead'
                   // this.currentValue = ev.currentTarget.value;
               })
               .on('typeahead:select', (ev, datum) => {
-                  this.selectedId = datum.id;
+                  this.selectedId = datum.id ? datum.id : datum.primaryId;
                   this.focusNextElement();
               })
               .on('typeahead:autocomplete', (ev, datum) => {
-                  this.selectedId = datum.id;
+                  this.selectedId = datum.id ? datum.id : datum.primaryId;
                   this.focusNextElement();
               })
               ;

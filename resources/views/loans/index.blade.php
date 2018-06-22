@@ -55,21 +55,24 @@
           'class' => 'form row px-2'
           )) }}
 
+
+          <div class="col-sm-5 px-2">
+            <label for="user">Til hvem?</label>
+            <typeahead name="user" :tabindex="1" value="{{ old('user') }}" prefetch="/users" remote="/users/search-alma" placeholder="Til hvem?" :min-length="4" :alma="true"></typeahead>
+            <small class="form-text text-muted">
+                Navn eller låne-ID
+            </small>
+          </div>
+
+
           <div class="col-sm-5 px-2">
             <label for="thing">Hva?</label>
-            <typeahead name="thing" :tabindex="1" value="{{ old('thing') }}" prefetch="/things?mine=1" remote="/items/search" :min-length="0" :limit="30"></typeahead>
+            <typeahead name="thing" :tabindex="2" value="{{ old('thing') }}" prefetch="/things?mine=1" remote="/items/search" :min-length="0" :limit="30"></typeahead>
             <small class="form-text text-muted">
               Scann eller velg ting
             </small>
           </div>
 
-          <div class="col-sm-5 px-2">
-            <label for="user">Til hvem?</label>
-            <typeahead name="user" :tabindex="2" value="{{ old('user') }}" prefetch="/users" remote="/users/search-alma" placeholder="Til hvem?" :min-length="4" :alma="true"></typeahead>
-            <small class="form-text text-muted">
-                Navn eller låne-ID
-            </small>
-          </div>
 
 <!--
           <div id="bibsysdok_extras" style="flex:1 0 auto; display:none;">
