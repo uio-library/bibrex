@@ -204,9 +204,10 @@ class LoansController extends Controller
             $user = User::where('lastname','=',$name[0])
                 ->where('firstname','=',$name[1])
                 ->first();
+        } elseif (is_numeric($user_input)){
+            $user = User::where('id','=',$user_input)->first();
         } else {
-            $user = User::where('id','=',$user_input)
-                ->orWhere('barcode', '=', mb_strtolower($user_input))
+            $user = User::where('barcode', '=', mb_strtolower($user_input))
                 ->orWhere('university_id','=',$user_input)
                 ->orWhere('alma_primary_id','=',$user_input)
                 ->first();
