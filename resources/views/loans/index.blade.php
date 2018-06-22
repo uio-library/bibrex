@@ -419,9 +419,9 @@
   });*/
 
 
-  window.addEventListener('keydown', evt => {
+  window.addEventListener('keypress', evt => {
     if (evt.altKey || evt.ctrlKey || evt.metaKey) return;
-      if (evt.target == document.body && evt.key) {
+    if (evt.target == document.body && evt.key) {
         setTimeout(() => {
           let inp = document.querySelector('input[tabindex="1"]');
           inp.value += evt.key;
