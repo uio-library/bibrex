@@ -12,11 +12,9 @@
 
       <form class="form" role="form">
         <div class="row px-3 align-items-center">
-            <input type="text" id="search" class="form-control col-sm-3" placeholder="Søk">
-            <label class="col col">
-                <input type="checkbox" id="onlyUsersWithLoans">
-                Vis bare folk med aktive lån
-            </label>
+            <input type="text" id="search" class="form-control col-sm-3" placeholder="Søk" autocomplete="off">
+            <div class="col col">
+            </div>
             <div class="col col-auto" v-b-tooltip.hover title="Merk to brukere som du ønsker å slå sammen.">
                 <button id="flett" class="btn btn-success" style="width:100%;" disabled="disabled">
                     <i class="far fa-compress-alt"></i>
@@ -48,14 +46,11 @@
 
     function filter_users(users) {
 
-      var onlyUsersWithLoans = $('#onlyUsersWithLoans').is(':checked'),
-          search = $('#search').val().toLowerCase();
+      var search = $('#search').val().toLowerCase();
 
       return $.grep(users, function(user) {
-        var n1 = (user.firstname + ' ' + user.lastname).toLowerCase(),
-          n2 = (user.lastname + ', ' + user.firstname).toLowerCase();
-        if (onlyUsersWithLoans && user.loancount === 0) return false;
-        if (search !== '' && n1.indexOf(search) === -1 && n2.indexOf(search) === -1) return false;
+        var n1 = (user.name).toLowerCase();
+        if (search !== '' && n1.indexOf(search) === -1 ) return false;
         return true;
       });
     }
@@ -64,10 +59,9 @@
       console.log('Antall: ' + users.length)
       $('.list-group').html('');
       $.each(users, function(i, user) {
-        $('.list-group').append('<li class="list-group-item" data-id="' + user.id + '" data-loanscount="' + user.loancount + '"> \
+        $('.list-group').append('<li class="list-group-item" data-id="' + user.id + '"> \
             <input type="checkbox" id="user' + user.id + '"> \
-            <span class="badge">' + user.loancount + '</span> \
-            <a href="/users/' + user.id + '">' + user.lastname + ', ' + user.firstname + '</a> \
+            <a href="/users/' + user.id + '">' + user.name + '</a> \
             ' + (user.barcode ? '(' + user.barcode + ')' : '') + ' \
           </li>');
       });

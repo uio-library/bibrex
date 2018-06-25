@@ -19,6 +19,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
         whitelistPatterns: [
             /^tt-/, /typeahead/,                 // Typeahead.vue
             /(bs-)?tooltip/, /^(fade|show)$/,    // VueBootstrap tooltip
+            /^badge-/,                           // logs.index
         ],
    })
    .version();

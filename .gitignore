@@ -19,3 +19,7 @@ app/config/packages/aws
 /public/css
 /public/js
 /public/mix-manifest.json
+/public/fonts
+/storage/debugbar
+/hosts.yml
+*.log

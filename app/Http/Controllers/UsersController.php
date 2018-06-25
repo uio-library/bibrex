@@ -35,10 +35,7 @@ class UsersController extends Controller {
                 'primaryId' => $user->alma_primary_id,
                 'group' => $user->alma_user_group,
                 'name' => $user->lastname . ', ' . $user->firstname,
-                'lastname' => $user->lastname,
-                'firstname' => $user->firstname,
                 'barcode' => $user->barcode,
-                'loancount' => count($user->loans)
             );
         }
 
