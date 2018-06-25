@@ -5,7 +5,7 @@
 
 <div class="card mb-3">
     <div class="card-header">
-        <h5>Korleis fungerar Bibrex?</h5>
+        <h5>Korleis fungerer Bibrex?</h5>
     </div>
     <div class="card-body">
         <ul>
