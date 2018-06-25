@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Europe/Oslo',
 
     /*
     |--------------------------------------------------------------------------
@@ -154,8 +154,8 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AlmaServiceProvider::class,
         App\Providers\AppServiceProvider::class,
+        App\Providers\AlmaServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,

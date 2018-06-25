@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \Monolog\Logger::setTimezone(new \DateTimeZone('Europe/Oslo'));
     }
 
     /**
