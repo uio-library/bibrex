@@ -13,6 +13,16 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
+.nav-tabs a.active {
+  background-color: #ffffff !important;
+  border-bottom-color: #ffffff !important;
+}
+.tab-content {
+  background: white;
+  border-style: solid;
+  border-color: #dee2e6;
+  border-width: 0px 1px 1px 1px;
+}
 body {
     font-family: 'Open Sans', sans-serif;
     overflow-y: scroll;
@@ -185,7 +195,7 @@ a:hover *, a:focus * {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: #5cb85c;
+  background: white;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds-ellipsis div:nth-child(1) {

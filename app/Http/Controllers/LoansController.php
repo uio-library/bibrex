@@ -54,7 +54,8 @@ class LoansController extends Controller
 		$r = response()->view('loans.index', array(
 			'loans' => $loans,
             'has_things' => !is_null($library->things()->first()),
-			'loan_ids' => \Session::get('loan_ids', array())
+			'loan_ids' => \Session::get('loan_ids', array()),
+            'tab' => \Session::get('tab', 'default'),
 		));
 		$r->header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');
 		return $r;
@@ -413,10 +414,9 @@ class LoansController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Loan $loan
-     * @param Request $request
      * @return Response
      */
-	public function getDestroy(Loan $loan, Request $request)
+	public function getDestroy(Loan $loan)
 	{
 		\Log::info('Returnerte <a href="'. action('LoansController@getShow', $loan->id) . '">' . $loan->item->thing->name . '</a>.');
 
@@ -429,17 +429,38 @@ class LoansController extends Controller
         $user->last_loan_at = Carbon::now();
         $user->save();
 
-		$returnTo = $request->input('returnTo', 'items.show');
-
-		switch ($returnTo) {
-			case 'loans.index':
-				$redir = redirect()->action('LoansController@getIndex');
-				break;
-			default:
-				$redir = redirect()->action('ItemsController@show', $itemId);
-		}
-		return $redir->with('status', $repr .' ble levert inn for ' . $user->getName() . '. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
+        return redirect()->action('LoansController@getIndex')
+            ->with('tab', 'retur')
+            ->with('status', $repr .' ble levert inn for ' . $user->getName() . '. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
 	}
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function postDestroy(Request $request)
+    {
+        if (!$request->input('barcode')) {
+            return back();
+        }
+        $loan = Loan::with(['item', 'item.thing', 'user'])
+            ->whereHas('item', function($query) use ($request) {
+                $query->where('dokid', '=', $request->input('barcode'));
+            })
+            ->first();
+
+        if (is_null($loan)) {
+            $item = Item::where('dokid', '=', $request->input('barcode'))->first();
+            if ($item) {
+                return back()->with('tab', 'retur')->with('error', 'Eksemplaret er ikke utlånt.');
+            }
+            return back()->with('tab', 'retur')->with('error', 'Strekkoden «' . $request->input('barcode') . '» ble ikke funnet i systemet!');
+        }
+
+        return $this->getDestroy($loan);
+    }
 
     /**
      * Restores the specified resource into storage.
@@ -457,6 +478,7 @@ class LoansController extends Controller
 		$loan->save();
 
 		return redirect()->action('LoansController@getIndex')
+            ->with('tab', 'retur')
 			->with('status', 'Innleveringen ble angret.');
 	}
 
