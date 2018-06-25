@@ -45,16 +45,15 @@ class LoansController extends Controller
 	public function getIndex()
 	{
 		$library = \Auth::user();
-		$things = $library->things()->orderBy('name')->get();
 
 		// A list of all loans for the current library
-		$loans = Loan::with('item.thing','user')
+		$loans = Loan::with('item.thing','user','reminders')
 			->where('library_id', $library->id)
 			->orderBy('created_at','desc')->get();
 
 		$r = response()->view('loans.index', array(
 			'loans' => $loans,
-			'things' => $things,
+            'has_things' => !is_null($library->things()->first()),
 			'loan_ids' => \Session::get('loan_ids', array())
 		));
 		$r->header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');

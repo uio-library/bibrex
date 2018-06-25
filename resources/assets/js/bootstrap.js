@@ -1,5 +1,5 @@
 
-window._ = require('lodash');
+// window._ = require('lodash');
 window.Popper = require('popper.js').default;
 
 /**
@@ -11,12 +11,8 @@ window.Popper = require('popper.js').default;
 window.$ = window.jQuery = require('jquery');
 require( 'datatables.net-bs4' );
 
-require('bootstrap');
-
-require('select2');
-
-// require('handlebars');
-
+// At least for now, use the standard bootstrap js for the navbar dropdowns and tabs.
+import 'bootstrap';
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests

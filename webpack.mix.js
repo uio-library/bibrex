@@ -1,4 +1,5 @@
 let mix = require('laravel-mix');
+require('laravel-mix-purgecss');
 
 /*
  |--------------------------------------------------------------------------
@@ -13,4 +14,11 @@ let mix = require('laravel-mix');
 
 mix.js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
+   .copy('node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css', 'public/css/')
+   .purgeCss({
+        whitelistPatterns: [
+            /^tt-/, /typeahead/,                 // Typeahead.vue
+            /(bs-)?tooltip/, /^(fade|show)$/,    // VueBootstrap tooltip
+        ],
+   })
    .version();

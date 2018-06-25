@@ -23,7 +23,7 @@
     </div>
   @endif
 
-    @if (!count($things))
+    @if (!$has_things)
 
 <div class="card text-danger border-danger mb-3">
 <div class="card-body">
