@@ -328,8 +328,8 @@ class LoansController extends Controller
             $user->save();
 		}
 
-		\Log::info('Lånte ut <a href="'. action('LoansController@getShow', $loan_ids[0]) . '">' . $thing->name . '</a>.');
-
+        \Log::info('Lånte ut ' . $thing->email_name_nob .
+            ' (<a href="'. action('LoansController@getShow', $loan_ids[0]) . '">Detaljer</a>)');
 
 		if ($newTempUser) {
 			return redirect()->action('UsersController@getEdit', $user->id)
@@ -366,9 +366,18 @@ class LoansController extends Controller
             'due_at' => 'required|date',
         ]);
 
+        $old_date = $loan->due_at;
+
 		$loan->due_at = Carbon::parse($request->due_at);
 		$loan->note = $request->note;
 		$loan->save();
+
+        \Log::info(sprintf('Endret forfallsdato for <a href="%s">utlånet</a> av %s fra %s til %s.',
+            action('LoansController@getShow', $loan->id),
+            $loan->item->thing->email_name_nob,
+            $old_date->toDateString(),
+            $loan->due_at->toDateString()
+        ));
 
 		return redirect()->action('LoansController@getShow', $loan->id)
 			->with('status', 'Lånet ble oppdatert');
@@ -383,7 +392,8 @@ class LoansController extends Controller
      */
 	public function getLost(Loan $loan, Request $request)
 	{
-		\Log::info('<a href="'. action('LoansController@getShow', $loan->id) . '">Utlån</a> av ' . $loan->item->thing->name . ' ble registrert som tapt.');
+		\Log::info('Registrerte ' . $loan->item->thing->email_name_nob . ' som tapt' .
+            ' (<a href="'. action('LoansController@getShow', $loan->id) . '">Detaljer</a>)');
 
 		$repr = $loan->representation();
 		$itemId = $loan->item->id;
@@ -407,7 +417,7 @@ class LoansController extends Controller
 			default:
 				$redir = redirect()->action('ItemsController@show', $itemId);
 		}
-		return $redir->with('status', $repr .' ble registrert som rotet bort. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
+		return $redir->with('status', $repr .' ble registrert som rotet bort. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="btn alert-link"><i class="far fa-undo"></i> Angre</a>');
 	}
 
     /**
@@ -418,7 +428,8 @@ class LoansController extends Controller
      */
 	public function getDestroy(Loan $loan)
 	{
-		\Log::info('Returnerte <a href="'. action('LoansController@getShow', $loan->id) . '">' . $loan->item->thing->name . '</a>.');
+        \Log::info('Returnerte ' . $loan->item->thing->email_name_nob .
+            ' (<a href="'. action('LoansController@getShow', $loan->id) . '">Detaljer</a>)');
 
 		$user = $loan->user;
 
@@ -431,7 +442,7 @@ class LoansController extends Controller
 
         return redirect()->action('LoansController@getIndex')
             ->with('tab', 'retur')
-            ->with('status', $repr .' ble levert inn for ' . $user->getName() . '. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="alert-link">Angre</a>');
+            ->with('status', $repr .' ble returnert for ' . $user->getName() . '. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="btn alert-link"><i class="far fa-undo"></i> Angre</a>');
 	}
 
     /**
@@ -470,16 +481,21 @@ class LoansController extends Controller
      */
 	public function getRestore(Loan $loan)
 	{
-		\Log::info('Returen av <a href="'. action('LoansController@getShow', $loan->id) . '">utlånet</a> av ' . $loan->item->thing->name . ' ble angret.');
+        \Log::info('Angret retur av ' . $loan->item->thing->email_name_nob .
+            ' (<a href="'. action('LoansController@getShow', $loan->id) . '">Detaljer</a>)');
 
 		$loan->restore();
+        $loan->item->restore();
 
 		$loan->is_lost = false;
 		$loan->save();
 
+        $repr = $loan->representation();
+
 		return redirect()->action('LoansController@getIndex')
             ->with('tab', 'retur')
-			->with('status', 'Innleveringen ble angret.');
+            ->with('status', 'Angret. ' . $repr .' er fortsatt utlånt til ' . $loan->user->getName() . '.');
+
 	}
 
 }

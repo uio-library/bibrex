@@ -181,6 +181,9 @@ class ThingsController extends Controller {
                 ->with('error', 'Kan ikke slette ting med aktive lån.');
         }
 
+        \Log::info(sprintf('Slettet tingen <a href="%s">%s</a>.',
+            action('ThingsController@getShow', $thing->id),
+            $thing->name));
         $thing->delete();
 
         return redirect()->action('ThingsController@getShow', $thing->id)
@@ -196,6 +199,9 @@ class ThingsController extends Controller {
     public function getRestore(Thing $thing)
     {
         $thing->restore();
+        \Log::info(sprintf('Gjenopprettet tingen <a href="%s">%s</a>.',
+            action('ThingsController@getShow', $thing->id),
+            $thing->name));
 
         return redirect()->action('ThingsController@getShow', $thing->id)
             ->with('status', 'Tingen «' . $thing->name . '» ble gjenopprettet.');

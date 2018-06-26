@@ -2,14 +2,13 @@
 
 @section('content')
 
-@if ((new \Jenssegers\Agent\Agent() )->browser() == 'IE')
+  @if ((new \Jenssegers\Agent\Agent() )->browser() == 'IE')
 
+    <div class="card bg-danger text-white">
+      Denne siden støttes ikke i IE, ihvertfall ikke enda.
+    </div>
 
-<div class="card bg-danger text-white">
-  Denne siden støttes ikke i IE, ihvertfall ikke enda.
-</div>
-
-@else
+  @endif
 
   <div class="card">
     <div class="card-header">
@@ -26,23 +25,21 @@
     <Things></Things>
   </div>
 
-@endif
-
 @stop
 
 @section('scripts')
 
-<script type='text/javascript'>
+  <script type='text/javascript'>
 
-  $(document).ready(function() {
-    $('.spinner').hide();
-    $('form').on('submit', function(e) {
-      $('.spinner').show();
-      $('input[type="button"]').prop('disabled', true);
-      return true;
+    $(document).ready(function() {
+      $('.spinner').hide();
+      $('form').on('submit', function(e) {
+        $('.spinner').show();
+        $('input[type="button"]').prop('disabled', true);
+        return true;
+      });
     });
-  });
 
-</script>
+  </script>
 
 @stop
