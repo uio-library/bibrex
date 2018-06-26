@@ -141,16 +141,19 @@ class ItemsController extends Controller
      * Delte the specified resource from storage.
      *
      * @param Item $item
-     * @param Request $request
      * @return Response
      */
-    public function delete(Item $item, Request $request)
+    public function delete(Item $item)
     {
         if ($item->loans()->count()) {
             return redirect()->action('ItemsController@show', $item->id)
                 ->with('error', 'Kan ikke slette utlånt eksemplar.');
         }
 
+        \Log::info(sprintf('Slettet %s <a href="%s">%s</a>.',
+            $item->thing->email_name_definite_nob,
+            action('ItemsController@show', $item->id),
+            $item->dokid));
         $item->delete();
 
         return redirect()->action('ItemsController@show', $item->id)
@@ -166,6 +169,10 @@ class ItemsController extends Controller
     public function restore(Item $item)
     {
         $item->restore();
+        \Log::info(sprintf('Gjenopprettet %s <a href="%s">%s</a>.',
+            $item->thing->email_name_definite_nob,
+            action('ItemsController@show', $item->id),
+            $item->dokid));
 
         return redirect()->action('ItemsController@show', $item->id)
             ->with('status', 'Eksemplaret ble gjenopprettet.');

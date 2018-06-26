@@ -78,8 +78,8 @@ Route::middleware(['auth'])->group(function()
     Route::get('/items/{item}', 'ItemsController@show');
     Route::get('/items/edit/{item}', 'ItemsController@editForm');
     Route::post('/items/{item}', 'ItemsController@upsert');
-    Route::get('/items/delete/{item}', 'ItemsController@deleteForm');
-    Route::post('/items/delete/{item}', 'ItemsController@delete');
+    // Route::get('/items/delete/{item}', 'ItemsController@deleteForm');
+    Route::get('/items/delete/{item}', 'ItemsController@delete');
     Route::get('/items/restore/{item}', 'ItemsController@restore');
 
     // --[[ THINGS ]]--
