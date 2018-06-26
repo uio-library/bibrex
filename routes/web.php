@@ -57,6 +57,8 @@ Route::middleware(['auth'])->group(function()
     Route::put('/users/{user}', 'UsersController@putUpdate');
     Route::get('/users/merge/{user1}/{user2}', 'UsersController@getMerge');
     Route::post('/users/merge/{user1}/{user2}', 'UsersController@postMerge');
+    Route::get('/users/delete/{user}', 'UsersController@deleteForm');
+    Route::post('/users/delete/{user}', 'UsersController@delete');
 
     // --[[ LOAN ]]--
     Route::get('/loans', 'LoansController@getIndex');

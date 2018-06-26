@@ -201,5 +201,46 @@ class UsersController extends Controller {
 			->with('status', 'Brukerne ble flettet.');
 	}
 
+	/**
+     * Show the form for deleting the specified resource.
+     *
+     * @param User $user
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteForm(User $user, Request $request)
+    {
+        if ($user->loans()->count()) {
+            return redirect()->action('UsersController@getShow', $user->id)
+                ->with('error', 'Kan ikke slette en bruker med aktive lån.');
+        }
 
+        return response()->view('users.delete', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Delte the specified resource from storage.
+     *
+     * @param User $user
+     * @param Request $request
+     * @return Response
+     */
+    public function delete(User $user, Request $request)
+    {
+        if ($user->loans()->count()) {
+            return redirect()->action('UsersController@getShow', $user->id)
+                ->with('error', 'Kan ikke slette en bruker med aktive lån.');
+        }
+
+        $user_id = $user->id;
+        $name = $user->getName();
+
+        $user->delete();
+        \Log::info(sprintf('Slettet brukeren med ID %d', $user_id));
+
+        return redirect()->action('UsersController@getIndex')
+            ->with('status', "Brukeren $name ble slettet.");
+    }
 }

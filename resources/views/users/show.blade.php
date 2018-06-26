@@ -8,15 +8,20 @@
         <div class="row align-items-center">
             <h5 class="col mb-0">Brukerinformasjon</h5>
 
-            <a href="{{ URL::action('UsersController@getNcipLookup', $user->id) }}" class="col col-auto mx-3 btn btn-primary">
-                <i class="far fa-pencil-alt"></i>
+            <a href="{{ URL::action('UsersController@getNcipLookup', $user->id) }}" class="col col-auto mx-1 btn btn-primary">
+                <i class="far fa-sync-alt"></i>
                 Re-importer fra Alma
             </a>
 
-            <a href="{{ URL::action('UsersController@getEdit', $user->id) }}" class="col col-auto mx-3 btn btn-primary">
+            <a href="{{ URL::action('UsersController@getEdit', $user->id) }}" class="col col-auto mx-1 btn btn-primary">
                 <i class="far fa-pencil-alt"></i>
                 Rediger
             </a>
+
+              <a class="btn btn-warning col-auto mx-1 mr-3" href="{{ URL::action('UsersController@deleteForm', $user->id) }}">
+                  <i class="far fa-trash"></i>
+                  Slett
+              </a>
 
         </div>
     </div>
