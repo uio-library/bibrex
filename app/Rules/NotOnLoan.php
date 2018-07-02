@@ -3,10 +3,9 @@
 namespace App\Rules;
 
 use App\Item;
-use App\Thing;
 use Illuminate\Contracts\Validation\Rule;
 
-class ThingExists implements Rule
+class NotOnLoan implements Rule
 {
     protected $item;
 
@@ -29,7 +28,18 @@ class ThingExists implements Rule
      */
     public function passes($attribute, $value)
     {
-       return !is_null($this->item);
+        if (is_null($this->item)) {
+            return true;
+        }
+
+        // Always true if the item is a generic representaiton without barcode
+        if (is_null($this->item->dokid)) {
+            return true;
+        }
+
+        // Check if already on loan
+        $loan = $this->item->loans()->first();
+        return is_null($loan);
     }
 
     /**
@@ -39,6 +49,6 @@ class ThingExists implements Rule
      */
     public function message()
     {
-        return 'Tingen ble ikke funnet! Kanskje du ser etter tingen i seg selv?';
+        return 'Tingen er allerede utlånt.';
     }
 }

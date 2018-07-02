@@ -2,22 +2,18 @@
 
 namespace App\Rules;
 
-use App\Item;
-use App\Thing;
 use Illuminate\Contracts\Validation\Rule;
 
-class ThingExists implements Rule
+class RequiresBarcode implements Rule
 {
-    protected $item;
-
     /**
      * Create a new rule instance.
      *
-     * @param Item $item
+     * @return void
      */
-    public function __construct(Item $item = null)
+    public function __construct()
     {
-        $this->item = $item;
+        //
     }
 
     /**
@@ -29,7 +25,7 @@ class ThingExists implements Rule
      */
     public function passes($attribute, $value)
     {
-       return !is_null($this->item);
+        return false;
     }
 
     /**
@@ -39,6 +35,6 @@ class ThingExists implements Rule
      */
     public function message()
     {
-        return 'Tingen ble ikke funnet! Kanskje du ser etter tingen i seg selv?';
+        return 'Utlån av denne tingen må gjøres med strekkode.';
     }
 }

@@ -28,6 +28,15 @@ class RouteServiceProvider extends ServiceProvider
     {
         parent::boot();
 
+        Route::pattern('library', '[0-9]+');
+        Route::pattern('user', '[0-9]+');
+        Route::pattern('user1', '[0-9]+');
+        Route::pattern('user2', '[0-9]+');
+        Route::pattern('loan', '[0-9]+');
+        Route::pattern('thing', '[0-9]+');
+        Route::pattern('reminder', '[0-9]+');
+        Route::pattern('ip', '[0-9]+');
+
         Route::bind('thing', function ($value) {
             return $value == '_new'
                 ? new Thing()

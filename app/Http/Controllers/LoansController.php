@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Alma\User as AlmaUser;
+use App\Events\LoanTableUpdated;
+use App\Http\Requests\CheckoutRequest;
 use App\Item;
 use App\Loan;
-use App\Rules\StartsWithUo;
-use App\Rules\ThingExists;
-use App\Thing;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
-use Scriptotek\Alma\Client as AlmaClient;
 
 class LoansController extends Controller
 {
@@ -22,10 +18,12 @@ class LoansController extends Controller
      *
      * @static array
      */
-    protected $messages = array(
-        'user.required' => 'Mangler låntaker.',
+    protected $messages = [
+        'user.required' => 'Trenger enten navn eller låne-ID.',
+        'user.id.required_without' => 'Trenger enten navn eller låne-ID.',
+        'user.name.required_without' => 'Trenger enten navn eller låne-ID.',
         'thing.required' => 'Uten ting blir det bare ingenting.',
-    );
+    ];
 
 	/*
 	 * Factory for Laravel Auth
@@ -40,26 +38,39 @@ class LoansController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
+     * @param Request $request
 	 * @return Response
 	 */
-	public function getIndex()
+	public function getIndex(Request $request)
 	{
 		$library = \Auth::user();
 
-		// A list of all loans for the current library
-		$loans = Loan::with('item.thing','user','reminders')
-			->where('library_id', $library->id)
-			->orderBy('created_at','desc')->get();
-
 		$r = response()->view('loans.index', array(
-			'loans' => $loans,
             'has_things' => !is_null($library->things()->first()),
 			'loan_ids' => \Session::get('loan_ids', array()),
             'tab' => \Session::get('tab', 'default'),
 		));
+
 		$r->header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');
 		return $r;
 	}
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function json()
+    {
+        $library = \Auth::user();
+
+        $loans = Loan::with('item.thing','user','reminders')
+            ->where('library_id', $library->id)
+            ->orderBy('created_at','desc')->get();
+
+        return response()->json($loans);
+    }
 
     /**
      * Display the specified resource.
@@ -81,265 +92,66 @@ class LoansController extends Controller
      *
      * @return array
      */
-    public function messages()
-    {
-        return [
-            'user.startswithuo' => 'Kun kortnumre som starter på «uo» (vanlige studentkort) blir importert automatisk. Kortnumre som starter på «ubo» (ansattkort og nøkkelkort) må du registrere manuelt med LTREG i Bibsys. For kort fra andre institusjoner kan du bruke F12 LTKOP når du er på LTREG-skjermen.',
-            'user.required' => 'Trenger enten navn eller låne-ID.',
-            'dokid.required' => 'Dokid må fylles ut.',
-            'dokid.regex' => 'Dokid er ikke et dokid.',
-            'count.integer' => 'Antall må være et heltall.',
-            'count.between' => 'Antall må være et tall mellom 1 og 10.',
-            'thing.exists' => 'Tingen finnes ikke',
-        ];
-    }
+    // public function messages()
+    // {
+    //     return [
+    //         // 'user.startswithuo' => 'Kun kortnumre som starter på «uo» (vanlige studentkort) blir importert automatisk. Kortnumre som starter på «ubo» (ansattkort og nøkkelkort) må du registrere manuelt med LTREG i Bibsys. For kort fra andre institusjoner kan du bruke F12 LTKOP når du er på LTREG-skjermen.',
+    //         // 'dokid.required' => 'Dokid må fylles ut.',
+    //         // 'dokid.regex' => 'Dokid er ikke et dokid.',
+    //         // 'thing.exists' => 'Tingen finnes ikke',
+
+    //         // 'user.required' => 'Trenger enten navn eller låne-ID.',
+    //         // 'user.id' => ['required_without' => 'Trenger enten navn eller låne-ID.'],
+    //         // 'user.name' => ['required_without' => 'Trenger enten navn eller låne-ID.'],
+    //     ];
+    //}
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param AlmaClient $alma
-     * @param Request $request
+     * @param CheckoutRequest $request
      * @return Response
-     * @throws ValidationException
      */
-	public function postStore(AlmaClient $alma, Request $request)
+	public function checkout(CheckoutRequest $request)
 	{
-        $request->validate([
-            'user' => ['required', 'string', new StartsWithUo()],
-            'thing' => [new ThingExists()],
-            'count' => ['integer', 'between:1,10'],
-            // 'dokid' => ['regex:/^[0-9a-zA-Z]{9}$/'],
-        ], $this->messages);
-
-        $lib = \Auth::user();
-
-        // ======================== Lookup item and thing ========================
-
-        $item = Item::where('dokid', '=', $request->thing)->first();
-        if (!is_null($item)) {
-            $thing = $item->thing;
-
-            // Check if already on loan
-            $loan = $item->loans()->first();
-            if ($loan) {
-                throw ValidationException::withMessages([
-                    'already_on_loan' => ['Tingen er allerede utlånt.'],
-                ]);
-            }
-        } else {
-            // If not a barcode, then maybe a thing name
-            $thing = Thing::where('name', '=', $request->thing)->first();
-
-            // Then find a generic item, if one exists
-            if (array_get($thing->library_settings, 'require_item')) {
-                throw ValidationException::withMessages([
-                    'needs_barcode' => ['Utlån av denne tingen må gjøres med strekkode.'],
-                ]);
-            }
-            $item = Item::where('thing_id','=',$thing->id)->first();
-            if (!$item) {
-                $item = new Item();
-                $item->thing_id = $thing->id;
-                $item->save();
-            } elseif (!is_null($item->dokid)) {
-                throw ValidationException::withMessages([
-                    'needs_barcode' => ['Utlån av denne tingen må gjøres med strekkode.'],
-                ]);
-            }
-        }
-
-		// if ($thing->id == 1) {
-
-		// 	// Hent DOKID fra DOKID/KNYTTID
-		// 	$unknown_id = $request->input('dokid');
-
-		// 	if (empty($unknown_id)) {
-  //               throw ValidationException::withMessages([
-  //                   'dokid_empty' => ['Intet dokument oppgitt.'],
-  //               ]);
-		// 	}
-  //           $curl = \App::make('Curl');
-  //           touch(storage_path('cookie_file'));
-  //           $curl->cookie_file = storage_path('cookie_file');
-  //           $curl->follow_redirects = false;
-		// 	$ids = $curl->get('http://services.biblionaut.net/getids.php?id=' . $unknown_id);
-		// 	$ids = json_decode($ids);
-
-		// 	if (empty($ids->dokid)) {
-  //               throw ValidationException::withMessages([
-  //                   'document_not_found' => ['Dokumentet finnes ikke.'],
-  //               ]);
-		// 	}
-
-		// 	// Sjekk om dokumentet finnes lokalt
-		// 	$dok = Document::where('dokid','=',$ids->dokid)->first();
-		// 	if (!$dok) {
-		// 		$dok = new Document();
-		// 		$dok->thing_id = $thing->id;
-		// 		$dok->dokid = $ids->dokid;
-		// 		$dok->objektid = $ids->objektid;
-		// 		if ($unknown_id != $ids->dokid) {
-		// 			$dok->knyttid = $unknown_id;
-		// 		}
-		// 		$dok->save();
-		// 	}
-
-		// 	// Check if already on loan
-		// 	$loan = $dok->loans()->first();
-		// 	if ($loan) {
-  //               throw ValidationException::withMessages([
-  //                   'already_on_loan' => ['Dokumentet er allerede utlånt.'],
-  //               ]);
-		// 	}
-		// }
-
-        // ======================== Lookup or import user ========================
-
-        $user_input = $request->input('user_id') ?: $request->input('user');
-        $newTempUser = false;
-
-        if (strpos($user_input, ',') !== false) {
-            $name = explode(',', $user_input);
-            $name = array_map('trim', $name);
-            $user = User::where('lastname','=',$name[0])
-                ->where('firstname','=',$name[1])
-                ->first();
-        } elseif (is_numeric($user_input)){
-            $user = User::where('id','=',$user_input)->first();
-        } else {
-            $user = User::where('barcode', '=', mb_strtolower($user_input))
-                ->orWhere('university_id','=',$user_input)
-                ->orWhere('alma_primary_id','=',$user_input)
-                ->first();
-        }
-
-        if (is_null($user)) {
-	        \Log::info('Ingen lokal bruker funnet for: "' . $user_input . '"');
-
-            // Try lookup by primary id first. Since Alma allows the primary id
-            // to be *anything*, it can overlap with names, etc.
-            $query = 'primary_id~' . $user_input;
-            $users = collect($alma->users->search($query, ['limit' => 5]))->map(function($u) {
-                return new AlmaUser($u);
-            });
-            if (count($users) == 0) {
-                $query = 'ALL~' . $user_input;
-                $users = collect($alma->users->search($query, ['limit' => 5]))->map(function($u) {
-                    return new AlmaUser($u);
-                });
-            }
-
-            if (count($users) > 1) {
-                \Log::warning('Mer enn én bruker ble funnet i Alma for "' . $user_input . '".');
-                throw ValidationException::withMessages([
-                    'user' => ['Mer enn én bruker ble funnet i Alma.'],
-                ]);
-            } elseif (count($users) == 1) {
-            	$barcode = $users[0]->getBarcode();
-            	$univId = $users[0]->getUniversityId();
-            	$user = User::where('barcode', '=', $barcode)
-                    ->orWhere('university_id', '=', $univId)
-                    ->orWhere('alma_primary_id', '=', $users[0]->primaryId)
-                    ->first();
-            	if (is_null($user)) {
-            		$user = new User();
-            	}
-                $user->mergeFromAlmaResponse($users[0]);
-                $user->save();
-                \Log::info('Importerte bruker fra Alma: "' . $users[0]->primaryId. '"');
-            } else {
-                if (strpos($user_input, ',') !== false) {
-
-                    if (!array_get($lib->options, 'guestcard_for_cardless_loans', false)) {
-                        throw ValidationException::withMessages([
-                            'user' => ['Brukeren ble ikke funnet i Alma og opprettelse av lokale brukere er ikke aktivert for dette biblioteket. Det kan aktiveres i <a href="' . action('LibrariesController@getMyAccount') . '">kontoinnstillingene</a>.'],
-                        ]);
-                    }
-
-                    $name = explode(',', $user_input);
-                    $name = array_map('trim', $name);
-                    $user = User::create(['firstname' => $name[0], 'lastname' => $name[1]]);
-                    \Log::info('Oppretter ny midlertidig bruker: ' . $user->lastname . ', ' . $user->firstname);
-                    $newTempUser = true;
-                } else {
-                    \Log::info('Ikke funnet i Alma: ' . $user_input);
-                    throw ValidationException::withMessages([
-                        'user' => ['Brukeren ble ikke funnet.'],
-                    ]);
-                }
-            }
-        }
-
-		// if ($this->isLTID($user_input)) {
-		// 	$ltid = $user_input;
-		// 	$user = User::where('ltid','=',$user_input)->first();
-		// } else if (preg_match('/[0-9]/', $user_input)) {
-  //           throw ValidationException::withMessages([
-  //               'invalid_ltid_format' => ['Kortnummeret har feil lengde.'],
-  //           ]);
-		// } else {
-		// 	$user_id = $request->input('ltid_id');
-
-		// 	if (!empty($user_id)) {
-		// 		$user = User::find($user_id);
-		// 	} else {
-		// 		if (strpos($user_input, ',') === false) {
-  //                   throw ValidationException::withMessages([
-  //                       'invalid_name_format' => ['Navnet må skrives på formen "Etternavn, Fornavn".'],
-  //                   ]);
-
-		// 		} else {
-
-		// 			$name = explode(',', $user_input);
-		// 			$name = array_map('trim', $name);
-		// 			$user = User::where('lastname','=',$name[0])
-		// 				->where('firstname','=',$name[1])->first();
-
-		// 		}
-		// 	}
-		// }
-
-        // ======================== Checkout ========================
-
-		if ($thing->id == 1) {
-			$count = 1;
-		} else {
-			$count = $request->input('count', 1);
-		}
-		$count = intval($count);
-
-		// Create new loan(s)
+		// Create new loan
 		$loan_ids = array();
-		for ($i=0; $i < $count; $i++) {
-			$loan = new Loan();
-			$loan->user_id = $user->id;
-			$loan->item_id = $item->id;
-			$loan->due_at = Carbon::now()->addDays($thing->loan_time)->setTime(0, 0, 0);
-            $loan->as_guest = false;
-			if (!$loan->save()) {
-				return redirect()->action('LoansController@getIndex')
-					->withErrors($loan->errors)
-					->withInput();
-			}
-			$loan_ids[] = $loan->id;
 
-            $user->loan_count += 1;
-            $user->last_loan_at = Carbon::now();
-            $user->save();
+		$loan = new Loan();
+		$loan->user_id = $request->user->id;
+		$loan->item_id = $request->item->id;
+		$loan->due_at = Carbon::now()
+            ->addDays($request->item->thing->loan_time)
+            ->setTime(0, 0, 0);
+        $loan->as_guest = false;
+		if (!$loan->save()) {
+		    return response()->json(['errors' => $loan->errors], 409);
 		}
+		$loan_ids[] = $loan->id;
 
-        \Log::info('Lånte ut ' . $thing->email_name_nob .
-            ' (<a href="'. action('LoansController@getShow', $loan_ids[0]) . '">Detaljer</a>)');
+        $request->user->loan_count += 1;
+        $request->user->last_loan_at = Carbon::now();
+        $request->user->save();
 
-		if ($newTempUser) {
-			return redirect()->action('UsersController@getEdit', $user->id)
-				->with('status', 'Utlånet er registrert. VIKTIG: Siden dette er en ny låner må du registrere litt informasjon om vedkommende.');
+        \Log::info(sprintf('Lånte ut %s (<a href="%s">Detaljer</a>).',
+            $request->item->thing->email_name_nob,
+            action('LoansController@getShow', $loan->id)
+        ));
+        event(new LoanTableUpdated($loan_ids));
+
+		if ($request->localUser) {
+		    return response()->json([
+		        'status' => 'Utlånet ble registrert. VIKTIG: Siden dette er en ny låner må du registrere litt informasjon om vedkommende.',
+                'user' => action('UsersController@getEdit', $request->user->id),
+                'loan_ids' => $loan_ids,
+            ]);
+
 		} else {
-			return redirect()->action('LoansController@getIndex')
-				->with('status', ($count == 1 ? 'Utlånet' : 'Utlånene') . ' er registrert.')
-				->with('loan_ids', $loan_ids);
-		}
-
+            return response()->json([
+                'status' => 'Utlånet ble registrert.',
+                'loan_ids' => $loan_ids,
+            ]);
+        }
 	}
 
     /**
@@ -378,6 +190,7 @@ class LoansController extends Controller
             $old_date->toDateString(),
             $loan->due_at->toDateString()
         ));
+        event(new LoanTableUpdated([$loan->id]));
 
 		return redirect()->action('LoansController@getShow', $loan->id)
 			->with('status', 'Lånet ble oppdatert');
@@ -390,112 +203,142 @@ class LoansController extends Controller
      * @param Request $request
      * @return Response
      */
-	public function getLost(Loan $loan, Request $request)
+	public function lost(Loan $loan, Request $request)
 	{
 		\Log::info('Registrerte ' . $loan->item->thing->email_name_nob . ' som tapt' .
             ' (<a href="'. action('LoansController@getShow', $loan->id) . '">Detaljer</a>)');
 
-		$repr = $loan->representation();
-		$itemId = $loan->item->id;
-		$user = $loan->user->getName();
+        $loan->lost();
 
-		$loan->is_lost = true;
-		$loan->save();
+        event(new LoanTableUpdated([]));
 
-		$loan->checkIn();
-
-		if ($loan->item->dokid) {
-			$loan->item->delete();
-		}
-
-		$returnTo = $request->input('returnTo', 'items.show');
-
-		switch ($returnTo) {
-			case 'loans.index':
-				$redir = redirect()->action('LoansController@getIndex');
-				break;
-			default:
-				$redir = redirect()->action('ItemsController@show', $itemId);
-		}
-		return $redir->with('status', $repr .' ble registrert som rotet bort. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="btn alert-link"><i class="far fa-undo"></i> Angre</a>');
-	}
+        return response()->json([
+            'status' => sprintf('%s ble registrert som tapt.', $loan->item->formattedLink(true)),
+            'undoLink' => action('LoansController@getRestore', $loan->id),
+        ]);
+    }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param Loan $loan
-     * @return Response
-     */
-	public function getDestroy(Loan $loan)
-	{
-        \Log::info('Returnerte ' . $loan->item->thing->email_name_nob .
-            ' (<a href="'. action('LoansController@getShow', $loan->id) . '">Detaljer</a>)');
-
-		$user = $loan->user;
-
-		$repr = $loan->representation();
-		$itemId = $loan->item->id;
-		$loan->checkIn();
-
-        $user->last_loan_at = Carbon::now();
-        $user->save();
-
-        return redirect()->action('LoansController@getIndex')
-            ->with('tab', 'retur')
-            ->with('status', $repr .' ble returnert for ' . $user->getName() . '. <a href="' . action('LoansController@getRestore', $loan->id) . '" class="btn alert-link"><i class="far fa-undo"></i> Angre</a>');
-	}
-
-    /**
-     * Remove the specified resource from storage.
+     * Checkin the specified loan.
      *
      * @param Request $request
      * @return Response
      */
-    public function postDestroy(Request $request)
+    public function checkin(Request $request)
     {
-        if (!$request->input('barcode')) {
-            return back();
+        $status = null;
+        $undoLink = null;
+        if ($request->input('barcode')) {
+            $loan = Loan::with(['item', 'item.thing', 'user'])
+                ->whereHas('item', function ($query) use ($request) {
+                    $query->where('dokid', '=', $request->input('barcode'));
+                })
+                ->first();
+        } else if ($request->input('loan')) {
+            $loan = Loan::with(['item', 'item.thing', 'user'])
+                ->find($request->input('loan'));
+        } else {
+            return response()->json([
+                'status' => 'Ingenting ble returnert.',
+            ], 200);
         }
-        $loan = Loan::with(['item', 'item.thing', 'user'])
-            ->whereHas('item', function($query) use ($request) {
-                $query->where('dokid', '=', $request->input('barcode'));
-            })
-            ->first();
 
         if (is_null($loan)) {
-            $item = Item::where('dokid', '=', $request->input('barcode'))->first();
-            if ($item) {
-                return back()->with('tab', 'retur')->with('error', 'Eksemplaret er ikke utlånt.');
-            }
-            return back()->with('tab', 'retur')->with('error', 'Strekkoden «' . $request->input('barcode') . '» ble ikke funnet i systemet!');
+            $loan = Loan::with(['item', 'item.thing', 'user'])
+                ->withTrashed()
+                ->whereHas('item', function ($query) use ($request) {
+                    $query->where('dokid', '=', $request->input('barcode'));
+                })
+                ->orderBy('updated_at', 'desc')
+                ->first();
+
         }
 
-        return $this->getDestroy($loan);
+        if (is_null($loan)) {
+            $item = Item::withTrashed()->where('dokid', '=', $request->input('barcode'))->first();
+            if ($item) {
+                return response()->json([
+                    'error' => sprintf(
+                        'Denne %s var ikke utlånt.',
+                        $item->formattedLink(false)
+                    )
+                ], 422);
+            }
+            return response()->json([
+                'error' => 'Bibrex kjente ikke igjen strekkoden «' . $request->input('barcode') . '».',
+            ], 422);
+        }
+
+        if ($loan->is_lost) {
+            $status = sprintf(
+                'Denne %s var registrert som tapt, men ikke nå lenger (takket være deg)!',
+                $loan->item->formattedLink(false)
+            );
+            $loan->found();
+
+        } else if ($loan->item->trashed()) {
+            $status = sprintf(
+                'Du store min hatt, denne %s har faktisk blitt kassert i mellomtiden!',
+                $loan->item->formattedLink(false)
+            );
+
+        } elseif ($loan->trashed()) {
+            $status = sprintf(
+                'Denne %s var strengt tatt ikke utlånt (men det går helt greit).',
+                $loan->item->formattedLink(false)
+            );
+
+        } else {
+            $status = sprintf('%s ble returnert.', $loan->item->formattedLink(true));
+            $undoLink = action('LoansController@getRestore', $loan->id);
+        }
+
+        \Log::info(sprintf('Returnerte %s (<a href="%s">Detaljer</a>).',
+            $loan->item->thing->email_name_definite_nob,
+            action('LoansController@getShow', $loan->id)
+        ));
+
+        $user = $loan->user;
+
+        $loan->checkIn();
+
+        $user->last_loan_at = Carbon::now();
+        $user->save();
+
+        event(new LoanTableUpdated());
+
+        return response()->json([
+            'status' => $status,
+            'undoLink' => $undoLink,
+        ]);
     }
 
     /**
-     * Restores the specified resource into storage.
+     * Restores the specified loan.
      *
      * @param Loan $loan
      * @return Response
      */
 	public function getRestore(Loan $loan)
 	{
-        \Log::info('Angret retur av ' . $loan->item->thing->email_name_nob .
-            ' (<a href="'. action('LoansController@getShow', $loan->id) . '">Detaljer</a>)');
+        \Log::info(sprintf('Angret retur av %s (<a href="%s">Detaljer</a>).',
+            $loan->item->thing->email_name_nob,
+            action('LoansController@getShow', $loan->id)
+        ));
 
-		$loan->restore();
-        $loan->item->restore();
+        if ($loan->is_lost) {
+            $loan->found();
+        } else {
+            $loan->restore();
+        }
 
-		$loan->is_lost = false;
-		$loan->save();
+        event(new LoanTableUpdated([$loan->id]));
 
-        $repr = $loan->representation();
-
-		return redirect()->action('LoansController@getIndex')
-            ->with('tab', 'retur')
-            ->with('status', 'Angret. ' . $repr .' er fortsatt utlånt til ' . $loan->user->getName() . '.');
-
+        return response()->json([
+            'status' => sprintf('Angret. %s er fortsatt utlånt til %s.',
+                $loan->item->formattedLink(true),
+                $loan->user->name),
+        ]);
 	}
 
 }

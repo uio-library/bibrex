@@ -16,6 +16,7 @@ class User
     public $name;
     public $barcode;
     public $university_id;
+    public $type = 'alma';
 
     protected $user;
     protected $expanded = false;

@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use function Stringy\create as s;
 
 class Item extends Model {
 
@@ -48,5 +49,30 @@ class Item extends Model {
 			->withTrashed()
 			->where('library_id', $library_id)
 			->orderBy('created_at', 'desc');
+	}
+
+    public function lost()
+    {
+        $this->is_lost = true;
+        $this->save();
+        $this->delete();
+    }
+
+    public function found()
+    {
+        $this->restore();
+        $this->is_lost = false;
+        $this->save();
+	}
+
+    public function formattedLink($ucfirst=false)
+    {
+        $name = s($this->thing->email_name_definite_nob);
+        $name = $ucfirst ? $name->upperCaseFirst() : $name->lowerCaseFirst();
+
+        return sprintf('<a href="%s">%s</a>',
+            action('ItemsController@show', $this->id),
+            $name
+        );
 	}
 }

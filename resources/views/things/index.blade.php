@@ -4,8 +4,11 @@
 
   @if ((new \Jenssegers\Agent\Agent() )->browser() == 'IE')
 
-    <div class="card bg-danger text-white">
-      Denne siden støttes ikke i IE, ihvertfall ikke enda.
+    <div class="card bg-danger text-white mb-3">
+      <div class="card-body">
+        Bibrex fungerer muligens i Internet Explorer,
+        men bytt til Firefox eller Chrome om du opplever problemer.
+      </div>
     </div>
 
   @endif
@@ -22,7 +25,7 @@
     </div>
 
     <!-- List group -->
-    <Things></Things>
+    <things-table></things-table>
   </div>
 
 @stop

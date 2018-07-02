@@ -55,6 +55,7 @@ class ItemsController extends Controller
             ->get()->map(function($item) {
                 return [
                     'id' => $item->id,
+                    'type' => 'item',
                     'name' => $item->dokid,
                     'group' => $item->thing->name,
                 ];

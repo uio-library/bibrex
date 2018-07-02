@@ -3,7 +3,7 @@
         <input type="hidden" :name="name + '_id'" :value="selectedId">
         <input type="text"
             ref="textinput"
-            v-model="currentValue"
+            :value="value"
             autocomplete="off"
             :name="name"
             :placeholder="placeholder"
@@ -62,7 +62,6 @@ import Bloodhound from 'corejs-typeahead'
                 selectedId: '',
                 waitingTimer: null,
                 waitingSince: null,
-                currentValue: '',
             };
         },
 
@@ -144,15 +143,31 @@ import Bloodhound from 'corejs-typeahead'
                 limit: this.limit,
                 display: item => item.name,
                 templates: {
-                  suggestion: d => d.group
-                      ? `<div><span class="right">${d.primaryId}</span><span class="main">${d.name} - ${d.group}</span></div>`
-                      : `<div><span class="main">${d.name}</span></div>`,
+                  suggestion: d => {
+                      if (d.primaryId) {
+                          return `
+                                <div>
+                                    <span class="right">${d.primaryId}</span>
+                                    <span class="main">${d.name} - ${d.group}</span>
+                                </div>`;
+                      }
+                      if (d.group) {
+                          return `<div>
+                                <span class="right"><samp>${d.name}</samp></span>
+                                <span class="main">${d.group}</span>
+                             </div>`;
+
+                      }
+                      return `<div>
+                            <span class="right">(uten strekkode)</span>
+                            <span class="main">${d.name}</span>
+                      </div>`;
+                  },
                   notFound: '<div class="tt-empty"><span>No matches</span></div>',
                   pending: '<div class="tt-pending">Looking...</div>',
                 }
               })
               .on('typeahead:asyncrequest', (u) => {
-                console.log($(this.$refs.textinput));
                   $(this.$refs.textinput).addClass('busy');
                   if (this.alma) {
                       this.waitingSince = new Date().getTime();
@@ -166,16 +181,28 @@ import Bloodhound from 'corejs-typeahead'
               })
               .on('input', (ev) => {
                   this.selectedId = '';
-              })
-              .on('change', (ev) => {
-                  // this.currentValue = ev.currentTarget.value;
+                  this.$emit('input', {
+                      name: ev.currentTarget.value,
+                  });
               })
               .on('typeahead:select', (ev, datum) => {
                   this.selectedId = datum.id ? datum.id : datum.primaryId;
+                  this.$emit('input', {
+                      type: datum.type,
+                      id: this.selectedId,
+                      name: datum.name,
+                      barcode: datum.barcode,
+                  });
                   this.focusNextElement();
               })
               .on('typeahead:autocomplete', (ev, datum) => {
                   this.selectedId = datum.id ? datum.id : datum.primaryId;
+                  this.$emit('input', {
+                      type: datum.type,
+                      id: this.selectedId,
+                      name: datum.name,
+                      barcode: datum.barcode,
+                  });
                   this.focusNextElement();
               })
               ;

@@ -66,6 +66,41 @@ class ThingsController extends Controller {
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
+     * @return Response
+     */
+    public function json(Request $request)
+    {
+        $libraryId = \Auth::user()->id;
+
+        $things = $this->thingFactory;
+
+        if ($request->input('withLoans')) {
+            $things->with('items.loans');
+        }
+
+        if ($request->input('mine')) {
+            $things->whereHas('libraries', function ($query) use ($libraryId) {
+                $query->where('library_id', '=', $libraryId);
+            });
+        }
+
+        $things->orderBy('name');
+
+        $things = $things->get()->map(function($thing) {
+            return [
+                'id' => $thing->id,
+                'type' => 'thing',
+                'name' => $thing->name,
+            ];
+        });
+
+        return response()->json($things);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
      * @param Library $library
      * @return Response
      */

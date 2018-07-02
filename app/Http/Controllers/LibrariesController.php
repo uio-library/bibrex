@@ -295,20 +295,16 @@ class LibrariesController extends Controller
 			->with('status', 'IP-adressen ble lagt til');
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function removeIp($id)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param LibraryIp $ip
+     * @return Response
+     */
+	public function removeIp(LibraryIp $ip)
 	{
 		$lib = Auth::user();
-		if (!$lib) {
-			return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-		}
 
-		$ip = LibraryIp::find($id);
 		if ($ip->library_id != $lib->id) {
 			return redirect()->action('LibrariesController@getMyIps')
 				->with('status', 'IP-adressen hører ikke til ditt bibliotek.');

@@ -78,33 +78,30 @@
 @endif
 
 <div class="container" id="app">
+
   @show
 
   @if (Session::has('status'))
-  <div class="alert alert-success">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    {!! Session::get('status') !!}
-  </div>
+    <alert variant="success" v-cloak>
+      {!! Session::get('status') !!}
+    </alert>
   @endif
 
   @if (Session::has('error'))
-  <div class="alert alert-danger">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    {!! Session::get('error') !!}
-  </div>
+    <alert variant="danger" v-cloak>
+      {!! Session::get('error') !!}
+    </alert>
   @endif
 
   @if ($e = $errors->all('<li>:message</li>'))
-  <div class="alert alert-danger">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    Kunne ikke lagre fordi:
-    <ul>
-      @foreach ($e as $msg)
-      {!!  $msg !!}
-      @endforeach
-    </ul>
-  </div>
-
+    <alert variant="danger" v-cloak>
+      Kunne ikke lagre fordi:
+      <ul>
+        @foreach ($e as $msg)
+        {!!  $msg !!}
+        @endforeach
+      </ul>
+    </alert>
   @endif
 
   @yield('content')
@@ -117,36 +114,6 @@
 <script type="text/javascript" src="{{ mix('/js/app.js') }}"></script>
 
 @yield('scripts')
-
-<script type="text/javascript">
-
-  $(document).ready(function() {
-
-    if ($('.container > .alert').length != 0) {
-      $('.container > .alert').addClass('visible');
-    }
-
-      //parent.postMessage("Hello","*");
-
-      var idleStart;
-      function resetIdleTime() {
-        idleStart = new Date();
-      }
-      function tick() {
-        var now = new Date();
-        // 5 minutter
-        if (now - idleStart > 1000 * 60 * 5) {
-          location.reload();
-        }
-
-        setTimeout(tick, 1000);
-      }
-      resetIdleTime();
-      document.body.addEventListener('mousemove', resetIdleTime, true);
-      document.body.addEventListener('keydown', resetIdleTime, true);
-      setTimeout(tick, 1000);
-    });
-  </script>
 
 </body>
 </html>

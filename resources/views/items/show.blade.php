@@ -83,6 +83,24 @@
               </div>
           </li>
 
+          <li class="list-group-item">
+              <div class="row">
+                  <div class="col-sm-2">
+                      Tapt?
+                  </div>
+                  <div class="col">
+                      @if ($item->is_lost)
+                          <span class="text-danger">
+                            <i class="far fa-exclamation-triangle"></i>
+                            Dette eksemplaret er tapt.
+                          </span>
+                      @else
+                          Nei
+                      @endif
+                  </div>
+              </div>
+          </li>
+
       </ul>
   </div>
 
@@ -103,7 +121,7 @@
           @if ($lastLoan->trashed())
             @if ($lastLoan->is_lost)
               <span class="text-danger">
-                <i class="fas fa-exclamation-triangle"></i>
+                <i class="far fa-exclamation-triangle"></i>
                 Markert som tapt
                 {{ $lastLoan->deleted_at }}
               </span>

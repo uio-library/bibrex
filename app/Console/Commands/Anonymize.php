@@ -43,11 +43,16 @@ class Anonymize extends Command
             'lastname' => '(anonymisert)',
             'firstname' => '(anonymisert)',
         ]);
-        foreach (Loan::withTrashed()->with('user')->get() as $loan) {
-            if (!is_null($loan->deleted_at)) {
-                $loan->user_id = $anonUser->id;
-                $loan->save();
-            }
+
+        $loans = Loan::withTrashed()->whereNotNull('deleted_at')
+            ->where('user_id', '!=', $anonUser->id)
+            ->where('is_lost', '=', false)
+            ->with('user')
+            ->get();
+
+        foreach ($loans as $loan) {
+            $loan->user_id = $anonUser->id;
+            $loan->save();
         }
     }
 }

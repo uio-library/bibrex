@@ -8,9 +8,18 @@
 @import "~@fortawesome/fontawesome-pro/scss/fontawesome";
 @import "~@fortawesome/fontawesome-pro/scss/fa-regular";
 
+[v-cloak] {display: none};
+
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.is-invalid .form-control {
+  border-color: #d9534f;
+}
+.invalid-feedback {
+  display: block;
 }
 
 .nav-tabs a.active {
@@ -33,16 +42,16 @@ body {
     -o-transition: max-width 0.2s ease-in-out;
     transition: max-width 0.2s ease-in-out;
 }
-myTable td {
-    -webkit-transition: all 0.5s ease-in-out;
-    -moz-transition: all 0.5s ease-in-out;
-    -o-transition: all 0.5s ease-in-out;
-    transition: all 0.5s ease-in-out;
+.dataTable td {
+    -webkit-transition: all 0.5s ease-out;
+    -moz-transition: all 0.5s ease-out;
+    -o-transition: all 0.5s ease-out;
+    transition: all 0.5s ease-out;
 }
-.added td {
-    background-color: #ffffbb;
+.highlight td {
+
 }
-.focus {
+.highlight-active td {
     background-color: #ffff44;
 }
 
@@ -89,7 +98,6 @@ a:hover *, a:focus * {
 }
 
 .alert.visible {
-  display: block;
   opacity: 1;
 }
 
@@ -177,17 +185,17 @@ a:hover *, a:focus * {
 }
 
 
-
-
-
-
+.checkout {
+  display: block;
+  width: 100%;
+}
 
 
 .lds-ellipsis {
   display: inline-block;
   position: relative;
   width: 64px;
-  height: 20px;
+  height: 16px;
 }
 .lds-ellipsis div {
   position: absolute;
@@ -245,6 +253,3 @@ input.busy {
   background-repeat: no-repeat;
 }
 
-.checkout:disabled {
-  opacity: 0.2;
-}

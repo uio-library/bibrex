@@ -36,6 +36,7 @@ class UsersController extends Controller {
                 'group' => $user->alma_user_group,
                 'name' => $user->lastname . ', ' . $user->firstname,
                 'barcode' => $user->barcode,
+                'type' => 'local',
             );
         }
 
@@ -235,7 +236,7 @@ class UsersController extends Controller {
         }
 
         $user_id = $user->id;
-        $name = $user->getName();
+        $name = $user->name;
 
         $user->delete();
         \Log::info(sprintf('Slettet brukeren med ID %d', $user_id));

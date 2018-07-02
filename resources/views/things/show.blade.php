@@ -108,10 +108,11 @@
             <em>Ingen</em>
         </li>
       @endif
-      @foreach ($thing->items()->whereNotNull('dokid')->orderBy('dokid')->get() as $item)
-        <li class="list-group-item">
+      @foreach ($thing->items()->whereNotNull('dokid')->orderBy('library_id')->orderBy('dokid')->get() as $item)
+        <li class="list-group-item d-flex justify-content-between align-items-center">
             <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->dokid }}</samp></a>
-            {{ $item->note }}
+            <span>{{ $item->note }}</span>
+            <span>{{ $item->library->name }}</span>
         </li>
       @endforeach
     </ul>
@@ -121,7 +122,7 @@
   <div class="card mb-3">
 
     <div class="card-header">
-      <h5>Slettede/tapte eksemplarer</h5>
+      <h5>Slettede og tapte eksemplarer</h5>
     </div>
 
     <ul class="list-group list-group-flush">
@@ -133,7 +134,8 @@
       @foreach ($thing->items()->onlyTrashed()->get() as $item)
         <li class="list-group-item">
             <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->dokid }}</samp></a>
-            {{ $item->note }}
+            {{ $item->is_lost ? '(tapt)' : '(slettet)' }}
+            Note: {{ $item->note }}
         </li>
       @endforeach
     </ul>

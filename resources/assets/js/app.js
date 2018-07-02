@@ -62,9 +62,13 @@ Vue.use(ToggleButton);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
-Vue.component('typeahead', require('./components/Typeahead.vue'));
-Vue.component('things', require('./components/Things.vue'));
+Vue.component('alert', require('./components/Alert.vue'));
+Vue.component('checkout-checkin', require('./components/CheckoutCheckin.vue'));
+Vue.component('checkout-checkin-status', require('./components/CheckoutCheckinStatus.vue'));
+Vue.component('datatable', require('./components/Datatable.vue'));
+Vue.component('loan-actions', require('./components/LoanActions.vue'));
+Vue.component('loans-table', require('./components/LoansTable.vue'));
+Vue.component('things-table', require('./components/ThingsTable.vue'));
 
 const app = new Vue({
     el: '#app'

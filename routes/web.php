@@ -62,14 +62,13 @@ Route::middleware(['auth'])->group(function()
 
     // --[[ LOAN ]]--
     Route::get('/loans', 'LoansController@getIndex');
+    Route::get('/loans.json', 'LoansController@json');
+    Route::post('/loans/checkout', 'LoansController@checkout');
+    Route::post('/loans/checkin', 'LoansController@checkin');
     Route::get('/loans/{loan}', 'LoansController@getShow');
-    Route::post('/loans', 'LoansController@postStore');
-
-    Route::get('/loans/lost/{loan}', 'LoansController@getLost');
-    Route::get('/loans/return/{loan}', 'LoansController@getDestroy');
-    Route::post('/loans/return', 'LoansController@postDestroy');
-    Route::get('/loans/restore/{loan}', 'LoansController@getRestore');
-    Route::get('/loans/edit/{loan}', 'LoansController@edit');
+    Route::post('/loans/{loan}/restore', 'LoansController@getRestore');
+    Route::post('/loans/{loan}/lost', 'LoansController@lost');
+    Route::get('/loans/{loan}/edit', 'LoansController@edit');
     Route::post('/loans/{loan}', 'LoansController@update');
 
     // --[[ ITEM ]]--
@@ -84,6 +83,7 @@ Route::middleware(['auth'])->group(function()
 
     // --[[ THINGS ]]--
     Route::get('/things', 'ThingsController@getIndex');
+    Route::get('/things.json', 'ThingsController@json');
     Route::get('/things/{thing}', 'ThingsController@getShow');
     Route::get('/things/edit/{thing}', 'ThingsController@getEdit');
     Route::post('/things/toggle/{thing}', 'ThingsController@toggle');

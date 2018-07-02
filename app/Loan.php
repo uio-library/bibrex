@@ -22,6 +22,13 @@ class Loan extends Model {
      */
     protected $dates = ['due_at', 'deleted_at'];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['url', 'created_at_relative', 'days_left'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -73,19 +80,12 @@ class Loan extends Model {
         return $dl;
     }
 
-    public function daysLeftFormatted() {
-        $d = $this->daysLeft();
-        if ($d == 999999)
-            return '';
-        if ($d > 1)
-            return '<span style="color:green;">om ' . $d . ' dager</span>';
-        if ($d == 1)
-            return '<span style="color:orange;">i morgen</span>';
-        if ($d == 0)
-            return '<span style="color:orange;">i dag</span>';
-        if ($d == -1)
-            return '<span style="color:red;">i går</span>';
-        return'<span style="color:red;">for ' . abs($d) . ' dager siden</span>';
+    public function getDaysLeftAttribute() {
+        return $this->daysLeft();
+    }
+
+    public function getUrlAttribute() {
+        return action('LoansController@getShow', $this->id);
     }
 
     public function relativeCreationTimeHours() {
@@ -131,6 +131,10 @@ class Loan extends Model {
         }
         return str_replace('{diff}', $this->created_at->diffForHumans(Carbon::now(), true),
                            $msgs['generic']);
+    }
+
+    public function getCreatedAtRelativeAttribute() {
+        return $this->relativeCreationTime();
     }
 
     /*
@@ -225,6 +229,28 @@ class Loan extends Model {
 
         parent::save($options);
         return true;
+    }
+
+    public function lost()
+    {
+        if ($this->item->dokid) {
+            $this->item->lost();
+        }
+
+        $this->is_lost = true;
+        $this->save();
+        $this->delete();
+    }
+
+    public function found()
+    {
+        $this->restore();
+        $this->is_lost = false;
+        $this->save();
+
+        if ($this->item->is_lost) {
+            $this->item->found();
+        }
     }
 
     /**

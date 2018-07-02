@@ -98,8 +98,6 @@
                 <div class="col">
                     {{ $loan->due_at->toDateString() }}
                     @if (!$loan->trashed())
-                        {!! ($d = $loan->daysLeftFormatted()) ? "($d)" : "ukjent / aldri" !!}
-
                         <a href="{{ action('LoansController@edit', $loan->id) }}">[Rediger]</a>
                     @endif
                 </div>
@@ -114,7 +112,7 @@
                 <div class="col">
                     @if ($loan->is_lost)
                         <span class="text-danger">
-                            <i class="fas fa-exclamation-triangle"></i>
+                            <i class="far fa-exclamation-triangle"></i>
                             Markert som tapt
                             {{ $loan->deleted_at }}
                         </span>

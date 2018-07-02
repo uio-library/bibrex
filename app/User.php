@@ -29,6 +29,13 @@ class User extends Authenticatable {
     protected $dates = ['last_loan_at'];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['name', 'url'];
+
+    /**
      * Array of user-editable attributes (excluding machine-generated stuff)
      *
      * @static array
@@ -49,9 +56,14 @@ class User extends Authenticatable {
             ->orderBy('created_at', 'desc');
     }
 
-    public function getName()
+    public function getNameAttribute()
     {
-        return $this->firstname . ' ' . $this->lastname;
+        return $this->lastname . ', ' . $this->firstname;
+    }
+
+    public function getUrlAttribute()
+    {
+        return action('UsersController@getShow', $this->id);
     }
 
     /**
