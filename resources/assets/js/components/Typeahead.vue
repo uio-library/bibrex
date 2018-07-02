@@ -3,7 +3,6 @@
         <input type="hidden" :name="name + '_id'" :value="selectedId">
         <input type="text"
             ref="textinput"
-            :value="value"
             autocomplete="off"
             :name="name"
             :placeholder="placeholder"
@@ -26,10 +25,6 @@ import Bloodhound from 'corejs-typeahead'
         props: {
             name: {
                 type: String
-            },
-            value: {
-                type: String,
-                default: '',
             },
             placeholder: {
                 type: String,

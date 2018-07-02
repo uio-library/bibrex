@@ -17,6 +17,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
    .copy('node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css', 'public/css/')
    .purgeCss({
         whitelistPatterns: [
+            /^alert-/, /^visible/,               // Alerts
             /^tt-/, /typeahead/,                 // Typeahead.vue
             /(bs-)?tooltip/, /^(fade|show)$/,    // VueBootstrap tooltip
             /^badge-/,                           // logs.index

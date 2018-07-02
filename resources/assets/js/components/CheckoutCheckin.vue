@@ -135,12 +135,10 @@ export default {
             };
         },
         setCurrentThing(value) {
-            console.log('set thing');
             this.currentThing = value;
             Vue.set(this.errors, 'thing', null);
         },
         setCurrentUser(value) {
-            console.log('set user');
             this.currentUser = value;
             Vue.set(this.errors, 'user', null);
         },
@@ -171,7 +169,7 @@ export default {
             })
             .catch(response => {
                 this.busy = false;
-                console.log(response.response.status, response.response.data);
+                console.log(response);
                 if (response.response.status === 422) {
                     this.$root.$emit('error', {message: 'Utlånet kunne ikke gjennomføres. Se detaljer over.'});
                     this.errors = {
