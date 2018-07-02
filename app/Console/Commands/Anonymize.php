@@ -50,9 +50,12 @@ class Anonymize extends Command
             ->with('user')
             ->get();
 
+        $c = 0;
         foreach ($loans as $loan) {
             $loan->user_id = $anonUser->id;
             $loan->save();
+            $c++;
         }
+        \Log::info("Anonymized $c loans");
     }
 }
