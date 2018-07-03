@@ -20,11 +20,11 @@ class ThingsController extends Controller {
         'name.required' => 'Internt navn må fylles ut.',
         'name.unique' => 'Typen finnes allerede.',
 
-        'email_name_nob.required' => 'Ubestemt form på bokmål må fylles ut.',
-        'email_name_definite_nob.required' => 'Bestemt form på bokmål må fylles ut.',
+        'name_indefinite_nob.required' => 'Ubestemt form på bokmål må fylles ut.',
+        'name_definite_nob.required' => 'Bestemt form på bokmål må fylles ut.',
 
-        'email_name_eng.required' => 'Ubestemt form på engelsk må fylles ut.',
-        'email_name_definite_eng.required' => 'Bestemt form på engelsk må fylles ut.',
+        'name_indefinite_eng.required' => 'Ubestemt form på engelsk må fylles ut.',
+        'name_definite_eng.required' => 'Bestemt form på engelsk må fylles ut.',
     ];
 
     public function __construct(Thing $thing)
@@ -116,8 +116,6 @@ class ThingsController extends Controller {
         foreach ($things as $t) {
             $out[] = [
                 'name' => $t->name,
-                'disabled' => $t->disabled,
-                'num_items' => $t->num_items,
                 'available_items' => $t->availableItems(),
             ];
         }
@@ -175,23 +173,28 @@ class ThingsController extends Controller {
     {
         \Validator::make($request->all(), [
             'name' => 'required|unique:things,name' . ($thing->id ? ',' . $thing->id : ''),
-            'email_name_nob' => 'required',
-            'email_name_eng' => 'required',
-            'email_name_definite_nob' => 'required',
-            'email_name_definite_eng' => 'required',
+            'name_indefinite_nob' => 'required',
+            'name_indefinite_nno' => 'required',
+            'name_indefinite_eng' => 'required',
+            'name_definite_nob' => 'required',
+            'name_definite_nno' => 'required',
+            'name_definite_eng' => 'required',
             'loan_time' => 'required|numeric|gte:1|lte:36500',
         ], $this->messages)->validate();
 
         $thing->name = $request->input('name');
-        $thing->email_name_nob = $request->input('email_name_nob');
-        $thing->email_name_eng = $request->input('email_name_eng');
-        $thing->email_name_definite_nob = $request->input('email_name_definite_nob');
-        $thing->email_name_definite_eng = $request->input('email_name_definite_eng');
-        $thing->num_items = $request->input('num_items') ?: 0;
-        $thing->disabled = $request->input('disabled') == 'on';
+
+        $props = $thing->properties;
+        $props->name_indefinite->nob = $request->input('name_indefinite_nob');
+        $props->name_indefinite->nno = $request->input('name_indefinite_nno');
+        $props->name_indefinite->eng = $request->input('name_indefinite_eng');
+        $props->name_definite->nob = $request->input('name_definite_nob');
+        $props->name_definite->nno = $request->input('name_definite_nno');
+        $props->name_definite->eng = $request->input('name_definite_eng');
+        $thing->properties = $props;
+
         $thing->loan_time = $request->input('loan_time');
         $thing->note = $request->input('note');
-        $thing->send_reminders = $request->input('send_reminders') == 'on';
 
         if (!$thing->save()) {
             return redirect()->action('ThingsController@getEdit', $thing->id ?: '_new')

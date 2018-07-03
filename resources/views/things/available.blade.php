@@ -41,12 +41,12 @@ function update() {
     $.getJSON('{{ URL::action('ThingsController@getAvailableJson', $library_id) }}').then(function(res) {
       $('#things').empty();
       res.forEach(function(thing) {
-          if (!thing.disabled && thing.num_items) {
+          if (!thing.disabled) {
             $('#things').append(`
             <div style="flex: 0 0 31vw;">
     <div style=" background: #8A9B0F; border-radius: 3px; color:#fff; padding: 1em; border: 1px solid #033649; margin: 1vw;">
               <div class="header">${thing.name}</div>
-              <div class="desc">${thing.available_items} av ${thing.num_items} tilgjengelig</div>
+              <div class="desc">${thing.available_items} av ? tilgjengelig</div>
             </div>
             `);
           }

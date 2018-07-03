@@ -13,7 +13,7 @@ class Anonymize extends Command
      *
      * @var string
      */
-    protected $signature = 'anonymize';
+    protected $signature = 'bibrex:anonymize';
 
     /**
      * The console command description.

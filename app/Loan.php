@@ -2,9 +2,11 @@
 
 namespace App;
 
+use App\Notifications\ExtendedDatabaseNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\MessageBag;
 
 class Loan extends Model {
@@ -40,9 +42,10 @@ class Loan extends Model {
             ->withTrashed();
     }
 
-    public function reminders()
+    public function notifications()
     {
-        return $this->hasMany(Reminder::class);
+        return $this->hasMany(ExtendedDatabaseNotification::class)
+            ->orderBy('created_at', 'desc');
     }
 
     public function library()
@@ -85,7 +88,7 @@ class Loan extends Model {
     }
 
     public function getUrlAttribute() {
-        return action('LoansController@getShow', $this->id);
+        return action('LoansController@getShow', ['loan' => $this->id]);
     }
 
     public function relativeCreationTimeHours() {

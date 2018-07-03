@@ -24,6 +24,13 @@
         </div>
     </div>
 
+    <p class="p-3">
+      Under kan du velge hvilke ting som skal kunne lånes ut i ditt bibliotek,
+      om utlån alltid skal knyttes til et bestemt eksemplar og
+      om det skal sendes påminnelser hvis tingen ikke leveres i tide.
+      Innstillingene under gjelder bare for ditt bibliotek, ikke for alle.
+    </p>
+
     <!-- List group -->
     <things-table></things-table>
   </div>

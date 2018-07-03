@@ -152,7 +152,7 @@ class ItemsController extends Controller
         }
 
         \Log::info(sprintf('Slettet %s <a href="%s">%s</a>.',
-            $item->thing->email_name_definite_nob,
+            $item->thing->properties->name_definite->nob,
             action('ItemsController@show', $item->id),
             $item->dokid));
         $item->delete();
@@ -171,7 +171,7 @@ class ItemsController extends Controller
     {
         $item->restore();
         \Log::info(sprintf('Gjenopprettet %s <a href="%s">%s</a>.',
-            $item->thing->email_name_definite_nob,
+            $item->thing->properties->name_definite->nob,
             action('ItemsController@show', $item->id),
             $item->dokid));
 

@@ -17,15 +17,20 @@
         @endif
     </h5>
 
+    <p class="p-3">
+      Merk: Innstillingene under gjelder for alle bibliotek. Før du endrer lånetid kan det derfor
+      være lurt å diskutere med de andre brukerne.
+    </p>
+
     <ul class="list-group list-group-flush">
 
         <li class="list-group-item">
             <div class="row">
                 <label for="name" class="col-sm-3 col-form-label">Internt navn:</label>
-                <div class="col-sm-9">
+                <div class="col-sm-8">
                     @component('components.text', ['name' => 'name', 'value' => $thing->name])
                     @endcomponent
-                    <p class="form-text text-muted">
+                    <p class="small form-text">
                       Dette navnet vises kun i Bibrex.
                     </p>
                 </div>
@@ -33,13 +38,98 @@
         </li>
 
         <li class="list-group-item">
+
+          <div class="row mb-3">
+
+            <div class="col col-sm-3 col-form-label">
+              Bokmål:
+            </div>
+
+            <div class="col col-sm-4">
+              @component('components.text', ['name' => 'name_indefinite_nob', 'value' => $thing->properties->name_indefinite->nob])
+              @endcomponent
+              <p class="small form-text">
+                Form som passer inn i setningen «Du lånte ____ frå oss i går». Noen eksempler:
+                «eit hørselvern», «ei skjøteledning», «nøkkelen til hvilerommet»
+                (bestemt form fordi det bare finnes én).
+              </p>
+            </div>
+
+            <div class="col col-sm-4">
+              @component('components.text', ['name' => 'name_definite_nob', 'value' => $thing->properties->name_definite->nob])
+              @endcomponent
+              <p class="small form-text">
+                Form som passer inn i setningen «____ må leveres». Noen eksempler:
+                «hørselvernet», «skjøteledningen», «nøkkelen til hvilerommet».
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="row mb-3">
+
+            <div class="col col-sm-3 col-form-label">
+              Nynorsk:
+            </div>
+
+            <div class="col col-sm-4">
+              @component('components.text', ['name' => 'name_indefinite_nno', 'value' => $thing->properties->name_indefinite->nno])
+              @endcomponent
+              <p class="small form-text">
+                Form som passer inn i setninga «Du lånte ____ frå oss i går». Nokre eksempel:
+                «eit høyrselsvern», «ei skøyteleidning», «nykelen til kvilerommet»
+              </p>
+            </div>
+
+            <div class="col col-sm-4">
+              @component('components.text', ['name' => 'name_definite_nno', 'value' => $thing->properties->name_definite->nno])
+              @endcomponent
+              <p class="small form-text">
+                Form som passer inn i setninga «____ må leverast». Nokre eksempel:
+                «høyrselsvernet», «skøyteleidninga», «nykelen til kvilerommet».
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="row mb-3">
+            <div class="col col-sm-3 col-form-label">
+              Engelsk:
+            </div>
+
+            <div class="col col-sm-4">
+              @component('components.text', ['name' => 'name_indefinite_eng', 'value' => $thing->properties->name_indefinite->eng])
+              @endcomponent
+              <p class="small form-text">
+                Form som passer inn i setningen «You borrowed ____ from us yesterday.
+                Noen eksempler: «a pair of earmuffs», «an extension cord», «the resting room key».
+              </p>
+            </div>
+
+            <div class="col col-sm-4">
+              @component('components.text', ['name' => 'name_definite_eng', 'value' => $thing->properties->name_definite->eng])
+              @endcomponent
+              <p class="small form-text">
+                Form som passer inn i setningen «____ must be returned».
+                Noen eksempler:
+                «the earmuffs», «the extension cord», «the resting room key».
+                Første bokstav kan godt være liten for konsistens, programvaren gjør den automatisk stor ved behov.
+              </p>
+            </div>
+          </div>
+
+        </li>
+
+        <li class="list-group-item">
             <div class="row">
-                <label for="name" class="col-sm-3 col-form-label">Lånetid:</label>
-                <div class="col-sm-9">
+                <label for="name" class="col-sm-3 col-form-label">Lånetid (antall dager):</label>
+                <div class="col-sm-8">
                     @component('components.text', ['name' => 'loan_time', 'value' => $thing->loan_time])
                     @endcomponent
-                    <p class="form-text text-muted">
-                      Antall dager. Minimum er «1», som betyr det at tingen purres neste morgen.
+                    <p class="small form-text">
+                      Minimum er «1», som innebærer at tingen purres neste morgen.
                     </p>
                 </div>
             </div>
@@ -47,102 +137,17 @@
 
         <li class="list-group-item">
             <div class="row">
-                <label for="note" class="col-sm-3 col-form-label">Merknad:</label>
+                <label for="note" class="col-sm-3 col-form-label">Intern merknad:</label>
                 <div class="col-sm-9">
                     @component('components.text', ['name' => 'note', 'value' => $thing->note])
                     @endcomponent
-                    <p class="form-text text-muted">
+                    <p class="small form-text">
                       Vises i utlånsoversikten.
                     </p>
                 </div>
             </div>
         </li>
 
-        <li class="list-group-item">
-
-              <h5 class="card-title">Purringer</h5>
-
-              <div class="form-group row justify-content-end">
-                <div class="col-sm-12">
-                    <input type="checkbox" id="send_reminders" name="send_reminders"{{ $thing->send_reminders ? ' checked="checked"' : '' }} />
-                    {{ Form::label('send_reminders', 'Send purre-eposter for denne tingen') }}
-                </div>
-              </div>
-
-              <div class="form-group row">
-                {{ Form::label('email_name_nob', 'Ubestemt form på bokmål: ', ['class' => 'col-sm-3 col-form-label']) }}
-                <div class="col-sm-9">
-                    @component('components.text', ['name' => 'email_name_nob', 'value' => $thing->email_name_nob])
-                    @endcomponent
-                    <p class="form-text text-muted">
-                      Form som passer inn i setningen «Du lånte xxx fra oss i dag». Noen eksempler:
-                      «et hørselvern», «en skjøteledning», «nøkkelen til hvilerommet».
-                    </p>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                {{ Form::label('email_name_definite_nob', 'Bestemt form på bokmål: ', ['class' => 'col-sm-3 col-form-label']) }}
-                <div class="col-sm-9">
-                    @component('components.text', ['name' => 'email_name_definite_nob', 'value' => $thing->email_name_definite_nob])
-                    @endcomponent
-                    <p class="form-text text-muted">
-                      Form som passer inn i setningen «xxx må leveres». Noen eksempler:
-                      «hørselvernet», «skjøteledningen», «nøkkelen til hvilerommet».
-                    </p>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                {{ Form::label('email_name_eng', 'Ubestemt form på engelsk: ', ['class' => 'col-sm-3 col-form-label']) }}
-                <div class="col-sm-9">
-                    @component('components.text', ['name' => 'email_name_eng', 'value' => $thing->email_name_eng])
-                    @endcomponent
-                    <p class="form-text text-muted">
-                      Form som passer inn i setningen «You borrowed xxx from us today». Noen eksempler:
-                      «a pair of earmuffs», «an extension cord», «a key to the resting room».
-                    </p>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                {{ Form::label('email_name_definite_eng', 'Bestemt form på engelsk: ', ['class' => 'col-sm-3 col-form-label']) }}
-                <div class="col-sm-9">
-                    @component('components.text', ['name' => 'email_name_definite_eng', 'value' => $thing->email_name_definite_eng])
-                    @endcomponent
-                    <p class="form-text text-muted">
-                      Form som passer inn i setningen «xxx must be returned». Noen eksempler:
-                      «the earmuffs», «the extension cord», «the key to the resting room».
-                      Første bokstav kan godt være liten for konsistens, programvaren gjør den automatisk stor ved behov.
-                    </p>
-                </div>
-              </div>
-        </li>
-
-        {{--
-
-        <li class="list-group-item">
-
-              <h5 class="card-title">Forekomster</h5>
-
-              <div class="row">
-                {{ Form::label('num_items', 'Antall tilgjengelig totalt: ', ['class' => 'col-sm-3 col-form-label']) }}
-                <div class="col-sm-9">
-                    {{ Form::number('num_items', $thing->num_items, array('class' => 'form-control')) }}
-                </div>
-              </div>
-        </li>
-
-        <li class="list-group-item">
-              <h5 class="card-title">Stans utlån</h5>
-            <div class="row text-danger">
-                <div class="col-sm-12">
-                    <input type="checkbox" id="disabled" name="disabled"{{ $thing->disabled ? ' checked="checked"' : '' }} />
-                    {{ Form::label('disabled', 'Ikke tillat nye utlån') }}
-                </div>
-              </div>
-        </li>
-        --}}
 
     </ul>
 

@@ -24,6 +24,15 @@ class Thing extends Model {
     protected $dates = ['deleted_at'];
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'properties' => 'object',
+    ];
+
+    /**
      * The accessors to append to the model's array form.
      *
      * @var array
@@ -64,6 +73,11 @@ class Thing extends Model {
             ->first() ? true : false;
     }
 
+    /**
+     * The settings for this thing at my library.
+     *
+     * @return bool
+     */
     public function getLibrarySettingsAttribute()
     {
         $lib = $this->libraries()
@@ -74,7 +88,7 @@ class Thing extends Model {
 
     public function availableItems()
     {
-        return $this->num_items - count($this->activeLoans());
+        return $this->items()->count() - count($this->activeLoans());
     }
 
     public function allLoans()

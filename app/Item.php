@@ -67,7 +67,7 @@ class Item extends Model {
 
     public function formattedLink($ucfirst=false)
     {
-        $name = s($this->thing->email_name_definite_nob);
+        $name = s($this->thing->properties->name_definite->nob);
         $name = $ucfirst ? $name->upperCaseFirst() : $name->lowerCaseFirst();
 
         return sprintf('<a href="%s">%s</a>',

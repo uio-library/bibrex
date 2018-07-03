@@ -129,20 +129,20 @@
                     Påminnelser:
                 </div>
                 <div class="col">
-                    @if (count($loan->reminders) == 0)
+                    @if (count($loan->notifications) == 0)
                       <div>
                         <em>Ingen påminnelser sendt</em>
                       </div>
                     @else
-                      @foreach ($loan->reminders as $reminder)
+                      @foreach ($loan->notifications as $notification)
                         <div>
-                          <a href="{{ URL::action('RemindersController@getShow', $reminder->id) }}">Påminnelse</a> per {{ $reminder->medium == 'sms' ? 'SMS' : 'e-post' }} sendt {{ $reminder->created_at }}
+                          <a href="{{ URL::action('NotificationsController@show', $notification->id) }}">{{ $notification->humanReadableType() }}</a> sendt {{ $notification->created_at }}
                         </div>
                       @endforeach
                     @endif
                     @if (!$loan->trashed())
                         <div>
-                          <a href="{{ URL::action('RemindersController@getCreate') . '?loan_id=' . $loan->id }}">
+                          <a href="{{ URL::action('NotificationsController@create', ['loan_id' => $loan->id]) }}">
                             Send manuell påminnelse
                           </a>
                         </div>

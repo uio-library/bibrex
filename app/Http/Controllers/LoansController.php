@@ -65,7 +65,7 @@ class LoansController extends Controller
     {
         $library = \Auth::user();
 
-        $loans = Loan::with('item.thing','user','reminders')
+        $loans = Loan::with('item.thing','user','notifications')
             ->where('library_id', $library->id)
             ->orderBy('created_at','desc')->get();
 
@@ -134,7 +134,7 @@ class LoansController extends Controller
         $request->user->save();
 
         \Log::info(sprintf('Lånte ut %s (<a href="%s">Detaljer</a>).',
-            $request->item->thing->email_name_nob,
+            $request->item->thing->properties->name_indefinite->nob,
             action('LoansController@getShow', $loan->id)
         ));
         event(new LoanTableUpdated($loan_ids));
@@ -186,7 +186,7 @@ class LoansController extends Controller
 
         \Log::info(sprintf('Endret forfallsdato for <a href="%s">utlånet</a> av %s fra %s til %s.',
             action('LoansController@getShow', $loan->id),
-            $loan->item->thing->email_name_nob,
+            $loan->item->thing->properties->name_indefinite->nob,
             $old_date->toDateString(),
             $loan->due_at->toDateString()
         ));
@@ -205,7 +205,7 @@ class LoansController extends Controller
      */
 	public function lost(Loan $loan, Request $request)
 	{
-		\Log::info('Registrerte ' . $loan->item->thing->email_name_nob . ' som tapt' .
+		\Log::info('Registrerte ' . $loan->item->thing->properties->name_indefinite->nob . ' som tapt' .
             ' (<a href="'. action('LoansController@getShow', $loan->id) . '">Detaljer</a>)');
 
         $loan->lost();
@@ -294,7 +294,7 @@ class LoansController extends Controller
         }
 
         \Log::info(sprintf('Returnerte %s (<a href="%s">Detaljer</a>).',
-            $loan->item->thing->email_name_definite_nob,
+            $loan->item->thing->properties->name_definite->nob,
             action('LoansController@getShow', $loan->id)
         ));
 
@@ -322,7 +322,7 @@ class LoansController extends Controller
 	public function getRestore(Loan $loan)
 	{
         \Log::info(sprintf('Angret retur av %s (<a href="%s">Detaljer</a>).',
-            $loan->item->thing->email_name_nob,
+            $loan->item->thing->properties->name_indefinite->nob,
             action('LoansController@getShow', $loan->id)
         ));
 

@@ -94,10 +94,12 @@ Route::middleware(['auth'])->group(function()
     // Route::delete('/things/{thing}', 'ThingsController@delete');
 
     // --[[ REMINDER ]]--
-    Route::get('/reminders', 'RemindersController@getIndex');
-    Route::get('/reminders/create', 'RemindersController@getCreate');
-    Route::post('/reminders', 'RemindersController@postStore');
-    Route::get('/reminders/{reminder}', 'RemindersController@getShow');
+    Route::get('/notifications', 'NotificationsController@index');
+    Route::get('/notifications/{notification}', 'NotificationsController@show');
+
+    Route::get('/loans/{loan}/create-reminder', 'NotificationsController@create');
+    Route::post('/loans/{loan}/send-reminder', 'NotificationsController@send');
+
 
     // --[[ LOG ]]--
     Route::get('/logs', 'LogsController@getIndex');
