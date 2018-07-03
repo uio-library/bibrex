@@ -9,8 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\MessageBag;
 use Scriptotek\Alma\Client as AlmaClient;
 
-
-class User extends Authenticatable {
+class User extends Authenticatable
+{
 
     use Notifiable;
 
@@ -40,7 +40,7 @@ class User extends Authenticatable {
      *
      * @static array
      */
-    public static $editableAttributes = array('barcode', 'university_id','lastname', 'firstname', 'phone', 'email', 'lang');
+    public static $editableAttributes = ['barcode', 'university_id','lastname', 'firstname', 'phone', 'email', 'lang'];
 
     public function loans()
     {
@@ -159,9 +159,6 @@ class User extends Authenticatable {
             $loan->user_id = $this->id;
             $loan->save();
             \Log::info('Lån ' . $loan->id . ' flyttet fra bruker ' . $user->id . ' til ' . $this->id);
-            if (!$loan->as_guest) {
-
-            }
         }
 
         // Delete other user first to avoid database integrity conflicts
@@ -176,5 +173,4 @@ class User extends Authenticatable {
 
         return null;
     }
-
 }

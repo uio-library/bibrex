@@ -31,7 +31,6 @@ class FirstReminderEmail extends Mailable
         $lang = $loan->user->lang;
 
         switch ($lang) {
-
             case 'eng':
                 $subject = s($this->subjectTpl[$lang])
                     ->replace('{thing}', $thing->properties->name_definite->eng)
@@ -72,7 +71,8 @@ class FirstReminderEmail extends Mailable
         ];
     }
 
-    public function toArray() {
+    public function toArray()
+    {
         return $this->data;
     }
 

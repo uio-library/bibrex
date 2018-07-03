@@ -19,7 +19,8 @@ class ExtendedDatabaseNotification extends DatabaseNotification
      */
     protected $appends = ['url'];
 
-    public function getUrlAttribute() {
+    public function getUrlAttribute()
+    {
         return action('NotificationsController@show', $this->id);
     }
 

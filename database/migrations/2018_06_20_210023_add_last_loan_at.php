@@ -13,7 +13,7 @@ class AddLastLoanAt extends Migration
      */
     public function up()
     {
-        Schema::table('users', function(Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->dateTime('last_loan_at')->nullable();
         });
     }
@@ -25,7 +25,7 @@ class AddLastLoanAt extends Migration
      */
     public function down()
     {
-        Schema::table('users', function(Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('last_loan_at');
         });
     }

@@ -13,7 +13,7 @@ class AddItemLibraryId extends Migration
      */
     public function up()
     {
-        Schema::table('items', function(Blueprint $table) {
+        Schema::table('items', function (Blueprint $table) {
             $table->integer('library_id')
                 ->unsigned()->nullable();
             $table->foreign('library_id')
@@ -29,7 +29,7 @@ class AddItemLibraryId extends Migration
      */
     public function down()
     {
-        Schema::table('items', function(Blueprint $table) {
+        Schema::table('items', function (Blueprint $table) {
             $table->dropForeign('items_library_id_foreign');
             $table->dropColumn('library_id');
         });

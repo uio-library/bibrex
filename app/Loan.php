@@ -9,7 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\MessageBag;
 
-class Loan extends Model {
+class Loan extends Model
+{
 
     use SoftDeletes;
 
@@ -56,7 +57,7 @@ class Loan extends Model {
     public function representation($plaintext = false)
     {
         if ($this->item->thing->id == 1) {
-            $s = rtrim($this->item->title,' :')
+            $s = rtrim($this->item->title, ' :')
                 . ($this->item->subtitle ? ' : ' . $this->item->subtitle : '');
             if (!$plaintext) {
                 $s .= ' <small>(' . $this->item->dokid . ')</small>';
@@ -71,7 +72,8 @@ class Loan extends Model {
         }
     }
 
-    public function daysLeft() {
+    public function daysLeft()
+    {
         if (is_null($this->due_at)) {
             return 999999;
         }
@@ -79,25 +81,31 @@ class Loan extends Model {
         $d2 = new \DateTime();
         $diff = $d2->diff($d1);
         $dl = intval($diff->format('%r%a'));
-        if ($dl > 0) $dl++;
+        if ($dl > 0) {
+            $dl++;
+        }
         return $dl;
     }
 
-    public function getDaysLeftAttribute() {
+    public function getDaysLeftAttribute()
+    {
         return $this->daysLeft();
     }
 
-    public function getUrlAttribute() {
+    public function getUrlAttribute()
+    {
         return action('LoansController@getShow', ['loan' => $this->id]);
     }
 
-    public function relativeCreationTimeHours() {
+    public function relativeCreationTimeHours()
+    {
         Carbon::setLocale('no');
         $hours = $this->created_at->diffInHours(Carbon::now());
         return $hours;
     }
 
-    public function relativeCreationTime() {
+    public function relativeCreationTime()
+    {
         if ($this->user->lang == 'eng') {
             Carbon::setLocale('en');
             $msgs = [
@@ -132,83 +140,17 @@ class Loan extends Model {
         if ($diffHours < 48) {
             return str_replace('{hours}', $diffHours, $msgs['today']);
         }
-        return str_replace('{diff}', $this->created_at->diffForHumans(Carbon::now(), true),
-                           $msgs['generic']);
+        return str_replace(
+            '{diff}',
+            $this->created_at->diffForHumans(Carbon::now(), true),
+            $msgs['generic']
+        );
     }
 
-    public function getCreatedAtRelativeAttribute() {
+    public function getCreatedAtRelativeAttribute()
+    {
         return $this->relativeCreationTime();
     }
-
-    /*
-    private function ncipCheckout() {
-
-        $results = \DB::select('SELECT barcode, in_alma FROM users WHERE users.id = ?', array($this->user_id));
-        if (empty($results)) dd("user not found");
-        $user = $results[0];
-
-        $ltid = $user->ltid;
-        $this->as_guest = false;
-        if (!$user->in_alma) {
-
-            $lib = \Auth::user();
-
-            if (is_null($ltid) && !array_get($lib->options, 'guestcard_for_cardless_loans', false)) {
-                $this->errors->add('cardless_not_activated', 'Kortløse utlån er ikke aktivert. Det kan aktiveres i <a href="' . action('LibrariesController@getMyAccount') . '">kontoinnstillingene</a>.');
-                return false;
-            }
-
-            if (!is_null($ltid) && !array_get($lib->options, 'guestcard_for_nonworking_cards', false)) {
-                $this->errors->add('guestcard_not_activated', 'Kortet ble ikke funnet i BIBSYS og bruk av gjestekort er ikke aktivert. Det kan aktiveres i <a href="' . action('LibrariesController@getMyAccount') . '">kontoinnstillingene</a>.');
-                return false;
-            }
-
-            if (is_null($lib->guest_ltid)) {
-                $this->errors->add('guestcard_not_configured', 'Gjestekortnummer er ikke satt opp i <a href="' . action('LibrariesController@getMyAccount') . '">kontoinnstillingene</a>.');
-                return false;
-            }
-
-            $ltid = $lib->guest_ltid;
-            $this->as_guest = true;
-
-        }
-
-        $results = \DB::select('SELECT things.id, items.dokid FROM things,items WHERE things.id = items.thing_id AND items.id = ?', array($this->item_id));
-        if (empty($results)) dd("thing not found");
-
-        $thing = $results[0];
-        $dokid = $thing->dokid;
-
-        if ($thing->id == 1) {
-
-            $ncip = \App::make('ncip.client');
-            $response = $ncip->checkOutItem($ltid, $dokid);
-
-            // BIBSYS sometimes returns an empty response on successful checkouts.
-            // We will therefore threat an empty response as success... for now...
-            $logmsg = '[NCIP] Lånte ut ' . $dokid . ']] til ' . $ltid . '';
-            if ($this->as_guest) {
-                $logmsg .= ' (midlertidig lånekort)';
-            }
-            $logmsg .= ' i BIBSYS.';
-            if ((!$response->success && $response->error == 'Empty response') || ($response->success)) {
-                if ($response->dueDate) {
-                    $this->due_at = $response->dueDate;
-                    $logmsg .= ' Fikk forfallsdato.';
-                } else {
-                    $logmsg .= ' Fikk tom respons.';
-                }
-                \Log::info($logmsg);
-            } else {
-                \Log::info('Dokumentet "' . $dokid . '" kunne ikke lånes ut i BIBSYS: ' . $response->error);
-                $this->errors->add('checkout_error', 'Dokumentet kunne ikke lånes ut i BIBSYS: ' . $response->error);
-                return false;
-            }
-
-        }
-        return true;
-    }
-    */
 
     /**
      * Save the model to the database.
@@ -220,14 +162,8 @@ class Loan extends Model {
     {
         $this->errors = new MessageBag();
         if (!$this->exists) {
-
             // Set library id
             $this->library_id = \Auth::user()->id;
-
-            // Checkout in NCIP service
-            // if (!$this->ncipCheckout()) {
-            //  return false;
-            // }
         }
 
         parent::save($options);
@@ -257,61 +193,12 @@ class Loan extends Model {
     }
 
     /**
-     * Check in the item in NCIP and delete the loan
+     * Check in the item.
      *
      * @return null
      */
     public function checkIn()
     {
-        // if ($this->item->thing->id == 1) {
-
-        //     $dokid = $this->item->dokid;
-
-        //     $ncip = \App::make('ncip.client');
-        //     $response = $ncip->checkInItem($dokid);
-
-        //     if (!$response->success) {
-        //         \Log::error('Dokumentet ' . $dokid . ' kunne ikke leveres inn i BIBSYS: ' . $response->error);
-        //         dd("Dokumentet kunne ikke leveres inn i BIBSYS: " . $response->error);
-        //     }
-        //     \Log::info('[NCIP] Returnerte ' . $dokid . ' i BIBSYS');
-        // }
         $this->delete();
     }
-
-    /**
-     * Restore a soft-deleted model instance.
-     *
-     * @return bool|null
-     */
-    // public function restore()
-    // {
-    //  // if (!$this->ncipCheckout()) {
-    //  //  return false;
-    //  // }
-    //  parent::restore();
-    //  return true;
-    // }
-
-    // public function transfer()
-    // {
-    //     if ($this->as_guest) {
-    //         $dokid = $this->item->dokid;
-    //         $barcode = $this->user->barcode;
-
-    //         $ncip = \App::make('ncip.client');
-    //         $ncip->checkInItem($dokid);
-    //         $response = $ncip->checkOutItem($ltid, $dokid);
-    //         if ($response->success) {
-    //             $this->as_guest = false;
-    //             $this->save();
-    //             \Log::info('[NCIP] Overførte lånet av ' . $dokid . ' til ' . $ltid . ' i BIBSYS');
-    //         } else {
-    //             \Log::error('[NCIP] Klarte ikke å overføre lånet av ' . $dokid . ' til ' . $ltid . ' i BIBSYS');
-    //             return $response->error;
-    //         }
-    //     }
-    //     return true;
-    // }
-
 }

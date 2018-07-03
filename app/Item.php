@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use function Stringy\create as s;
 
-class Item extends Model {
+class Item extends Model
+{
 
     use SoftDeletes;
 
@@ -34,22 +35,22 @@ class Item extends Model {
         return $this->belongsTo(Library::class, 'library_id');
     }
 
-	public function loans()
-	{
-		return $this->hasMany(Loan::class)
-			->with('user');
-	}
+    public function loans()
+    {
+        return $this->hasMany(Loan::class)
+            ->with('user');
+    }
 
-	public function allLoans()
-	{
-		$library_id = \Auth::user()->id;
+    public function allLoans()
+    {
+        $library_id = \Auth::user()->id;
 
-		return $this->hasMany(Loan::class)
-			->with('user')
-			->withTrashed()
-			->where('library_id', $library_id)
-			->orderBy('created_at', 'desc');
-	}
+        return $this->hasMany(Loan::class)
+            ->with('user')
+            ->withTrashed()
+            ->where('library_id', $library_id)
+            ->orderBy('created_at', 'desc');
+    }
 
     public function lost()
     {
@@ -63,16 +64,17 @@ class Item extends Model {
         $this->restore();
         $this->is_lost = false;
         $this->save();
-	}
+    }
 
-    public function formattedLink($ucfirst=false)
+    public function formattedLink($ucfirst = false)
     {
         $name = s($this->thing->properties->name_definite->nob);
         $name = $ucfirst ? $name->upperCaseFirst() : $name->lowerCaseFirst();
 
-        return sprintf('<a href="%s">%s</a>',
+        return sprintf(
+            '<a href="%s">%s</a>',
             action('ItemsController@show', $this->id),
             $name
         );
-	}
+    }
 }

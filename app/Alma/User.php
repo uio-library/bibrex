@@ -35,10 +35,14 @@ class User
         $this->user = $user;
 
         foreach ($user->contact_info->email as $e) {
-            if ($e->preferred) $this->email = $e->email_address;
+            if ($e->preferred) {
+                $this->email = $e->email_address;
+            }
         }
         foreach ($user->contact_info->phone as $e) {
-            if ($e->preferred) $this->phone = $e->phone_number;
+            if ($e->preferred) {
+                $this->phone = $e->phone_number;
+            }
         }
         if (in_array($user->preferred_language->value, ['no', 'nb', 'nob'])) {
             $this->lang = 'nob';
@@ -57,7 +61,9 @@ class User
 
     protected function expand()
     {
-        if ($this->expanded) return;
+        if ($this->expanded) {
+            return;
+        }
         $this->user->fetch();
         $this->barcode = $this->user->getBarcode();
         $this->university_id = $this->user->getUniversityId();

@@ -13,7 +13,7 @@ class AddItemLost extends Migration
      */
     public function up()
     {
-        Schema::table('items', function(Blueprint $table) {
+        Schema::table('items', function (Blueprint $table) {
             $table->boolean('is_lost')->default(false);
         });
     }
@@ -25,7 +25,7 @@ class AddItemLost extends Migration
      */
     public function down()
     {
-        Schema::table('items', function(Blueprint $table) {
+        Schema::table('items', function (Blueprint $table) {
             $table->dropColumn('is_lost');
         });
     }

@@ -36,4 +36,3 @@ class DatabaseLoggingHandler extends AbstractProcessingHandler
         $this->connection->table('log')->insert($data);
     }
 }
-

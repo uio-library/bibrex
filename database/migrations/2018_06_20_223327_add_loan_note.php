@@ -13,7 +13,7 @@ class AddLoanNote extends Migration
      */
     public function up()
     {
-        Schema::table('loans', function(Blueprint $table) {
+        Schema::table('loans', function (Blueprint $table) {
             $table->text('note')->nullable();
         });
     }
@@ -25,7 +25,7 @@ class AddLoanNote extends Migration
      */
     public function down()
     {
-        Schema::table('loans', function(Blueprint $table) {
+        Schema::table('loans', function (Blueprint $table) {
             $table->dropColumn('note');
         });
     }

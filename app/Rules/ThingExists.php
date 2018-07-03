@@ -29,7 +29,7 @@ class ThingExists implements Rule
      */
     public function passes($attribute, $value)
     {
-       return !is_null($this->item);
+        return !is_null($this->item);
     }
 
     /**

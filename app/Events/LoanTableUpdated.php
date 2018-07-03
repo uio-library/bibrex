@@ -26,7 +26,7 @@ class LoanTableUpdated implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($highlight=[])
+    public function __construct($highlight = [])
     {
         $this->highlight = $highlight;
     }

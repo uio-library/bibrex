@@ -14,7 +14,7 @@ class Cleanup extends Migration
      */
     public function up()
     {
-        Schema::table('things', function(Blueprint $table) {
+        Schema::table('things', function (Blueprint $table) {
             $table->json('properties')->default('{}');
         });
 
@@ -34,7 +34,7 @@ class Cleanup extends Migration
             $thing->save();
         }
 
-        Schema::table('things', function(Blueprint $table) {
+        Schema::table('things', function (Blueprint $table) {
             $table->dropColumn('num_items');
             $table->dropColumn('disabled');
             $table->dropColumn('send_reminders');
@@ -54,7 +54,7 @@ class Cleanup extends Migration
      */
     public function down()
     {
-        Schema::table('things', function(Blueprint $table) {
+        Schema::table('things', function (Blueprint $table) {
             $table->dropColumn('properties');
             $table->boolean('disabled')->default(false);
             $table->boolean('send_reminders')->default(false);

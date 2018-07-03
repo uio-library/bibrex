@@ -22,22 +22,22 @@ class ItemsController extends Controller
         'dokid.unique' => 'Strekkoden er allerede i bruk. Du må legge inn en unik strekkode.',
     ];
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		$items = Item::with('loans', 'thing')
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        $items = Item::with('loans', 'thing')
             ->whereNotNull('dokid')
             ->where('library_id', '=', \Auth::user()->id)
             ->get();
 
-		return response()->view('items.index', array(
-			'items' => $items
-		));
-	}
+        return response()->view('items.index', array(
+            'items' => $items
+        ));
+    }
 
     /**
      * Search for resources.
@@ -52,7 +52,7 @@ class ItemsController extends Controller
         $items = Item::where('dokid', $op, $q)
             ->where('library_id', '=', \Auth::user()->id)
             ->limit(10)
-            ->get()->map(function($item) {
+            ->get()->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'type' => 'item',
@@ -70,13 +70,13 @@ class ItemsController extends Controller
      * @param Item $item
      * @return Response
      */
-	public function show(Item $item)
-	{
-		return response()->view('items.show', array(
-			'item' => $item,
+    public function show(Item $item)
+    {
+        return response()->view('items.show', array(
+            'item' => $item,
             'lastLoan' => $item->loans()->withTrashed()->orderBy('id', 'desc')->first(),
-		));
-	}
+        ));
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -151,10 +151,12 @@ class ItemsController extends Controller
                 ->with('error', 'Kan ikke slette utlånt eksemplar.');
         }
 
-        \Log::info(sprintf('Slettet %s <a href="%s">%s</a>.',
+        \Log::info(sprintf(
+            'Slettet %s <a href="%s">%s</a>.',
             $item->thing->properties->name_definite->nob,
             action('ItemsController@show', $item->id),
-            $item->dokid));
+            $item->dokid
+        ));
         $item->delete();
 
         return redirect()->action('ItemsController@show', $item->id)
@@ -170,13 +172,14 @@ class ItemsController extends Controller
     public function restore(Item $item)
     {
         $item->restore();
-        \Log::info(sprintf('Gjenopprettet %s <a href="%s">%s</a>.',
+        \Log::info(sprintf(
+            'Gjenopprettet %s <a href="%s">%s</a>.',
             $item->thing->properties->name_definite->nob,
             action('ItemsController@show', $item->id),
-            $item->dokid));
+            $item->dokid
+        ));
 
         return redirect()->action('ItemsController@show', $item->id)
             ->with('status', 'Eksemplaret ble gjenopprettet.');
     }
-
 }

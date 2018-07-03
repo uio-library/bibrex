@@ -13,11 +13,10 @@ class AddAlmaId extends Migration
      */
     public function up()
     {
-        Schema::table('users', function(Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->string('alma_primary_id')->nullable();
             $table->string('alma_user_group')->nullable();
         });
-
     }
 
     /**
@@ -27,7 +26,7 @@ class AddAlmaId extends Migration
      */
     public function down()
     {
-        Schema::table('users', function(Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('alma_primary_id');
             $table->dropColumn('alma_user_group');
         });

@@ -29,35 +29,35 @@ class LibrariesController extends Controller
         'guest_ltid.regex' => 'LTID må være et gyldig LTID',
     );
 
-	protected $lib;
+    protected $lib;
 
-	public function __construct(Library $lib)
-	{
-		$this->libFactory = $lib;
-	}
+    public function __construct(Library $lib)
+    {
+        $this->libFactory = $lib;
+    }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function getIndex()
-	{
-		$items = Library::with('ips')->get();
-		return response()->view('libraries.index', array(
-			'libraries' => $items
-		));
-	}
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function getIndex()
+    {
+        $items = Library::with('ips')->get();
+        return response()->view('libraries.index', array(
+            'libraries' => $items
+        ));
+    }
 
-	/**
-	 * Display a form to create the resource.
-	 *
-	 * @return Response
-	 */
-	public function getCreate()
-	{
-		return response()->view('libraries.create', array());
-	}
+    /**
+     * Display a form to create the resource.
+     *
+     * @return Response
+     */
+    public function getCreate()
+    {
+        return response()->view('libraries.create', array());
+    }
 
     /**
      * Sets a new password. Note that it does *not store the model*.
@@ -89,8 +89,8 @@ class LibrariesController extends Controller
      * @param Request $request
      * @return Response
      */
-	public function postStore(Request $request)
-	{
+    public function postStore(Request $request)
+    {
         $rules = array(
             'name' => 'required|unique:libraries,name',
             'name_eng' => 'required|unique:libraries,name_eng',
@@ -98,55 +98,55 @@ class LibrariesController extends Controller
         );
         \Validator::make($request->all(), $rules, $this->messages)->validate();
 
-		$lib = new $this->libFactory();
+        $lib = new $this->libFactory();
 
         $lib->password = $this->validateAndHashPassword($request->input('password'), $request->input('password2'));
-		$lib->name = $request->input('name');
+        $lib->name = $request->input('name');
         $lib->name_eng = $request->input('name_eng');
-		$lib->email = $request->input('email');
+        $lib->email = $request->input('email');
 
-		if (!$lib->save()) {
-			return redirect()->back()
-				->withErrors($lib->errors)
-				->withInput();
-		}
-
-		return redirect()->action('LibrariesController@getIndex')
-			->with('status', 'Biblioteket ble opprettet!');
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  string  $id
-	 * @return Response
-	 */
-	public function getShow($id)
-	{
-		$lib = $this->libFactory->find($id);
-		if (!$lib) {
-			return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-		}
-		return response()->view('libraries.show', array(
-			'library' => $lib
-		));
-	}
-
-	function getLogin()
-	{
-		if (isset($_SERVER)) {
-            $library_ip = LibraryIp::whereRaw('? LIKE ip', array(array_get($_SERVER, 'REMOTE_ADDR','')))->first();
-			if ($library_ip) {
-                $lib = $library_ip->library;
-                $s = Auth::login($lib);
-				Session::put('iplogin', true);
-                // Session::flash('logged_in_from_ip', true);
-				return redirect()->intended('/');
-			}
+        if (!$lib->save()) {
+            return redirect()->back()
+                ->withErrors($lib->errors)
+                ->withInput();
         }
 
-		return response()->view('login');
-	}
+        return redirect()->action('LibrariesController@getIndex')
+            ->with('status', 'Biblioteket ble opprettet!');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  string  $id
+     * @return Response
+     */
+    public function getShow($id)
+    {
+        $lib = $this->libFactory->find($id);
+        if (!$lib) {
+            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
+        }
+        return response()->view('libraries.show', array(
+            'library' => $lib
+        ));
+    }
+
+    public function getLogin()
+    {
+        if (isset($_SERVER)) {
+            $library_ip = LibraryIp::whereRaw('? LIKE ip', array(array_get($_SERVER, 'REMOTE_ADDR', '')))->first();
+            if ($library_ip) {
+                $lib = $library_ip->library;
+                $s = Auth::login($lib);
+                Session::put('iplogin', true);
+                // Session::flash('logged_in_from_ip', true);
+                return redirect()->intended('/');
+            }
+        }
+
+        return response()->view('login');
+    }
 
     /**
      * Handle an authentication attempt.
@@ -156,144 +156,140 @@ class LibrariesController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postLogin(Request $request)
-	{
+    {
         $credentials = $request->only('email', 'password');
 
-		if (Auth::attempt($credentials, true)) {
-			Session::put('iplogin', false);
+        if (Auth::attempt($credentials, true)) {
+            Session::put('iplogin', false);
 
-			return redirect()->intended('/');
-		} else {
-			return back()
-				->withInput()
-				->with('loginfailed', true);
-		}
-	}
+            return redirect()->intended('/');
+        } else {
+            return back()
+                ->withInput()
+                ->with('loginfailed', true);
+        }
+    }
 
-	public function getLogout()
-	{
-		Auth::logout();
-		return redirect()->to('/');
-	}
+    public function getLogout()
+    {
+        Auth::logout();
+        return redirect()->to('/');
+    }
 
-	public function getMyAccount()
-	{
-		$lib = Auth::user();
-		if (!$lib) {
-			return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-		}
-		return response()->view('libraries.my', array(
-			'library' => $lib
-		));
+    public function getMyAccount()
+    {
+        $lib = Auth::user();
+        if (!$lib) {
+            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
+        }
+        return response()->view('libraries.my', array(
+            'library' => $lib
+        ));
+    }
 
-	}
+    public function postStoreMyAccount(Request $request)
+    {
+        $lib = Auth::user();
+        if (!$lib) {
+            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
+        }
 
-	public function postStoreMyAccount(Request $request)
-	{
-		$lib = Auth::user();
-		if (!$lib) {
-			return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-		}
+        $lib->name = $request->input('name');
+        $lib->email = $request->input('email');
+        $lib->guest_ltid = $request->input('guest_ltid') ? $request->input('guest_ltid') : null;
+        $lib->email = $request->input('email') ? $request->input('email') : null;
 
-		$lib->name = $request->input('name');
-		$lib->email = $request->input('email');
-		$lib->guest_ltid = $request->input('guest_ltid') ? $request->input('guest_ltid') : null;
-		$lib->email = $request->input('email') ? $request->input('email') : null;
+        $options = $lib->options;
+        $options['guestcard_for_nonworking_cards'] = ($request->input('guestcard_for_nonworking_cards') == 'true');
+        $options['guestcard_for_cardless_loans'] = ($request->input('guestcard_for_cardless_loans') == 'true');
+        $lib->options = $options;
 
-		$options = $lib->options;
-		$options['guestcard_for_nonworking_cards'] = ($request->input('guestcard_for_nonworking_cards') == 'true');
-		$options['guestcard_for_cardless_loans'] = ($request->input('guestcard_for_cardless_loans') == 'true');
-		$lib->options = $options;
+        if (!$lib->save()) {
+            return redirect()->back()
+                ->withErrors($lib->errors)
+                ->withInput();
+        }
 
-		if (!$lib->save()) {
-			return redirect()->back()
-				->withErrors($lib->errors)
-				->withInput();
-		}
+        if ($request->input('password') != '') {
+            $password = $request->input('password');
+            return redirect()->action('LibrariesController@getPassword')
+                ->with('password', $password);
+        }
 
-		if ($request->input('password') != '') {
-			$password = $request->input('password');
-			return redirect()->action('LibrariesController@getPassword')
-				->with('password', $password);
-		}
+        return redirect()->action('LibrariesController@getShow', $lib->id)
+            ->with('status', 'Kontoinformasjonen ble lagret.');
+    }
 
-		return redirect()->action('LibrariesController@getShow', $lib->id)
-			->with('status', 'Kontoinformasjonen ble lagret.');
+    public function getPassword()
+    {
+        $lib = Auth::user();
+        if (!$lib) {
+            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
+        }
+        return response()->view('libraries.password', array(
+            'library' => $lib,
+            'password' => Session::get('password'),
+        ));
+    }
 
-	}
-
-	public function getPassword()
-	{
-		$lib = Auth::user();
-		if (!$lib) {
-			return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-		}
-		return response()->view('libraries.password', array(
-			'library' => $lib,
-			'password' => Session::get('password'),
-		));
-
-	}
-
-	public function postPassword(Request $request)
-	{
-		$lib = Auth::user();
-		if (!$lib) {
-			return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-		}
+    public function postPassword(Request $request)
+    {
+        $lib = Auth::user();
+        if (!$lib) {
+            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
+        }
 
         $lib->password = $this->validateAndHashPassword($request->input('password'), $request->input('password1'));
-		$lib->save();
+        $lib->save();
 
-		return redirect()->action('LibrariesController@getShow', $lib->id)
-			->with('status', 'Nytt passord ble satt.');
-	}
+        return redirect()->action('LibrariesController@getShow', $lib->id)
+            ->with('status', 'Nytt passord ble satt.');
+    }
 
-	/**
-	 * Display a listing of the ips.
-	 *
-	 * @return Response
-	 */
-	public function getMyIps()
-	{
+    /**
+     * Display a listing of the ips.
+     *
+     * @return Response
+     */
+    public function getMyIps()
+    {
 
-		$lib = Auth::user();
-		if (!$lib) {
-			return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-		}
+        $lib = Auth::user();
+        if (!$lib) {
+            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
+        }
 
-		return response()->view('libraries.ips.index', array(
-			'library' => $lib
-		));
+        return response()->view('libraries.ips.index', array(
+            'library' => $lib
+        ));
+    }
 
-	}
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function storeIp(Request $request)
+    {
+        $lib = Auth::user();
+        if (!$lib) {
+            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
+        }
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function storeIp(Request $request)
-	{
-		$lib = Auth::user();
-		if (!$lib) {
-			return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-		}
+        $ip = new LibraryIp(array(
+            'library_id' => $lib->id,
+            'ip' => $request->input('ip')
+        ));
 
-		$ip = new LibraryIp(array(
-			'library_id' => $lib->id,
-			'ip' => $request->input('ip')
-		));
+        if (!$ip->save()) {
+            return redirect()->back()
+                ->withErrors($ip->errors)
+                ->withInput();
+        }
 
-		if (!$ip->save()) {
-			return redirect()->back()
-				->withErrors($ip->errors)
-				->withInput();
-		}
-
-		return redirect()->action('LibrariesController@getMyIps')
-			->with('status', 'IP-adressen ble lagt til');
-	}
+        return redirect()->action('LibrariesController@getMyIps')
+            ->with('status', 'IP-adressen ble lagt til');
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -301,19 +297,18 @@ class LibrariesController extends Controller
      * @param LibraryIp $ip
      * @return Response
      */
-	public function removeIp(LibraryIp $ip)
-	{
-		$lib = Auth::user();
+    public function removeIp(LibraryIp $ip)
+    {
+        $lib = Auth::user();
 
-		if ($ip->library_id != $lib->id) {
-			return redirect()->action('LibrariesController@getMyIps')
-				->with('status', 'IP-adressen hører ikke til ditt bibliotek.');
-		}
+        if ($ip->library_id != $lib->id) {
+            return redirect()->action('LibrariesController@getMyIps')
+                ->with('status', 'IP-adressen hører ikke til ditt bibliotek.');
+        }
 
-		$ip->delete();
+        $ip->delete();
 
-		return redirect()->action('LibrariesController@getMyIps')
-			->with('status', 'IP-adressen ble fjernet');
-	}
-
+        return redirect()->action('LibrariesController@getMyIps')
+            ->with('status', 'IP-adressen ble fjernet');
+    }
 }

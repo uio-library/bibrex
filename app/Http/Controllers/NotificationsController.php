@@ -18,15 +18,15 @@ class NotificationsController extends Controller
      * @param ExtendedDatabaseNotification $notification
      * @return Response
      */
-	public function show(ExtendedDatabaseNotification $notification)
-	{
-		return response()->view('notifications.show', [
-		    'type' => $notification->humanReadableType(),
-		    'loan' => $notification->loan,
+    public function show(ExtendedDatabaseNotification $notification)
+    {
+        return response()->view('notifications.show', [
+            'type' => $notification->humanReadableType(),
+            'loan' => $notification->loan,
             'email' => array_get($notification->data, 'email'),
             'sent' => $notification->created_at,
         ]);
-	}
+    }
 
     /**
      * Display a form to create the resource.
@@ -34,16 +34,16 @@ class NotificationsController extends Controller
      * @param Loan $loan
      * @return Response
      */
-	public function create(Loan $loan)
-	{
-		$notification = new FirstReminder($loan);
-		$email = $notification->email->toArray();
+    public function create(Loan $loan)
+    {
+        $notification = new FirstReminder($loan);
+        $email = $notification->email->toArray();
 
-		return response()->view('notifications.create', array(
-			'loan' => $loan,
-			'email' => $email,
-		));
-	}
+        return response()->view('notifications.create', array(
+            'loan' => $loan,
+            'email' => $email,
+        ));
+    }
 
     /**
      * Sends a new reminder.
@@ -52,12 +52,12 @@ class NotificationsController extends Controller
      * @param Request $request
      * @return Response
      */
-	public function send(Loan $loan, Request $request)
-	{
+    public function send(Loan $loan, Request $request)
+    {
         $loan->user->notify(new ManualReminder($loan, $request->input('subject'), $request->input('body')));
 
-		return redirect()
+        return redirect()
             ->action('LoansController@getShow', $loan->id)
-			->with('status', 'Påminnelsen ble sendt.');
-	}
+            ->with('status', 'Påminnelsen ble sendt.');
+    }
 }

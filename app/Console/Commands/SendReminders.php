@@ -40,11 +40,20 @@ class SendReminders extends Command
      */
     public function handle()
     {
-        $this->info(sprintf('-[ %s : Send reminders start ]------------------------------------', strftime('%Y-%m-%d %H:%M:%S')));
+        $this->info(sprintf(
+            '-[ %s : Send reminders start ]------------------------------------',
+            strftime('%Y-%m-%d %H:%M:%S')
+        ));
 
         $n = 0;
-        foreach (Loan::with('item', 'item.thing', 'item.thing.libraries', 'library', 'user', 'notifications')->get() as $loan) {
-
+        foreach (Loan::with(
+            'item',
+            'item.thing',
+            'item.thing.libraries',
+            'library',
+            'user',
+            'notifications'
+        )->get() as $loan) {
             $librarySettings = $loan->item->thing->libraries()
                 ->where('library_id', $loan->library->id)
                 ->first()
@@ -52,7 +61,8 @@ class SendReminders extends Command
                 ->only('require_item', 'send_reminders');
 
             if (!array_get($librarySettings, 'send_reminders')) {
-                $this->comment("[{$loan->id}] Not sending reminders for {$loan->item->thing->name} from {$loan->library->name}.");
+                $this->comment("[{$loan->id}] Not sending reminders for {$loan->item->thing->name}" .
+                    " from {$loan->library->name}.");
                 continue;
             }
 
@@ -79,6 +89,9 @@ class SendReminders extends Command
         }
         \Log::info('Sent ' . $n . ' reminders.');
 
-        $this->info(sprintf('-[ %s : Send reminders complete ]------------------------------------', strftime('%Y-%m-%d %H:%M:%S')));
+        $this->info(sprintf(
+            '-[ %s : Send reminders complete ]------------------------------------',
+            strftime('%Y-%m-%d %H:%M:%S')
+        ));
     }
 }

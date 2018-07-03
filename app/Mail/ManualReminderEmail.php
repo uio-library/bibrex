@@ -43,7 +43,8 @@ class ManualReminderEmail extends Mailable
         ];
     }
 
-    public function toArray() {
+    public function toArray()
+    {
         return $this->data;
     }
 
