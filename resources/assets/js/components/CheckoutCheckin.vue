@@ -156,6 +156,17 @@ export default {
             }
         },
         checkout() {
+
+            if (!this.currentThing.name) {
+                document.querySelector('.active input[tabindex="2"]').focus();
+                return;
+            }
+
+            if (!this.currentUser.name) {
+                document.querySelector('.active input[tabindex="1"]').focus();
+                return;
+            }
+
             this.busy = true;
             this.resetStatus();
             document.activeElement.blur();
@@ -215,6 +226,11 @@ export default {
         window.addEventListener('keypress', (evt) => {
             if (evt.altKey || evt.ctrlKey || evt.metaKey) return;
             if (evt.target == document.body && evt.key) {
+                var code = evt.which || evt.keyCode;
+                if (code <= 32) {
+                    return;
+                }
+
                 setTimeout(() => {
                     this.focusFirstTextInput().value += evt.key;
                 });
