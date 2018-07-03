@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\Anonymize;
+use App\Console\Commands\DeleteInactiveUsers;
 use App\Console\Commands\SendReminders;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -26,8 +27,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(Anonymize::class)->dailyAt('04:00');
         $schedule->command(SendReminders::class)->dailyAt('08:00');
+        $schedule->command(Anonymize::class)->dailyAt('04:00');
+        $schedule->command(DeleteInactiveUsers::class)->monthly();
     }
 
     /**
