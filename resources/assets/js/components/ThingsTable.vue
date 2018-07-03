@@ -18,7 +18,7 @@
         <tr v-for="thing in things">
 
           <td>
-            <a :href="'/things/' + thing.id">{{ thing.name }}</a>
+            <a :href="'/things/' + thing.id" v-b-tooltip.hover :title="'Bokmål: ' + thing.properties.name_indefinite.nob +' / '+ thing.properties.name_definite.nob + '. Nynorsk: ' + thing.properties.name_indefinite.nno +' / '+ thing.properties.name_definite.nno + '. Engelsk: ' + thing.properties.name_indefinite.eng +' / '+ thing.properties.name_definite.eng">{{ thing.name }}</a>
           </td>
 
           <td>

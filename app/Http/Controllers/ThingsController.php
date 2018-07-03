@@ -93,6 +93,7 @@ class ThingsController extends Controller
                 'id' => $thing->id,
                 'type' => 'thing',
                 'name' => $thing->name,
+                'properties' => $thing->properties,
             ];
         });
 
