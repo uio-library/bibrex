@@ -78,7 +78,11 @@ class SendReminders extends Command
 
             if (empty($loan->user->email)) {
                 $this->error("[{$loan->id}] Cannot send reminder. No email set for user {$loan->user->id}");
-                \Log::error('Cannot send reminder. No email set for user ' . $loan->user->id);
+                \Log::error(sprintf(
+                    'Kan ikke sende påminnelse til <a href="%s">%s</a> – mangler epostadresse.',
+                    action('UsersController@getShow', $loan->user->id),
+                    "bruker #{$loan->user->id}"
+                ));
                 continue;
             }
 
@@ -87,7 +91,9 @@ class SendReminders extends Command
             $loan->user->notify(new FirstReminder($loan));
             $n++;
         }
-        \Log::info('Sent ' . $n . ' reminders.');
+        if ($n > 0) {
+            \Log::info("Sendte $n påminnelse(r).");
+        }
 
         $this->info(sprintf(
             '-[ %s : Send reminders complete ]------------------------------------',
