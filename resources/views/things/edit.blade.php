@@ -28,7 +28,10 @@
             <div class="row">
                 <label for="name" class="col-sm-3 col-form-label">Internt navn:</label>
                 <div class="col-sm-8">
-                    @component('components.text', ['name' => 'name', 'value' => $thing->name])
+                    @component('components.text', [
+                      'name' => 'name',
+                      'value' => $thing->name,
+                    ])
                     @endcomponent
                     <p class="small form-text">
                       Dette navnet vises kun i Bibrex.
@@ -46,7 +49,10 @@
             </div>
 
             <div class="col col-sm-4">
-              @component('components.text', ['name' => 'name_indefinite_nob', 'value' => $thing->properties->name_indefinite->nob])
+              @component('components.text', [
+                'name' => 'name_indefinite_nob',
+                'value' => $thing->getProperty('name_indefinite.nob'),
+              ])
               @endcomponent
               <p class="small form-text">
                 Form som passer inn i setningen «Du lånte ____ frå oss i går». Noen eksempler:
@@ -56,7 +62,10 @@
             </div>
 
             <div class="col col-sm-4">
-              @component('components.text', ['name' => 'name_definite_nob', 'value' => $thing->properties->name_definite->nob])
+              @component('components.text', [
+                'name' => 'name_definite_nob',
+                'value' => $thing->getProperty('name_definite.nob'),
+              ])
               @endcomponent
               <p class="small form-text">
                 Form som passer inn i setningen «____ må leveres». Noen eksempler:
@@ -74,7 +83,10 @@
             </div>
 
             <div class="col col-sm-4">
-              @component('components.text', ['name' => 'name_indefinite_nno', 'value' => $thing->properties->name_indefinite->nno])
+              @component('components.text', [
+                'name' => 'name_indefinite_nno',
+                'value' => $thing->getProperty('name_indefinite.nno'),
+              ])
               @endcomponent
               <p class="small form-text">
                 Form som passer inn i setninga «Du lånte ____ frå oss i går». Nokre eksempel:
@@ -83,7 +95,10 @@
             </div>
 
             <div class="col col-sm-4">
-              @component('components.text', ['name' => 'name_definite_nno', 'value' => $thing->properties->name_definite->nno])
+              @component('components.text', [
+                'name' => 'name_definite_nno',
+                'value' => $thing->getProperty('name_definite.nno'),
+              ])
               @endcomponent
               <p class="small form-text">
                 Form som passer inn i setninga «____ må leverast». Nokre eksempel:
@@ -100,7 +115,10 @@
             </div>
 
             <div class="col col-sm-4">
-              @component('components.text', ['name' => 'name_indefinite_eng', 'value' => $thing->properties->name_indefinite->eng])
+              @component('components.text', [
+                'name' => 'name_indefinite_eng',
+                'value' => $thing->getProperty('name_indefinite.eng'),
+              ])
               @endcomponent
               <p class="small form-text">
                 Form som passer inn i setningen «You borrowed ____ from us yesterday.
@@ -109,7 +127,10 @@
             </div>
 
             <div class="col col-sm-4">
-              @component('components.text', ['name' => 'name_definite_eng', 'value' => $thing->properties->name_definite->eng])
+              @component('components.text', [
+                'name' => 'name_definite_eng',
+                'value' => $thing->getProperty('name_definite.eng'),
+              ])
               @endcomponent
               <p class="small form-text">
                 Form som passer inn i setningen «____ must be returned».
@@ -126,7 +147,10 @@
             <div class="row">
                 <label for="name" class="col-sm-3 col-form-label">Lånetid (antall dager):</label>
                 <div class="col-sm-8">
-                    @component('components.text', ['name' => 'loan_time', 'value' => $thing->loan_time])
+                    @component('components.text', [
+                      'name' => 'loan_time',
+                      'value' => $thing->loan_time,
+                    ])
                     @endcomponent
                     <p class="small form-text">
                       Minimum er «1», som innebærer at tingen purres neste morgen.
@@ -139,7 +163,10 @@
             <div class="row">
                 <label for="note" class="col-sm-3 col-form-label">Intern merknad:</label>
                 <div class="col-sm-9">
-                    @component('components.text', ['name' => 'note', 'value' => $thing->note])
+                    @component('components.text', [
+                      'name' => 'note',
+                      'value' => $thing->note,
+                    ])
                     @endcomponent
                     <p class="small form-text">
                       Vises i utlånsoversikten.

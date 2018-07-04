@@ -30,7 +30,7 @@ class Thing extends Model
      * @var array
      */
     protected $casts = [
-        'properties' => 'object',
+        'properties' => 'array',
     ];
 
     /**
@@ -101,5 +101,19 @@ class Thing extends Model
             }
         }
         return $loans;
+    }
+
+    public function getProperty($key)
+    {
+        return array_get($this->properties, $key);
+    }
+
+    public function setProperties($values)
+    {
+        $props = $this->properties;
+        foreach ($values as $k => $v) {
+            array_set($props, $k, $v);
+        }
+        $this->properties = $props;
     }
 }

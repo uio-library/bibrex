@@ -18,7 +18,7 @@
         <tr v-for="thing in things">
 
           <td>
-            <a :href="'/things/' + thing.id" v-b-tooltip.hover :title="'Bokmål: ' + thing.properties.name_indefinite.nob +' / '+ thing.properties.name_definite.nob + '. Nynorsk: ' + thing.properties.name_indefinite.nno +' / '+ thing.properties.name_definite.nno + '. Engelsk: ' + thing.properties.name_indefinite.eng +' / '+ thing.properties.name_definite.eng">{{ thing.name }}</a>
+            <a :href="'/things/' + thing.id" v-b-tooltip.hover :title="thing.tooltip">{{ thing.name }}</a>
           </td>
 
           <td>
@@ -72,6 +72,7 @@
 
 <script>
   import axios from 'axios';
+  import { get } from 'lodash/object';
 
   export default {
       data: () => {
@@ -102,6 +103,14 @@
         axios.get('/things')
         .then(res => {
           this.things = res.data;
+          this.things.forEach((thing) => {
+            thing.tooltip = 'Bokmål: ' + get(thing.properties, 'name_indefinite.nob') +
+                ' / '+ get(thing.properties, 'name_definite.nob') + '.' +
+                ' Nynorsk: ' + get(thing.properties, 'name_indefinite.nno') +
+                ' / '+ get(thing.properties, 'name_definite.nno') +
+                '. Engelsk: ' + get(thing.properties, 'name_indefinite.eng') +
+                ' / '+ get(thing.properties, 'name_definite.eng');
+          });
         })
         .catch(err => {
           this.things = [];

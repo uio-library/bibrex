@@ -21,8 +21,13 @@ class ThingsController extends Controller
         'name.required' => 'Internt navn må fylles ut.',
         'name.unique' => 'Typen finnes allerede.',
 
+        'loan_time.required' => 'Lånetid må fylles ut.',
+
         'name_indefinite_nob.required' => 'Ubestemt form på bokmål må fylles ut.',
         'name_definite_nob.required' => 'Bestemt form på bokmål må fylles ut.',
+
+        'name_indefinite_nno.required' => 'Ubestemt form på nynorsk må fylles ut.',
+        'name_definite_nno.required' => 'Bestemt form på nynorsk må fylles ut.',
 
         'name_indefinite_eng.required' => 'Ubestemt form på engelsk må fylles ut.',
         'name_definite_eng.required' => 'Bestemt form på engelsk må fylles ut.',
@@ -185,16 +190,14 @@ class ThingsController extends Controller
         ], $this->messages)->validate();
 
         $thing->name = $request->input('name');
-
-        $props = $thing->properties;
-        $props->name_indefinite->nob = $request->input('name_indefinite_nob');
-        $props->name_indefinite->nno = $request->input('name_indefinite_nno');
-        $props->name_indefinite->eng = $request->input('name_indefinite_eng');
-        $props->name_definite->nob = $request->input('name_definite_nob');
-        $props->name_definite->nno = $request->input('name_definite_nno');
-        $props->name_definite->eng = $request->input('name_definite_eng');
-        $thing->properties = $props;
-
+        $thing->setProperties([
+            'name_indefinite.nob' => $request->input('name_indefinite_nob'),
+            'name_definite.nob' => $request->input('name_definite_nob'),
+            'name_indefinite.nno' => $request->input('name_indefinite_nno'),
+            'name_definite.nno' => $request->input('name_definite_nno'),
+            'name_indefinite.eng' => $request->input('name_indefinite_eng'),
+            'name_definite.eng' => $request->input('name_definite_eng'),
+        ]);
         $thing->loan_time = $request->input('loan_time');
         $thing->note = $request->input('note');
 

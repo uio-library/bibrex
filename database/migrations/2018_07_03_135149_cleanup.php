@@ -58,8 +58,11 @@ class Cleanup extends Migration
             $table->dropColumn('properties');
             $table->boolean('disabled')->default(false);
             $table->boolean('send_reminders')->default(false);
+            $table->string('email_name_nob')->default('Fylles ut');
+            $table->string('email_name_nno')->default('Fyllast ut');
+            $table->string('email_name_eng')->default('Fill inn');
             $table->string('email_name_definite_nob')->default('Fylles ut');
-            $table->string('email_name_definite_nno')->default('Fylles ut');
+            $table->string('email_name_definite_nno')->default('Fyllast ut');
             $table->string('email_name_definite_eng')->default('Fill inn');
             $table->integer('num_items')->unsigned()->default(0);
         });
