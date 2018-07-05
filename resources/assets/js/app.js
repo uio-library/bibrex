@@ -23,6 +23,9 @@ window.Vue = require('vue');
 import { Tooltip } from 'bootstrap-vue/es/directives';
 Vue.use(Tooltip);
 
+import VueShortkey from 'vue-shortkey'
+Vue.use(VueShortkey)
+
 // import 'bootstrap/dist/css/bootstrap.css'
 // import 'bootstrap-vue/dist/bootstrap-vue.css'
 

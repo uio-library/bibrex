@@ -2,10 +2,10 @@
     <div>
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" :class="{active: activeTab == 'checkout'}" id="nav-checkout-tab" data-toggle="tab" href="#nav-checkout" role="tab" @click="onTabClick">Utlån</a>
+                <a class="nav-link" :class="{active: activeTab == 'checkout'}" id="nav-checkout-tab" href="#nav-checkout" role="tab" @click="onTabClick('checkout')" v-shortkey.once="checkoutShortkey" @shortkey="onTabClick('checkout')" v-b-tooltip.hover :title="'Snarvei: ' + checkoutShortkey.join('+')">Utlån</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" :class="{active: activeTab == 'checkin'}" id="nav-checkin-tab" data-toggle="tab" href="#nav-checkin" role="tab" @click="onTabClick">Retur</a>
+                <a class="nav-link" :class="{active: activeTab == 'checkin'}" id="nav-checkin-tab" href="#nav-checkin" role="tab" @click="onTabClick('checkin')" v-shortkey.once="checkinShortkey" @shortkey="onTabClick('checkin')" v-b-tooltip.hover :title="'Snarvei: ' + checkinShortkey.join('+')">Retur</a>
             </li>
         </ul>
         <div class="tab-content p-3 mb-3">
@@ -57,7 +57,7 @@
 
                     <div class="col px-2">
                         <label>&nbsp;</label>
-                        <spin-button :busy="this.busy" class="checkout">
+                        <spin-button :busy="this.busy" class="checkout" tabindex="3">
                             <i class="far fa-paper-plane"></i>
                             Lån ut
                         </spin-button>
@@ -79,7 +79,7 @@
 
                     <div class="col px-2">
                         <label>&nbsp;</label>
-                        <spin-button :busy="this.busy" class="checkout">
+                        <spin-button :busy="this.busy" class="checkout" tabindex="2">
                             <i class="far fa-paper-plane"></i>
                             Returner
                         </spin-button>
@@ -98,12 +98,29 @@
 <script>
 import { get } from 'lodash/object';
 import axios from 'axios';
+import platform from 'platform';
 import Typeahead from './Typeahead';
 import SpinButton from './SpinButton';
 
 export default {
     props: {
         libraryId: Number,
+    },
+    computed: {
+        checkoutShortkey() {
+            if (platform.os.family == 'OS X') {
+                return ['ctrl', 'e'];
+            } else {
+                return ['alt', 'e'];
+            }
+        },
+        checkinShortkey() {
+            if (platform.os.family == 'OS X') {
+                return ['ctrl', 'r'];
+            } else {
+                return ['alt', 'r'];
+            }
+        },
     },
     data: () => {
         return {
@@ -142,7 +159,8 @@ export default {
             this.currentUser = value;
             Vue.set(this.errors, 'user', null);
         },
-        onTabClick() {
+        onTabClick(tab) {
+            this.activeTab = tab;
             setTimeout(this.focusFirstTextInput.bind(this), 300);
         },
         getSuccessMsg() {
