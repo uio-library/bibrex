@@ -33,11 +33,6 @@ class ThingsController extends Controller
         'name_definite_eng.required' => 'Bestemt form på engelsk må fylles ut.',
     ];
 
-    public function __construct(Thing $thing)
-    {
-        $this->thingFactory = $thing;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -48,8 +43,7 @@ class ThingsController extends Controller
     {
         $libraryId = \Auth::user()->id;
 
-        $things = $this->thingFactory
-            ->with('items.loans');
+        $things = Thing::query()->with('items.loans');
 
         if ($request->input('mine')) {
             $things->whereHas('libraries', function ($query) use ($libraryId) {
@@ -79,7 +73,7 @@ class ThingsController extends Controller
     {
         $libraryId = \Auth::user()->id;
 
-        $things = $this->thingFactory;
+        $things = Thing::query();
 
         if ($request->input('withLoans')) {
             $things->with('items.loans');
@@ -113,8 +107,7 @@ class ThingsController extends Controller
      */
     public function getAvailableJson(Library $library)
     {
-        $things = $this->thingFactory
-            ->with('items.loans')
+        $things = Thing::with('items.loans')
             ->where('library_id', null)
             ->orWhere('library_id', $library->id)
             ->get();
