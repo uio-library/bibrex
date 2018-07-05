@@ -1,7 +1,10 @@
 <template>
     <div>
-        <div v-if="error" class="alert alert-danger">
+        <div v-if="error" class="alert visible alert-danger">
             {{ error }}
+        </div>
+        <div v-if="showNewVersionNotice" class="alert visible alert-warning">
+          Bibrex har akkurat blitt oppdatert. Du bør laste siden på nytt nå, ellers kan det skje uventede ting.
         </div>
         <div v-if="loans.length">
             <datatable :data="loans">
@@ -116,6 +119,7 @@ export default {
             error: '',
             highlight: [],
             loans: [],
+            showNewVersionNotice: false,
         };
     },
     methods: {
@@ -133,7 +137,7 @@ export default {
                 this.loans = [];
                 this.error = err;
             });
-        }
+        },
     },
     mounted() {
         this.loadTableData([]);
@@ -142,6 +146,12 @@ export default {
           .listen('LoanTableUpdated', (ev) => {
               console.log('Got notification, will update table.');
               setTimeout(() => this.loadTableData(ev.highlight ? ev.highlight : []), 100);
+          });
+
+        Echo.channel(`bibrex`)
+          .listen('NewVersionDeployed', (ev) => {
+              console.log('Got notification about new version.');
+              this.showNewVersionNotice = true;
           });
     },
 }
