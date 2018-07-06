@@ -43,7 +43,7 @@ class ThingsController extends Controller
     {
         $libraryId = \Auth::user()->id;
 
-        $things = Thing::query()->with('items.loans');
+        $things = Thing::with('items.loans');
 
         if ($request->input('mine')) {
             $things->whereHas('libraries', function ($query) use ($libraryId) {
@@ -51,16 +51,20 @@ class ThingsController extends Controller
             });
         }
 
-        $things = $things->orderBy('name')
-            ->get();
+        $things = $things->orderBy('name');
 
-        if ($request->ajax()) {
-            return response()->json($things);
-        }
-
-        return response()->view('things.index', array(
-            'things' => $things
-        ));
+        return response()->view('things.index', [
+            'things' => $things->get()->map(function ($thing) {
+                return [
+                    'id' => $thing->id,
+                    'type' => 'thing',
+                    'name' => $thing->name,
+                    'at_my_library' => $thing->at_my_library,
+                    'library_settings' => $thing->library_settings,
+                    'properties' => $thing->properties,
+                ];
+            }),
+        ]);
     }
 
     /**

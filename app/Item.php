@@ -38,7 +38,8 @@ class Item extends Model
     public function loans()
     {
         return $this->hasMany(Loan::class)
-            ->with('user');
+            ->with('user')
+            ->orderBy('created_at', 'desc');
     }
 
     public function allLoans()

@@ -86,6 +86,17 @@
           <li class="list-group-item">
               <div class="row">
                   <div class="col-sm-2">
+                      Opprettet
+                  </div>
+                  <div class="col">
+                      {{ $item->created_at }}
+                  </div>
+              </div>
+          </li>
+
+          <li class="list-group-item">
+              <div class="row">
+                  <div class="col-sm-2">
                       Tapt?
                   </div>
                   <div class="col">

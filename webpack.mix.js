@@ -20,7 +20,9 @@ mix.js('resources/assets/js/app.js', 'public/js')
             /^alert-/, /^visible/,               // Alerts
             /^tt-/, /typeahead/,                 // Typeahead.vue
             /(bs-)?tooltip/, /^(fade|show)$/,    // VueBootstrap tooltip
+            /dataTable/,                         // DataTables
             /^badge-/,                           // logs.index
+            /^col-/,                             // Bootstrap column layout
         ],
    })
    .version();

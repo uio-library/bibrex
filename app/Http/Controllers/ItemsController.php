@@ -31,12 +31,19 @@ class ItemsController extends Controller
     {
         $items = Item::with('loans', 'thing')
             ->whereNotNull('dokid')
-            ->where('library_id', '=', \Auth::user()->id)
-            ->get();
+            ->where('library_id', '=', \Auth::user()->id);
 
-        return response()->view('items.index', array(
-            'items' => $items
-        ));
+        return response()->view('items.index', [
+            'items' => $items->get()->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'thing' => $item->thing->name,
+                    'dokid' => $item->dokid,
+                    'note' => $item->note,
+                    'loan' => $item->loans()->first(),
+                ];
+            }),
+        ]);
     }
 
     /**

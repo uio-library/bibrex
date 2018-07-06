@@ -42,6 +42,10 @@ body {
     -o-transition: max-width 0.2s ease-in-out;
     transition: max-width 0.2s ease-in-out;
 }
+
+.dataTables_filter {
+    padding: 1em 1em 0 1em;
+}
 .dataTable td {
     -webkit-transition: all 0.5s ease-out;
     -moz-transition: all 0.5s ease-out;

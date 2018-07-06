@@ -68,10 +68,12 @@ Vue.use(ToggleButton);
 Vue.component('alert', require('./components/Alert.vue'));
 Vue.component('checkout-checkin', require('./components/CheckoutCheckin.vue'));
 Vue.component('checkout-checkin-status', require('./components/CheckoutCheckinStatus.vue'));
-Vue.component('datatable', require('./components/Datatable.vue'));
 Vue.component('loan-actions', require('./components/LoanActions.vue'));
+
+Vue.component('datatable', require('./components/Datatable.vue'));
 Vue.component('loans-table', require('./components/LoansTable.vue'));
 Vue.component('things-table', require('./components/ThingsTable.vue'));
+Vue.component('items-table', require('./components/ItemsTable.vue'));
 
 const app = new Vue({
     el: '#app'

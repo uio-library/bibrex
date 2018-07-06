@@ -7,7 +7,7 @@
           Bibrex har akkurat blitt oppdatert. Du bør laste siden på nytt nå, ellers kan det skje uventede ting.
         </div>
         <div v-if="loans.length">
-            <datatable :data="loans">
+            <datatable :data="loans" :sort-order="[[ 2, 'desc' ]]">
                 <thead>
                     <tr>
                         <th>Lån</th>

@@ -6,9 +6,9 @@
 <script>
 export default {
     props: {
-        data: {
+        sortOrder: {
             type: Array,
-        }
+        },
     },
     mounted() {
         console.log('Mounting table', new Date());
@@ -22,8 +22,7 @@ export default {
 
 
         $(this.$el).DataTable({
-            order: [[ 2, "desc" ]],
-
+            order: this.sortOrder,
             paging: false,
             info: false,
 

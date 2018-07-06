@@ -71,10 +71,13 @@
 </template>
 
 <script>
-  import axios from 'axios';
   import { get } from 'lodash/object';
+  import { cloneDeep } from 'lodash/lang';
 
   export default {
+      props: {
+        data: Array,
+      },
       data: () => {
           return {
               error: '',
@@ -93,28 +96,19 @@
         onUpdateSetting(thing, key, value) {
           axios.post(`/things/settings/${thing.id}`, {key: key, value: value})
           .then((resp) => {
-              console.log(resp.data.library_settings);
               thing.library_settings = resp.data.library_settings ;
           });
         }
       },
-      mounted() {
-        this.error = '';
-        axios.get('/things')
-        .then(res => {
-          this.things = res.data;
-          this.things.forEach((thing) => {
-            thing.tooltip = 'Bokmål: ' + get(thing.properties, 'name_indefinite.nob') +
+      created() {
+        this.things = cloneDeep(this.data);
+        this.things.forEach((thing) => {
+          thing.tooltip = 'Bokmål: ' + get(thing.properties, 'name_indefinite.nob') +
                 ' / '+ get(thing.properties, 'name_definite.nob') + '.' +
                 ' Nynorsk: ' + get(thing.properties, 'name_indefinite.nno') +
                 ' / '+ get(thing.properties, 'name_definite.nno') +
                 '. Engelsk: ' + get(thing.properties, 'name_indefinite.eng') +
                 ' / '+ get(thing.properties, 'name_definite.eng');
-          });
-        })
-        .catch(err => {
-          this.things = [];
-          this.error = err;
         });
       },
   }
