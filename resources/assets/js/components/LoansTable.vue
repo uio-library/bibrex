@@ -23,7 +23,7 @@
 
                       <td>
                           <a :href="loan.url">{{ loan.item.thing.name }}</a>
-                          <span v-if="loan.item.dokid">(<samp>{{ loan.item.dokid }}</samp>)</span>
+                          <span v-if="loan.item.barcode">(<samp>{{ loan.item.barcode }}</samp>)</span>
                       </td>
 
                       <td :data-order="loan.user.name">

@@ -15,7 +15,7 @@
             {{ item.thing }}
           </td>
           <td>
-            <a :href="'/items/' + item.id">{{ item.dokid }}</a>
+            <a :href="'/items/' + item.id">{{ item.barcode }}</a>
           </td>
           <td>
             {{ item.note }}

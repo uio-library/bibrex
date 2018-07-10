@@ -33,7 +33,7 @@ class NotOnLoan implements Rule
         }
 
         // Always true if the item is a generic representaiton without barcode
-        if (is_null($this->item->dokid)) {
+        if (is_null($this->item->barcode)) {
             return true;
         }
 

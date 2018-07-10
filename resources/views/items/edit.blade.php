@@ -31,9 +31,9 @@
 
             <li class="list-group-item">
                 <div class="row">
-                    {{ Form::label('dokid', 'Strekkode: ', ['class' => 'col-sm-3 col-form-label']) }}
+                    {{ Form::label('barcode', 'Strekkode: ', ['class' => 'col-sm-3 col-form-label']) }}
                     <div class="col-sm-9">
-                        @component('components.text', ['name' => 'dokid', 'value' => $item->dokid])
+                        @component('components.text', ['name' => 'barcode', 'value' => $item->barcode])
                         @endcomponent
                     </div>
                 </div>

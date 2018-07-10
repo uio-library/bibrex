@@ -48,7 +48,7 @@ class ThingsController extends Controller
             ->get();
 
         $things = $things->map(function ($thing) use ($libraryId) {
-                $items = $thing->items->whereNotIn('dokid', [null]);
+                $items = $thing->items->whereNotIn('barcode', [null]);
                 return [
                     'type' => 'thing',
                     'id' => $thing->id,

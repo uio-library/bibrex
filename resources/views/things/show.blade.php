@@ -26,14 +26,14 @@
     </div>
 
     <ul class="list-group list-group-flush">
-      @if ($thing->items()->whereNotNull('dokid')->count() == 0)
+      @if ($thing->items()->whereNotNull('barcode')->count() == 0)
         <li class="list-group-item">
             <em>Ingen</em>
         </li>
       @endif
-      @foreach ($thing->items()->whereNotNull('dokid')->orderBy('library_id')->orderBy('dokid')->get() as $item)
+      @foreach ($thing->items()->whereNotNull('barcode')->orderBy('library_id')->orderBy('barcode')->get() as $item)
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->dokid }}</samp></a>
+            <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->barcode }}</samp></a>
             <span>{{ $item->note }}</span>
             <span>{{ $item->library->name }}</span>
         </li>
@@ -56,7 +56,7 @@
       @endif
       @foreach ($thing->items()->onlyTrashed()->get() as $item)
         <li class="list-group-item">
-            <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->dokid }}</samp></a>
+            <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->barcode }}</samp></a>
             {{ $item->is_lost ? '(tapt)' : '(slettet)' }}
             Note: {{ $item->note }}
         </li>

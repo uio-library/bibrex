@@ -27,8 +27,8 @@
                     Eksemplar:
                 </div>
                 <div class="col">
-                    @if ($loan->item->dokid)
-                        <a href="{{ URL::action('ItemsController@show', $loan->item->id) }}"><samp>{{ $loan->item->dokid }}</samp></a>
+                    @if ($loan->item->barcode)
+                        <a href="{{ URL::action('ItemsController@show', $loan->item->id) }}"><samp>{{ $loan->item->barcode }}</samp></a>
                     @else
                         <em>ikke registrert</em>
                     @endif

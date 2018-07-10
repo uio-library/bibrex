@@ -70,12 +70,12 @@ class Loan extends Model
             $s = rtrim($this->item->title, ' :')
                 . ($this->item->subtitle ? ' : ' . $this->item->subtitle : '');
             if (!$plaintext) {
-                $s .= ' <small>(' . $this->item->dokid . ')</small>';
+                $s .= ' <small>(' . $this->item->barcode . ')</small>';
             }
             return $s;
         } else {
-            if ($this->item->dokid) {
-                return "{$this->item->thing->name} <tt>(#{$this->item->dokid})</tt>";
+            if ($this->item->barcode) {
+                return "{$this->item->thing->name} <tt>(#{$this->item->barcode})</tt>";
             } else {
                 return $this->item->thing->name;
             }
@@ -182,7 +182,7 @@ class Loan extends Model
 
     public function lost()
     {
-        if ($this->item->dokid) {
+        if ($this->item->barcode) {
             $this->item->lost();
         }
 

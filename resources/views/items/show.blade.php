@@ -67,7 +67,7 @@
                       Strekkode:
                   </div>
                   <div class="col">
-                    <samp>{{ $item->dokid ?: '(ingen)' }}</samp>
+                    <samp>{{ $item->barcode ?: '(ingen)' }}</samp>
                   </div>
               </div>
           </li>

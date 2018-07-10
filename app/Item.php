@@ -23,7 +23,16 @@ class Item extends Model
      *
      * @var array
      */
-    protected $fillable = ['dokid', 'library_id'];
+    protected $fillable = ['barcode', 'library_id'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'properties' => 'array',
+    ];
 
     public function thing()
     {

@@ -53,7 +53,7 @@ class CheckoutRequest extends FormRequest
         } elseif (!array_get($input, 'thing.type')) {
             // A thing was entered manually, not selected from the typeahead menu.
             // First check if the value matches a barcode.
-            $item = Item::where('dokid', '=', array_get($input, 'thing.name'))->first();
+            $item = Item::where('barcode', '=', array_get($input, 'thing.name'))->first();
 
             if (is_null($item)) {
                 // Next, check if it matches a thing name.
@@ -73,7 +73,7 @@ class CheckoutRequest extends FormRequest
                 ];
             }
 
-            $item = Item::where('thing_id', '=', $thing->id)->whereNull('dokid')->first();
+            $item = Item::where('thing_id', '=', $thing->id)->whereNull('barcode')->first();
             if (!$item) {
                 \Log::info('Creating generic item for thing ' . $thing->id);
                 $item = new Item();

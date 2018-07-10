@@ -28,7 +28,7 @@
                 <div class="row">
                     {{ Form::label('thing', 'Eksemplar: ', ['class' => 'col-sm-3 col-form-label']) }}
                     <div class="col-sm-9">
-                        <input type="text" readonly class="form-control-plaintext" id="staticType" value="{{  $loan->item->dokid }}">
+                        <input type="text" readonly class="form-control-plaintext" id="staticType" value="{{  $loan->item->barcode }}">
                     </div>
                 </div>
             </li>
@@ -43,6 +43,9 @@
                             'type' => 'date',
                         ])
                         @endcomponent
+                        <p class="text-muted">
+                            Påminnelse sendes samme morgen hvis påminnelser er aktivert for tingen.
+                        </p>
                     </div>
                 </div>
             </li>

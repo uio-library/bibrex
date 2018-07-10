@@ -212,7 +212,7 @@ class LoansController extends Controller
         if ($request->input('barcode')) {
             $loan = Loan::with(['item', 'item.thing', 'user'])
                 ->whereHas('item', function ($query) use ($request) {
-                    $query->where('dokid', '=', $request->input('barcode'));
+                    $query->where('barcode', '=', $request->input('barcode'));
                 })
                 ->first();
         } elseif ($request->input('loan')) {
@@ -228,14 +228,14 @@ class LoansController extends Controller
             $loan = Loan::with(['item', 'item.thing', 'user'])
                 ->withTrashed()
                 ->whereHas('item', function ($query) use ($request) {
-                    $query->where('dokid', '=', $request->input('barcode'));
+                    $query->where('barcode', '=', $request->input('barcode'));
                 })
                 ->orderBy('updated_at', 'desc')
                 ->first();
         }
 
         if (is_null($loan)) {
-            $item = Item::withTrashed()->where('dokid', '=', $request->input('barcode'))->first();
+            $item = Item::withTrashed()->where('barcode', '=', $request->input('barcode'))->first();
             if ($item) {
                 return response()->json([
                     'error' => sprintf(
