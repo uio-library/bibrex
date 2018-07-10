@@ -191,6 +191,11 @@ class CheckoutRequest extends FormRequest
 
     protected function almaSearch($alma, $query)
     {
+        if (is_null($alma->key)) {
+            \Log::warning('Cannot search Alma users since no Alma API key is configured.');
+            return collect([]);
+        }
+
         return collect($alma->users->search($query, ['limit' => 2]))->map(function ($user) {
             return new AlmaUser($user);
         });

@@ -1,6 +1,5 @@
 <?php
 
-use App\Thing;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -18,7 +17,7 @@ class Cleanup extends Migration
             $table->json('properties')->default('{}');
         });
 
-        foreach (Thing::get() as $thing) {
+        foreach (\DB::table('things')->get() as $thing) {
             $thing->properties = [
                 'name_indefinite' => [
                     'nob' => $thing->email_name_nob,

@@ -116,6 +116,7 @@ export default {
     },
     data: function() {
         return {
+            busy: false,
             error: '',
             highlight: [],
             loans: [],
@@ -124,35 +125,53 @@ export default {
     },
     methods: {
         loadTableData: function(highlight) {
+            if (this.busy) {
+                console.log('Already waiting for table to update');
+                return;
+            }
+            this.busy = true;
             this.error = '';
             axios.get('/loans.json')
             .then(res => {
+                this.busy = false;
                 this.loans = [];
                 Vue.nextTick(() => {
                     this.highlight = highlight;
                     this.loans = res.data;
                 });
             })
-            .catch(err => {
+            .catch(error => {
+                this.busy = false;
+                this.error = error;
                 this.loans = [];
-                this.error = err;
             });
         },
     },
     mounted() {
         this.loadTableData([]);
 
-        Echo.private(`loans.${this.library}`)
-          .listen('LoanTableUpdated', (ev) => {
-              console.log('Got notification, will update table.');
-              setTimeout(() => this.loadTableData(ev.highlight ? ev.highlight : []), 100);
-          });
+        this.$root.$on('updateLoansTable', ev => {
+            console.log('Got local notification, will update the loans table.', ev);
+            this.loadTableData(ev.loan ? [ev.loan.id] : []);
+        });
 
-        Echo.channel(`bibrex`)
-          .listen('NewVersionDeployed', (ev) => {
-              console.log('Got notification about new version.');
-              this.showNewVersionNotice = true;
-          });
+        if (window.Echo) {
+            Echo.private(`loans.${this.library}`)
+              .listen('LoanTableUpdated', (ev) => {
+                  if (ev.sender != sessionStorage.getItem('bibrexWindowId')) {
+                      console.log('Got notification from another window, will update the loans table.', ev);
+                      this.loadTableData(ev.loan ? [ev.loan.id] : []);
+                  }
+              });
+
+            Echo.channel(`bibrex`)
+              .listen('NewVersionDeployed', (ev) => {
+                  console.log('Got notification about new version.');
+                  this.showNewVersionNotice = true;
+              });
+        } else {
+            console.error('Echo did not initialize, cannot listen to notifications.');
+        }
     },
 }
 </script>

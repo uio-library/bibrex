@@ -133,11 +133,11 @@ export default {
                 this.original = cloneDeep(this.current);
                 this.editMode = false;
             })
-            .catch(response => {
+            .catch(error => {
                 this.busy = false;
-                console.log(response);
-                if (response.response.status === 422) {
-                    this.errors = response.response.data.errors || {};
+                console.error(error);
+                if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors || {};
                 } else {
                     this.errors = {'misc': ['Kunne ikke lagre pg.a. en ukjent feil.']};
                 }

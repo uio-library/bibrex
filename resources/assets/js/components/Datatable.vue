@@ -55,7 +55,6 @@ export default {
         });
     },
     beforeDestroy: function() {
-        console.log('Destroying table');
         $(this.$el).DataTable().destroy();
     }
 }

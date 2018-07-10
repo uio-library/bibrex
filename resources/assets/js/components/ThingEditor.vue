@@ -58,7 +58,7 @@
                     <div class="row">
                         <label for="name" class="col-sm-3 col-form-label">Internt navn:</label>
                         <div class="col-sm-8">
-                            <input type="text" :readonly="!editMode" v-model="current.name"
+                            <input id="name" name="name" type="text" :readonly="!editMode" v-model="current.name"
                                 :class="{
                                     'is-invalid': errors.name,
                                     'form-control': editMode,
@@ -85,7 +85,9 @@
                         </div>
 
                         <div class="col col-sm-4">
-                            <input placeholder="Ubestemt form" type="text" :readonly="!editMode" v-model="current.properties.name_indefinite[lang]"
+                            <input placeholder="Ubestemt form" type="text" :readonly="!editMode"
+                                :name="'name_indefinite.' + lang"
+                                v-model="current.properties.name_indefinite[lang]"
                                 :class="{
                                     'is-invalid': errors['properties.name_indefinite.' + lang],
                                     'form-control': editMode,
@@ -100,7 +102,9 @@
                         </div>
 
                         <div class="col col-sm-4">
-                            <input placeholder="Bestemt form" type="text" :readonly="!editMode" v-model="current.properties.name_definite[lang]"
+                            <input placeholder="Bestemt form" type="text" :readonly="!editMode"
+                                v-model="current.properties.name_definite[lang]"
+                                :name="'name_definite.' + lang"
                                 :class="{
                                     'is-invalid': errors['properties.name_definite.' + lang],
                                     'form-control': editMode,
@@ -123,7 +127,7 @@
                     <div class="row">
                         <label for="loan_time" class="col-sm-3 col-form-label">Utlånstid:</label>
                         <div class="col col-auto">
-                            <input name="loan_time" type="number" :readonly="!editMode" min="1" max="9999" required
+                            <input id="loan_time" name="loan_time" type="number" :readonly="!editMode" min="1" max="9999" required
                                 :value="current.properties.loan_time"
                                 @input="current.properties.loan_time = parseInt($event.target.value)"
                                 style="width: 65px; display: inline"
@@ -221,10 +225,9 @@ export default {
                 this.busy = false;
                 this.status = response.data.status;
             })
-            .catch(response => {
+            .catch(error => {
                 this.busy = false;
-                console.log(response.response.data.errors);
-                this.errors = response.response.data.errors || {};
+                this.errors = error.response.data.errors || {};
             });
         },
         restore() {
@@ -234,9 +237,9 @@ export default {
                 this.busy = false;
                 this.status = response.data.status;
             })
-            .catch(response => {
+            .catch(error => {
                 this.busy = false;
-                this.errors = response.response.data.errors || {};
+                this.errors = error.response.data.errors || {};
             });
         },
         save() {
@@ -256,11 +259,11 @@ export default {
                     this.current = cloneDeep(response.data.thing);
                 }
             })
-            .catch(response => {
+            .catch(error => {
                 this.busy = false;
-                console.log(response);
-                if (response.response.status === 422) {
-                    this.errors = response.response.data.errors || {};
+                console.error(error);
+                if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors || {};
                 } else {
                     this.errors = {'misc': ['Kunne ikke lagre pg.a. en ukjent feil.']};
                 }

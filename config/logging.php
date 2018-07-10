@@ -39,6 +39,12 @@ return [
             'channels' => ['daily', 'postgres'],
         ],
 
+        'testing' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/bibrex.testing.log'),
+            'level' => 'debug',
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/bibrex.log'),

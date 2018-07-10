@@ -60,6 +60,10 @@ class UsersController extends Controller
      */
     public function searchAlma(AlmaClient $alma, Request $request)
     {
+        if (is_null($alma->key)) {
+            \Log::warning('Cannot search Alma users since no Alma API key is configured.');
+            return response()->json([]);
+        }
         $query = 'ALL~' . $request->input('query');
         $users = collect($alma->users->search($query, ['limit' => 5]))->map(function ($u) {
             return new AlmaUser($u);

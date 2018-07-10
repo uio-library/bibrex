@@ -33,10 +33,24 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 let token = document.head.querySelector('meta[name="csrf-token"]');
 
 if (token) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+    window.axios.defaults.headers.post['X-CSRF-TOKEN'] = token.content;
 } else {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
+
+if (!window.sessionStorage.getItem('bibrexWindowId')) {
+    // One-liner UUIDv4. Not super-efficient, but good enough for us.
+    // Source: https://stackoverflow.com/a/2117523/489916
+    window.sessionStorage.setItem('bibrexWindowId', 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+    }));
+}
+
+window.axios.defaults.headers.post['X-Bibrex-Window'] = window.sessionStorage.getItem('bibrexWindowId');
+
+// Set a default timeout of 20s.
+window.axios.defaults.timeout = 20000;
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -46,12 +60,20 @@ if (token) {
 
 import Echo from "laravel-echo"
 
-window.Pusher = require('pusher-js');
+if (process.env.MIX_PUSHER_APP_KEY && process.env.MIX_PUSHER_APP_CLUSTER) {
 
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: process.env.MIX_PUSHER_APP_KEY,
-    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-    encrypted: true,
-    disableStats: true,
-});
+    window.Pusher = require('pusher-js');
+
+    window.Echo = new Echo({
+        broadcaster: 'pusher',
+        key: process.env.MIX_PUSHER_APP_KEY,
+        cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+        encrypted: true,
+        disableStats: true,
+    });
+
+} else {
+
+    window.Echo = null;
+
+}

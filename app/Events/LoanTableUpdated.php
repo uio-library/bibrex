@@ -2,7 +2,9 @@
 
 namespace App\Events;
 
+use App\Loan;
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Http\Request;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -15,20 +17,38 @@ class LoanTableUpdated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * Loans to highlight
+     * Action to highlight
      *
      * @var string
      */
-    public $highlight;
+    public $action;
+
+    /**
+     * Loan to highlight
+     *
+     * @var string
+     */
+    public $loan;
+
+    /**
+     * Sender window
+     *
+     * @var string
+     */
+    public $sender;
 
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param string $action
+     * @param Request $request
+     * @param Loan|null $loan
      */
-    public function __construct($highlight = [])
+    public function __construct(string $action, Request $request, Loan $loan = null)
     {
-        $this->highlight = $highlight;
+        $this->action = $action;
+        $this->sender = $request->headers->get('x-bibrex-window');
+        $this->loan = $loan ? $loan->toArray() : null;
     }
 
     /**

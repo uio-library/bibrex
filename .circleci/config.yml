@@ -1,0 +1,248 @@
+---
+# PHP CircleCI 2.0 configuration file
+# See: https://circleci.com/docs/2.0/language-php/
+version: 2
+
+
+# Define defaults that we can reuse in different places using a YAML anchor.
+# See: https://circleci.com/blog/circleci-hacks-reuse-yaml-in-your-circleci-config-with-yaml/
+defaults: &defaults
+  docker:
+    # CircleCI maintains a library of pre-built images
+    # See: https://circleci.com/docs/2.0/circleci-images/
+    - image: circleci/php:7.2-node-browsers
+    - image: circleci/postgres:9.6-alpine-ram
+      environment:
+        POSTGRES_USER: bibrex_test
+        POSTGRES_DB: bibrex_test
+  working_directory: ~/repo
+
+
+test_base: &test_base
+  <<: *defaults
+  steps:
+    - attach_workspace:
+        # Must be absolute path or relative path from working_directory
+        at: ~/
+
+    # Platform setup
+
+    - run:
+        name: Install and start Sauce Labs proxy in the background
+        command: |
+          curl -sSL https://saucelabs.com/downloads/sc-${SAUCE_VERSION}-linux.tar.gz | tar -xzv
+          cd sc-*-linux
+          ./bin/sc --user=${SAUCE_USERNAME} \
+             --api-key=${SAUCE_ACCESS_KEY} \
+             --readyfile=~/sauce_is_ready \
+             --tunnel-identifier="CircleCI-${CIRCLE_BUILD_NUM}" \
+             --tunnel-domains=bibrex.test
+        background: true
+        environment:
+          SAUCE_VERSION: 4.4.12
+
+    - run:
+        name: Install PHP extensions
+        command: |
+          sudo apt-get update -y
+          sudo mkdir -p /usr/share/man/man7/
+          sudo apt-get install -y postgresql-9.6 libpq-dev libpng-dev libjpeg-dev
+          sudo docker-php-ext-install mbstring pdo_pgsql
+
+    - run:
+        name: Install Dockerize
+        command: |
+          DOCKERIZE_URL=https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
+          curl -sSL ${DOCKERIZE_URL} | sudo tar -xzv -C /usr/local/bin
+        environment:
+          DOCKERIZE_VERSION: v0.6.1
+
+    - run:
+        name: Enable bibrex.test domain
+        command: echo 127.0.0.1 bibrex.test | sudo tee -a /etc/hosts
+
+    # Migrate DB and start server
+
+    - run:
+        name: Migrate DB
+        command: |
+          dockerize -wait tcp://localhost:5432 -timeout 1m
+          php artisan migrate --env=testing --force
+
+    - run:
+        name: Start server
+        command: php artisan serve --host=bibrex.test --no-interaction
+        background: true
+
+    - run:
+        name: Check if server is ready
+        command: wget --retry-connrefused -T 30 http://bibrex.test:8000
+
+    # Run tests and store results
+
+    - run:
+        name: Run Dusk tests
+        command: |
+          TEST_HOST="http://${SAUCE_USERNAME}:${SAUCE_ACCESS_KEY}@ondemand.saucelabs.com/wd/hub" \
+          SAUCE_TUNNEL="CircleCI-${CIRCLE_BUILD_NUM}" \
+          php artisan dusk --testdox
+
+    - store_artifacts:
+        path: tests/Browser/screenshots
+        destination: screenshots
+
+    - store_artifacts:
+        path: tests/Browser/console
+        destination: console_logs
+
+    - store_artifacts:
+        path: storage/logs/bibrex.testing.log
+        destination: bibrex.testing.log
+
+jobs:
+
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+
+      # System
+
+      - run:
+          name: Install PHP extensions
+          command: |
+            sudo apt-get update -y
+            sudo mkdir -p /usr/share/man/man7/
+            sudo apt-get install -y postgresql-9.6 libpq-dev libpng-dev libjpeg-dev
+            sudo docker-php-ext-install mbstring pdo_pgsql
+
+      - run:
+          name: Install Dockerize
+          command: |
+            DOCKERIZE_URL=https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz
+            curl -sSL ${DOCKERIZE_URL} | sudo tar -xzv -C /usr/local/bin
+          environment:
+            DOCKERIZE_VERSION: v0.6.1
+
+      # Composer
+
+      - run:
+          name: Setup .env file
+          command: mv .env.staging .env
+
+      - restore_cache:
+          keys:
+            - composer-cache-{{ checksum "composer.json" }}
+            - composer-cache
+
+      - run:
+          name: Installing Composer dependencies
+          command: composer install -n --prefer-dist
+
+      - save_cache:
+          paths:
+            - ./vendor
+            - ./composer.lock
+          key: composer-cache-{{ checksum "composer.json" }}
+
+      - run:
+          name: Generate app key
+          command: php artisan key:generate
+
+      # NPM
+
+      - restore_cache:
+          keys:
+            - npm-cache-{{ checksum "package-lock.json" }}
+            - npm-cache
+
+      - run:
+          name: Install NPM dependencies
+          command: |
+            npm config set "@fortawesome:registry" https://npm.fontawesome.com/
+            npm config set "//npm.fontawesome.com/:_authToken" ${FORT_AWESOME_TOKEN}
+            npm install
+
+      - save_cache:
+          paths:
+            - ./node_modules
+          key: npm-cache-{{ checksum "package-lock.json" }}
+
+      - run:
+          name: Build JS
+          command: npm run production
+
+      # Migrate DB and start server
+
+      - run:
+          name: Migrate DB
+          command: |
+            dockerize -wait tcp://localhost:5432 -timeout 1m
+            php artisan migrate --env=testing --force
+
+      - run:
+          name: Run PhpUnit tests
+          command: vendor/bin/phpunit
+
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - repo
+
+  # Use values from https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/
+  test_win7_chrome:
+    <<: *test_base
+    environment:
+      - TEST_PLATFORM: "Windows 7"
+      - TEST_BROWSER: "chrome"
+      - TEST_BROWSER_VERSION: "latest"
+
+  test_win7_ie11:
+    <<: *test_base
+    environment:
+      - TEST_PLATFORM: "Windows 7"
+      - TEST_BROWSER: "internet explorer"
+      - TEST_BROWSER_VERSION: "11.0"
+
+  test_win7_firefox:
+    <<: *test_base
+    environment:
+      - TEST_PLATFORM: "Windows 7"
+      - TEST_BROWSER: "firefox"
+      - TEST_BROWSER_VERSION: "61.0"
+
+  test_win10_firefox:
+    <<: *test_base
+    environment:
+      - TEST_PLATFORM: "Windows 10"
+      - TEST_BROWSER: "firefox"
+      - TEST_BROWSER_VERSION: "61.0"
+
+  test_win10_edge:
+    <<: *test_base
+    environment:
+      - TEST_PLATFORM: "Windows 10"
+      - TEST_BROWSER: "MicrosoftEdge"
+      - TEST_BROWSER_VERSION: "16.16299"
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test_win7_chrome:
+          requires:
+            - build
+      - test_win7_ie11:
+          requires:
+            - build
+      - test_win7_firefox:
+          requires:
+            - build
+      - test_win10_firefox:
+          requires:
+            - build
+      - test_win10_edge:
+          requires:
+            - build

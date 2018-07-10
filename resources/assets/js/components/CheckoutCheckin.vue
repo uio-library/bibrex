@@ -199,20 +199,25 @@ export default {
             })
             .then(response => {
                 this.busy = false;
+                this.$root.$emit('updateLoansTable', {loan: response.data.loan});
                 this.$root.$emit('status', {message: this.getSuccessMsg(response.data.loan)});
             })
-            .catch(response => {
+            .catch(error => {
                 this.busy = false;
-                console.log(response);
-                if (response.response.status === 422) {
+                if (error.response && error.response.status === 422) {
                     this.$root.$emit('error', {message: 'Utlånet kunne ikke gjennomføres. Se detaljer over.'});
                     this.errors = {
-                        thing: get(response, 'response.data.errors.thing.0'),
-                        user: get(response, 'response.data.errors.user.0'),
+                        thing: get(error, 'response.data.errors.thing.0'),
+                        user: get(error, 'response.data.errors.user.0'),
                     };
                 } else {
-                    this.$root.$emit('error', {message: 'Utlånet kunne ikke gjennomføres fordi det skjedde noe uventet.' +
-                        ' Feilen er forøvrig logget og vil bli analysert, men det hjelper jo ikke deg akkurat nå.'});
+                    console.error(error);
+                    if (error.code == 'ECONNABORTED') {
+                        this.$root.$emit('error', {message: 'Serveren svarer ikke. Utlånet ble antakelig ikke gjennomført. Last siden på nytt og prøv på nytt.'});
+                    } else {
+                        this.$root.$emit('error', {message: 'Utlånet kunne ikke gjennomføres fordi det skjedde noe uventet.' +
+                            ' Feilen er forøvrig logget og vil bli analysert, men det hjelper jo ikke deg akkurat nå.'});
+                    }
                 }
             });
         },
@@ -229,17 +234,22 @@ export default {
                     message: get(response, 'data.status'),
                     undoLink: get(response, 'data.undoLink'),
                 });
+                this.$root.$emit('updateLoansTable', {loan: response.data.loan});
             })
-            .catch(response => {
+            .catch(error => {
                 this.busy = false;
-                if (response.response.status === 422) {
-                    this.$root.$emit('error', {message: get(response, 'response.data.error')});
+                if (error.response && error.response.status === 422) {
+                    this.$root.$emit('error', {message: get(error, 'response.data.error')});
                 } else {
-                    this.$root.$emit('error', {message: 'Tingen kunne ikke returneres fordi det skjedde noe uventet!' +
-                        ' Du kan eventuelt prøve på nytt i en annen nettleser.' +
-                        ' Feilen er forøvrig logget og vil bli analysert, men det hjelper jo ikke deg akkurat nå.'});
+                    console.error(error);
+                    if (error.code == 'ECONNABORTED') {
+                        this.$root.$emit('error', {message: 'Serveren svarer ikke. Last siden på nytt og prøv på nytt.'});
+                    } else {
+                        this.$root.$emit('error', {message: 'Tingen kunne ikke returneres fordi det skjedde noe uventet!' +
+                            ' Du kan eventuelt prøve på nytt i en annen nettleser.' +
+                            ' Feilen er forøvrig logget og vil bli analysert, men det hjelper jo ikke deg akkurat nå.'});
+                    }
                 }
-                console.log(response);
             });
         },
     },

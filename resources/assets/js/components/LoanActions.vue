@@ -31,7 +31,7 @@
                 document.activeElement.blur();
                 this.busy = true;
                 this.$root.$emit('status', {});
-                    axios.post('/loans/checkin', {
+                axios.post('/loans/checkin', {
                     loan: this.loan,
                 })
                 .then(response => {
@@ -40,10 +40,11 @@
                         message: get(response, 'data.status'),
                         undoLink: get(response, 'data.undoLink'),
                     });
+                    this.$root.$emit('updateLoansTable', {});
                 })
-                .catch(response => {
+                .catch(error => {
                     this.busy = false;
-                    console.log(response.response.status, response.response.data);
+                    console.error(error.response);
                     this.$root.$emit('error', {message: 'Tingen kunne ikke returneres fordi det skjedde noe uventet!' +
                         ' Du kan eventuelt prøve på nytt i en annen nettleser.' +
                         ' Feilen er forøvrig logget og vil bli analysert, men det hjelper jo ikke deg akkurat nå.'});
@@ -60,10 +61,11 @@
                         message: get(response, 'data.status'),
                         undoLink: get(response, 'data.undoLink'),
                     });
+                    this.$root.$emit('updateLoansTable', {});
                 })
-                .catch(response => {
+                .catch(error => {
                     this.busy = false;
-                    console.log(response.response.status, response.response.data);
+                    console.log(error.response);
                     this.$root.$emit('error', {message: 'Som om ikke det var nok at tingen var tapt så oppsto det også en feil' +
                         ' som gjorde at den ikke kunne registreres som tapt! For en dag!' +
                         ' Du kan eventuelt prøve på nytt i en annen nettleser.' +

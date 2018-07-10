@@ -115,9 +115,10 @@ class LoansController extends Controller
             $request->item->thing->properties->get('name_indefinite.nob'),
             action('LoansController@getShow', $loan->id)
         ));
-        event(new LoanTableUpdated([$loan->id]));
 
-        $loan->load('item', 'item.thing');
+        event(new LoanTableUpdated('checkout', $request, $loan));
+
+        $loan->load('user', 'item', 'item.thing');
 
         if ($request->localUser) {
             return response()->json([
@@ -171,7 +172,7 @@ class LoansController extends Controller
             $old_date->toDateString(),
             $loan->due_at->toDateString()
         ));
-        event(new LoanTableUpdated([$loan->id]));
+        event(new LoanTableUpdated('update', $request, $loan));
 
         return redirect()->action('LoansController@getIndex')
             ->with('status', 'Lånet ble oppdatert');
@@ -191,11 +192,11 @@ class LoansController extends Controller
 
         $loan->lost();
 
-        event(new LoanTableUpdated([]));
+        event(new LoanTableUpdated('lost', $request, $loan));
 
         return response()->json([
             'status' => sprintf('%s ble registrert som tapt.', $loan->item->formattedLink(true)),
-            'undoLink' => action('LoansController@getRestore', $loan->id),
+            'undoLink' => action('LoansController@restore', $loan->id),
         ]);
     }
 
@@ -267,7 +268,7 @@ class LoansController extends Controller
             );
         } else {
             $status = sprintf('%s ble returnert.', $loan->item->formattedLink(true));
-            $undoLink = action('LoansController@getRestore', $loan->id);
+            $undoLink = action('LoansController@restore', $loan->id);
         }
 
         \Log::info(sprintf(
@@ -283,7 +284,7 @@ class LoansController extends Controller
         $user->last_loan_at = Carbon::now();
         $user->save();
 
-        event(new LoanTableUpdated());
+        event(new LoanTableUpdated('checkin', $request, $loan));
 
         return response()->json([
             'status' => $status,
@@ -295,9 +296,10 @@ class LoansController extends Controller
      * Restores the specified loan.
      *
      * @param Loan $loan
+     * @param Request $request
      * @return Response
      */
-    public function getRestore(Loan $loan)
+    public function restore(Loan $loan, Request $request)
     {
         \Log::info(sprintf(
             'Angret retur av %s (<a href="%s">Detaljer</a>).',
@@ -311,7 +313,7 @@ class LoansController extends Controller
             $loan->restore();
         }
 
-        event(new LoanTableUpdated([$loan->id]));
+        event(new LoanTableUpdated('restore', $request, $loan));
 
         return response()->json([
             'status' => sprintf(

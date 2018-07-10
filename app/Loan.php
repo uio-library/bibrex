@@ -121,7 +121,7 @@ class Loan extends Model
         if ($this->user->lang == 'eng') {
             Carbon::setLocale('en');
             $msgs = [
-                'justnow' => 'less than an hour ago',
+                'justnow' => 'just now',
                 'today' => '{hours} hour(s) ago',
                 'yesterday' => 'yesterday',
                 '2days' => 'two days ago',
@@ -130,7 +130,7 @@ class Loan extends Model
         } else {
             Carbon::setLocale('no');
             $msgs = [
-                'justnow' => 'for under en time siden',
+                'justnow' => 'nå nettopp',
                 'today' => 'for {hours} time(r) siden',
                 'yesterday' => 'i går',
                 '2days' => 'i forgårs',

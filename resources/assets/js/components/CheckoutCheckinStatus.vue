@@ -30,7 +30,6 @@
         },
         methods: {
             undo() {
-                console.log('UNDO', this.status.undoLink);
                 Vue.nextTick(() => this.$root.$emit('status', {}));
                 axios.post(this.status.undoLink)
                 .then(response => {
@@ -38,13 +37,14 @@
                     this.$root.$emit('status', {
                         message: get(response, 'data.status'),
                     });
+                    this.$root.$emit('updateLoansTable', {});
                 })
-                .catch(response => {
+                .catch(error => {
                     this.busy = false;
+                    console.error(error);
                     this.$root.$emit('error', {message: 'Auda, det oppsto en ukjent feil!' +
                         ' Du kan eventuelt prøve på nytt i en annen nettleser.' +
                         ' Feilen er forøvrig logget og vil bli analysert, men det hjelper jo ikke deg akkurat nå.'});
-                    console.log(response);
                 });
             }
         },

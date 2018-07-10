@@ -65,7 +65,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/loans/checkout', 'LoansController@checkout');
     Route::post('/loans/checkin', 'LoansController@checkin');
     Route::get('/loans/{loan}', 'LoansController@getShow');
-    Route::post('/loans/{loan}/restore', 'LoansController@getRestore');
+    Route::post('/loans/{loan}/restore', 'LoansController@restore');
     Route::post('/loans/{loan}/lost', 'LoansController@lost');
     Route::get('/loans/{loan}/edit', 'LoansController@edit');
     Route::post('/loans/{loan}', 'LoansController@update');
