@@ -122,7 +122,7 @@ class ItemsController extends Controller
 
         $item->save();
 
-        return redirect()->action('ThingsController@getShow', $item->thing->id)
+        return redirect()->action('ThingsController@show', $item->thing->id)
             ->with('status', 'Eksemplaret ' . $item->dokid . ' ble lagret!');
     }
 
@@ -160,7 +160,7 @@ class ItemsController extends Controller
 
         \Log::info(sprintf(
             'Slettet %s <a href="%s">%s</a>.',
-            $item->thing->getProperty('name_definite.nob'),
+            $item->thing->properties->get('name_definite.nob'),
             action('ItemsController@show', $item->id),
             $item->dokid
         ));
@@ -181,7 +181,7 @@ class ItemsController extends Controller
         $item->restore();
         \Log::info(sprintf(
             'Gjenopprettet %s <a href="%s">%s</a>.',
-            $item->thing->getProperty('name_definite.nob'),
+            $item->thing->properties->get('name_definite.nob'),
             action('ItemsController@show', $item->id),
             $item->dokid
         ));

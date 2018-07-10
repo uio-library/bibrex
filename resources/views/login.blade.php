@@ -8,7 +8,9 @@
 
   <!-- Complete CSS (Responsive, With Icons) -->
   <link rel="stylesheet" type="text/css" href="{{ mix('/css/app.css') }}">
+  <!--
   <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  -->
   <style type="text/css">
   html,body {
     height: 100%;
@@ -80,16 +82,6 @@ input {
         </div>
 
     </div>
-
-
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-  <script type="text/javascript" src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script type="text/javascript">
-
-    $(document).ready(function() {
-
-    });
-  </script>
 
 </body>
 </html>

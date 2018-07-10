@@ -42,7 +42,7 @@
                             name="thing"
                             :class="{'is-invalid': errors.thing}"
                             @input="setCurrentThing($event)"
-                            prefetch="/things.json?mine=1"
+                            prefetch="/things.json?withoutBarcode=1"
                             remote="/items/search"
                             :min-length="0"
                             :limit="30"
@@ -161,17 +161,22 @@ export default {
         },
         onTabClick(tab) {
             this.activeTab = tab;
-            setTimeout(this.focusFirstTextInput.bind(this), 300);
+            setTimeout(this.focusFirstTextInput.bind(this), 0);
         },
-        getSuccessMsg() {
+        getSuccessMsg(loan) {
+            let msg = `Utlån av ${loan.item.thing.properties.name_indefinite.nob} til ${loan.user.name} registrert`;
+
             switch (Math.floor(Math.random() * 20)) {
                 case 0:
-                    return 'Utlånet er registrert (og verden har forøvrig fortsatt ikke gått under).';
+                    msg += ' (og verden har forøvrig ikke gått under)';
+                    break;
                 case 1:
-                    return 'Utlånet er registrert (Faktisk helt sant).';
-                default:
-                    return 'Utlånet er registrert.';
+                    msg += ' (faktisk helt sant)';
+                    break;
             }
+
+            msg += `. Lånetid: ${loan.days_left} ${loan.days_left == 1 ? 'dag' : 'dager'}.`;
+            return msg;
         },
         checkout() {
 
@@ -194,7 +199,7 @@ export default {
             })
             .then(response => {
                 this.busy = false;
-                this.$root.$emit('status', {message: this.getSuccessMsg()});
+                this.$root.$emit('status', {message: this.getSuccessMsg(response.data.loan)});
             })
             .catch(response => {
                 this.busy = false;

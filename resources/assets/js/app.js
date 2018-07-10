@@ -69,6 +69,8 @@ Vue.component('alert', require('./components/Alert.vue'));
 Vue.component('checkout-checkin', require('./components/CheckoutCheckin.vue'));
 Vue.component('checkout-checkin-status', require('./components/CheckoutCheckinStatus.vue'));
 Vue.component('loan-actions', require('./components/LoanActions.vue'));
+Vue.component('thing-editor', require('./components/ThingEditor.vue'));
+Vue.component('thing-settings-editor', require('./components/ThingSettingsEditor.vue'));
 
 Vue.component('datatable', require('./components/Datatable.vue'));
 Vue.component('loans-table', require('./components/LoansTable.vue'));

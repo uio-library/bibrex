@@ -17,6 +17,20 @@ class Thing extends Model
         return $this->hasMany(Item::class);
     }
 
+
+
+    public function settings()
+    {
+        return $this->hasMany(ThingSettings::class);
+    }
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['name', 'properties', 'note'];
+
     /**
      * The attributes that should be mutated to dates.
      *
@@ -25,20 +39,11 @@ class Thing extends Model
     protected $dates = ['deleted_at'];
 
     /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'properties' => 'array',
-    ];
-
-    /**
      * The accessors to append to the model's array form.
      *
      * @var array
      */
-    protected $appends = ['at_my_library', 'library_settings'];
+    protected $appends = ['library_settings'];
 
     public function activeLoans()
     {
@@ -52,39 +57,19 @@ class Thing extends Model
     }
 
     /**
-     * The libraries where the thing is available.
-     */
-    public function libraries()
-    {
-        return $this->belongsToMany(Library::class)
-            ->withPivot('require_item', 'send_reminders')
-            ->using(LibraryThing::class);
-            //->withPivot('require_item');
-    }
-
-    /**
-     * Whether the thing is activated at my library.
-     *
-     * @return bool
-     */
-    public function getAtMyLibraryAttribute()
-    {
-        return $lib = $this->libraries()
-            ->where('library_id', \Auth::user()->id)
-            ->first() ? true : false;
-    }
-
-    /**
      * The settings for this thing at my library.
      *
-     * @return bool
+     * @return ThingSettings
      */
-    public function getLibrarySettingsAttribute()
+    public function getLibrarySettingsAttribute(Library $library = null)
     {
-        $lib = $this->libraries()
-            ->where('library_id', \Auth::user()->id)
-            ->first();
-        return $lib ? $lib->pivot->only('require_item', 'send_reminders') : [];
+        $library = $library ?? \Auth::user();
+        return $this->settings()
+            ->where('library_id', $library->id)
+            ->first() ?? ThingSettings::make([
+                'library_id' => $library->id,
+                'thing_id' => $this->id,
+            ]);
     }
 
     public function availableItems()
@@ -103,17 +88,13 @@ class Thing extends Model
         return $loans;
     }
 
-    public function getProperty($key)
+    public function getPropertiesAttribute()
     {
-        return array_get($this->properties, $key);
+        return new ThingProperties(json_decode($this->attributes['properties'], true));
     }
 
-    public function setProperties($values)
+    public function setPropertiesAttribute($value)
     {
-        $props = $this->properties;
-        foreach ($values as $k => $v) {
-            array_set($props, $k, $v);
-        }
-        $this->properties = $props;
+        $this->attributes['properties'] = json_encode($value);
     }
 }

@@ -67,7 +67,7 @@ class CheckoutRequest extends FormRequest
 
         if (is_null($item) && !is_null($thing)) {
             // Then find a generic item, if one exists
-            if (array_get($thing->library_settings, 'require_item')) {
+            if (!$thing->library_settings->loans_without_barcode) {
                 return [
                     'thing' => [new RequiresBarcode()],
                 ];

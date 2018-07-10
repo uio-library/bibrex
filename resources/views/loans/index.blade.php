@@ -20,8 +20,7 @@
     </alert>
   @endif
 
-  @if (!$has_things)
-
+  {{-- @if (!$has_things)
     <div class="card text-danger border-danger mb-3">
       <div class="card-body">
         <p class="card-text">
@@ -30,7 +29,7 @@
       </div>
     </div>
 
-  @endif
+  @endif--}}
 
   <checkout-checkin :library-id="{{ \Auth::user()->id }}"></checkout-checkin>
 

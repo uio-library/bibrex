@@ -2,90 +2,13 @@
 
 @section('content')
 
-  <div class="card mb-3">
-    <div class="card-header">
-        <div class="row align-items-center">
-            <h5 class="col mb-0">
-                {{ $thing->name }}
-            </h5>
-            @if ($thing->trashed())
-                <a class="btn btn-warning col col-auto mx-1" href="{{ URL::action('ThingsController@getRestore', $thing->id) }}">
-                    <i class="far fa-box-full"></i>
-                    Gjenopprett
-                </a>
-            @else
-                <a class="btn btn-primary col-auto mx-1" href="{{ URL::action('ThingsController@getEdit', $thing->id) }}">
-                    <i class="far fa-pencil-alt"></i>
-                    Rediger
-                </a>
-                <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ThingsController@getDestroy', $thing->id) }}">
-                    <i class="far fa-trash"></i>
-                    Slett
-                </a>
-            @endif
-        </div>
-    </div>
+  <thing-editor :data="{{ json_encode($thing) }}"></thing-editor>
 
-    <ul class="list-group list-group-flush">
+  @if ($thing->id)
+  <thing-settings-editor :thing-id="{{ $thing->id }}" :data="{{ json_encode($thing->library_settings) }}"></thing-settings-editor>
+  @endif
 
-      <li class="list-group-item">
-          <div class="row">
-              <div class="col-sm-3">
-                  Lånes ut i mitt bibliotek:
-              </div>
-              <div class="col">
-                  {{ $thing->at_my_library ? 'Ja' : 'Nei' }}
-              </div>
-          </div>
-      </li>
-
-      <li class="list-group-item">
-          <div class="row">
-              <div class="col-sm-3">
-                  Lånes ut m. strekkode:
-              </div>
-              <div class="col">
-                  {{ array_get($thing->library_settings, 'require_item') ? 'Ja' : 'Nei' }}
-              </div>
-          </div>
-      </li>
-
-      <li class="list-group-item">
-          <div class="row">
-              <div class="col-sm-3">
-                  Purres?
-              </div>
-              <div class="col">
-                  {{ array_get($thing->library_settings, 'send_reminders') ? 'Ja' : 'Nei' }}
-              </div>
-          </div>
-      </li>
-
-      <li class="list-group-item">
-          <div class="row">
-              <div class="col-sm-3">
-                  Merknad:
-              </div>
-              <div class="col">
-                  {{ $thing->note ?: '–' }}
-              </div>
-          </div>
-      </li>
-
-      <li class="list-group-item">
-          <div class="row">
-              <div class="col-sm-3">
-                  Lånetid (dager):
-              </div>
-              <div class="col">
-                  {{ $thing->loan_time }}
-              </div>
-          </div>
-      </li>
-    </ul>
-  </div>
-
-
+ @if($thing->id)
   <div class="card mb-3">
 
     <div class="card-header">
@@ -140,7 +63,7 @@
       @endforeach
     </ul>
   </div>
-
+@endif
   {{--
 
 

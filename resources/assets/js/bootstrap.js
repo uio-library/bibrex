@@ -9,7 +9,7 @@ window.Popper = require('popper.js').default;
  */
 
 window.$ = window.jQuery = require('jquery');
-require( 'datatables.net-bs4' );
+require('datatables.net-bs4');
 
 // At least for now, use the standard bootstrap js for the navbar dropdowns and tabs.
 import 'bootstrap';

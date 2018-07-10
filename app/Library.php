@@ -16,6 +16,11 @@ class Library extends Authenticatable
         return $this->hasMany(LibraryIp::class);
     }
 
+    public function settings()
+    {
+        return $this->hasMany(ThingSetting::class);
+    }
+
     public function loans()
     {
         return $this->hasMany(Loan::class);
@@ -24,16 +29,6 @@ class Library extends Authenticatable
     public function items()
     {
         return $this->hasMany(Item::class);
-    }
-
-    /**
-     * The things activated at the library.
-     */
-    public function things()
-    {
-        return $this->belongsToMany(Thing::class)
-            ->withPivot('require_item', 'send_reminders')
-            ->using(LibraryThing::class);
     }
 
     public function getOptionsAttribute($value)

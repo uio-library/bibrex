@@ -41,17 +41,17 @@
           <td>
             {{ $user1->barcode }}
             <?php
-              if (!empty($user1->barcode) && !empty($user2->barcode) && ($user1->barcode != $user2->barcode)) {
+            if (!empty($user1->barcode) && !empty($user2->barcode) && ($user1->barcode != $user2->barcode)) {
                 echo '<i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i>';
-              }
+            }
             ?>
           </td>
           <td>
             {{ $user2->barcode }}
             <?php
-              if (!empty($user1->barcode) && !empty($user2->barcode) && ($user1->barcode != $user2->barcode)) {
+            if (!empty($user1->barcode) && !empty($user2->barcode) && ($user1->barcode != $user2->barcode)) {
                 echo '<i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i>';
-              }
+            }
             ?>
           </td>
           <td>
@@ -66,17 +66,17 @@
           <td>
             {{ $user1->university_id }}
             <?php
-              if (!empty($user1->university_id) && !empty($user2->university_id) && ($user1->university_id != $user2->university_id)) {
+            if (!empty($user1->university_id) && !empty($user2->university_id) && ($user1->university_id != $user2->university_id)) {
                 echo '<i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i>';
-              }
+            }
             ?>
           </td>
           <td>
             {{ $user2->university_id }}
             <?php
-              if (!empty($user1->university_id) && !empty($user2->university_id) && ($user1->university_id != $user2->university_id)) {
+            if (!empty($user1->university_id) && !empty($user2->university_id) && ($user1->university_id != $user2->university_id)) {
                 echo '<i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i>';
-              }
+            }
             ?>
           </td>
           <td>

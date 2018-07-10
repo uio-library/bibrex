@@ -54,6 +54,16 @@ class Loan extends Model
         return $this->belongsTo(Library::class);
     }
 
+    /**
+     * Get library settings for the loaned thing.
+     *
+     * @return ThingSettings
+     */
+    public function getLibrarySettings()
+    {
+        return $this->item->thing->getLibrarySettingsAttribute($this->library_id);
+    }
+
     public function representation($plaintext = false)
     {
         if ($this->item->thing->id == 1) {
@@ -161,7 +171,7 @@ class Loan extends Model
     public function save(array $options = array())
     {
         $this->errors = new MessageBag();
-        if (!$this->exists) {
+        if (is_null($this->library_id)) {
             // Set library id
             $this->library_id = \Auth::user()->id;
         }

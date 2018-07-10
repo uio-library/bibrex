@@ -46,7 +46,6 @@ class LoansController extends Controller
         $library = \Auth::user();
 
         $r = response()->view('loans.index', array(
-            'has_things' => !is_null($library->things()->first()),
             'loan_ids' => \Session::get('loan_ids', array()),
             'tab' => \Session::get('tab', 'default'),
         ));
@@ -96,19 +95,16 @@ class LoansController extends Controller
     public function checkout(CheckoutRequest $request)
     {
         // Create new loan
-        $loan_ids = array();
-
         $loan = new Loan();
         $loan->user_id = $request->user->id;
         $loan->item_id = $request->item->id;
         $loan->due_at = Carbon::now()
-            ->addDays($request->item->thing->loan_time)
+            ->addDays($request->item->thing->properties->loan_time)
             ->setTime(0, 0, 0);
         $loan->as_guest = false;
         if (!$loan->save()) {
             return response()->json(['errors' => $loan->errors], 409);
         }
-        $loan_ids[] = $loan->id;
 
         $request->user->loan_count += 1;
         $request->user->last_loan_at = Carbon::now();
@@ -116,22 +112,24 @@ class LoansController extends Controller
 
         \Log::info(sprintf(
             'Lånte ut %s (<a href="%s">Detaljer</a>).',
-            $request->item->thing->getProperty('name_indefinite.nob'),
+            $request->item->thing->properties->get('name_indefinite.nob'),
             action('LoansController@getShow', $loan->id)
         ));
-        event(new LoanTableUpdated($loan_ids));
+        event(new LoanTableUpdated([$loan->id]));
+
+        $loan->load('item', 'item.thing');
 
         if ($request->localUser) {
             return response()->json([
                 'status' => 'Utlånet ble registrert. VIKTIG: Siden dette er en ny låner må du registrere ' .
                     'litt informasjon om vedkommende.',
                 'user' => action('UsersController@getEdit', $request->user->id),
-                'loan_ids' => $loan_ids,
+                'loan' => $loan,
             ]);
         } else {
             return response()->json([
                 'status' => 'Utlånet ble registrert.',
-                'loan_ids' => $loan_ids,
+                'loan' => $loan,
             ]);
         }
     }
@@ -169,13 +167,13 @@ class LoansController extends Controller
         \Log::info(sprintf(
             'Endret forfallsdato for <a href="%s">utlånet</a> av %s fra %s til %s.',
             action('LoansController@getShow', $loan->id),
-            $loan->item->thing->getProperty('name_indefinite.nob'),
+            $loan->item->thing->properties->get('name_indefinite.nob'),
             $old_date->toDateString(),
             $loan->due_at->toDateString()
         ));
         event(new LoanTableUpdated([$loan->id]));
 
-        return redirect()->action('LoansController@getShow', $loan->id)
+        return redirect()->action('LoansController@getIndex')
             ->with('status', 'Lånet ble oppdatert');
     }
 
@@ -188,7 +186,7 @@ class LoansController extends Controller
      */
     public function lost(Loan $loan, Request $request)
     {
-        \Log::info('Registrerte ' . $loan->item->thing->getProperty('name_indefinite.nob') . ' som tapt' .
+        \Log::info('Registrerte ' . $loan->item->thing->properties->get('name_indefinite.nob') . ' som tapt' .
             ' (<a href="'. action('LoansController@getShow', $loan->id) . '">Detaljer</a>)');
 
         $loan->lost();
@@ -274,7 +272,7 @@ class LoansController extends Controller
 
         \Log::info(sprintf(
             'Returnerte %s (<a href="%s">Detaljer</a>).',
-            $loan->item->thing->getProperty('name_definite.nob'),
+            $loan->item->thing->properties->get('name_definite.nob'),
             action('LoansController@getShow', $loan->id)
         ));
 
@@ -303,7 +301,7 @@ class LoansController extends Controller
     {
         \Log::info(sprintf(
             'Angret retur av %s (<a href="%s">Detaljer</a>).',
-            $loan->item->thing->getProperty('name_indefinite.nob'),
+            $loan->item->thing->properties->get('name_indefinite.nob'),
             action('LoansController@getShow', $loan->id)
         ));
 

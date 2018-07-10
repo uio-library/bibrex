@@ -4,13 +4,14 @@
       {{error}}
     </p>
 
-    <table style="width:100%" class="table">
+    <table style="width:100%" class="table" id="thingsTable">
       <thead>
         <tr>
           <th>Ting</th>
-          <th>Aktiv?</th>
-          <th>Strekkode?</th>
-          <th>Purres?</th>
+          <th>Lånetid</th>
+          <th>Påminnelser</th>
+          <th>Utlån uten strekkode</th>
+          <th>Eksemplarer<br><small>Mitt bibliotek / totalt</small></th>
         </tr>
       </thead>
       <tbody>
@@ -22,47 +23,29 @@
           </td>
 
           <td>
-             <toggle-button
-                v-b-tooltip.hover title="Kan denne tingen lånes ut i mitt bibliotek?"
-                :value="thing.at_my_library"
-                :color="'#82C7EB'"
-                :sync="true"
-                :labels="{checked: 'På', unchecked: 'Av'}"
-                :width="60"
-                :height="30"
-                @change="ev => onToggle(thing, ev.value)"
-              />
+            {{ thing.properties.loan_time }}
           </td>
 
           <td>
-            <div v-if="thing.at_my_library">
-              <toggle-button
-                v-b-tooltip.hover title="Skal det alltid lånes ut et bestemt eksemplar med strekkode?"
-                :value="thing.library_settings.require_item"
-                :color="'#82C7EB'"
-                :sync="true"
-                :labels="{checked: 'På', unchecked: 'Av'}"
-                :width="60"
-                :height="30"
-                @change="ev => onUpdateSetting(thing, 'require_item', ev.value)"
-              />
-            </div>
+            <span v-if="thing.library_settings.reminders" class="text-success">
+              <i class="far fa-check-circle"></i>
+              Aktivert
+            </span>
           </td>
 
           <td>
-            <div v-if="thing.at_my_library">
-              <toggle-button
-                v-b-tooltip.hover title="Skal det sendes purringer for denne tingen?"
-                :value="thing.library_settings.send_reminders"
-                :color="'#82C7EB'"
-                :sync="true"
-                :labels="{checked: 'På', unchecked: 'Av'}"
-                :width="60"
-                :height="30"
-                @change="ev => onUpdateSetting(thing, 'send_reminders', ev.value)"
-              />
-            </div>
+            <span v-if="thing.library_settings.loans_without_barcode" class="text-success">
+              <i class="far fa-check-circle"></i>
+              Aktivert
+            </span>
           </td>
+
+          <td>
+            {{ thing.items_mine}}
+            /
+            {{ thing.items_total}}
+          </td>
+
         </tr>
 
       </tbody>
@@ -85,20 +68,20 @@
           };
       },
       methods: {
-        onToggle(thing, value) {
-          axios.post(`/things/toggle/${thing.id}`, {value: value})
-          .then((resp) => {
-              thing.at_my_library = value;
-              thing.library_settings = resp.data.library_settings ;
-          });
+        // onToggle(thing, value) {
+        //   axios.post(`/things/toggle/${thing.id}`, {value: value})
+        //   .then((resp) => {
+        //       thing.at_my_library = value;
+        //       thing.library_settings = resp.data.library_settings ;
+        //   });
 
-        },
-        onUpdateSetting(thing, key, value) {
-          axios.post(`/things/settings/${thing.id}`, {key: key, value: value})
-          .then((resp) => {
-              thing.library_settings = resp.data.library_settings ;
-          });
-        }
+        // },
+        // onUpdateSetting(thing, key, value) {
+        //   axios.post(`/things/settings/${thing.id}`, {key: key, value: value})
+        //   .then((resp) => {
+        //       thing.library_settings = resp.data.library_settings ;
+        //   });
+        // }
       },
       created() {
         this.things = cloneDeep(this.data);

@@ -69,7 +69,7 @@ class Item extends Model
 
     public function formattedLink($ucfirst = false)
     {
-        $name = s($this->thing->getProperty('name_definite.nob'));
+        $name = s($this->thing->properties->get('name_definite.nob'));
         $name = $ucfirst ? $name->upperCaseFirst() : $name->lowerCaseFirst();
 
         return sprintf(

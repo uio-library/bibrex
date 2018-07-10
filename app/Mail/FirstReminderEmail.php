@@ -33,12 +33,12 @@ class FirstReminderEmail extends Mailable
         switch ($lang) {
             case 'eng':
                 $subject = s($this->subjectTpl[$lang])
-                    ->replace('{thing}', $thing->getProperty('name_definite.eng'))
+                    ->replace('{thing}', $thing->properties->get('name_definite.eng'))
                     ->upperCaseFirst();
                 $view = 'emails.first_reminder.eng_html';
                 $view_args = [
-                    'indefinite' => $thing->getProperty('name_indefinite.eng'),
-                    'definite' => $thing->getProperty('name_definite.eng'),
+                    'indefinite' => $thing->properties->get('name_indefinite.eng'),
+                    'definite' => $thing->properties->get('name_definite.eng'),
                     'relativeTime' => $loan->relativeCreationTime(),
                     'library' => $loan->library->name_eng,
                 ];
@@ -47,13 +47,13 @@ class FirstReminderEmail extends Mailable
 
             default:
                 $subject = s($this->subjectTpl[$lang])
-                    ->replace('{thing}', $thing->getProperty('name_definite.nob'))
+                    ->replace('{thing}', $thing->properties->get('name_definite.nob'))
                     ->upperCaseFirst();
                     ;
                 $view = 'emails.first_reminder.nob_html';
                 $view_args = [
-                    'indefinite' => $thing->getProperty('name_indefinite.nob'),
-                    'definite' => $thing->getProperty('name_definite.nob'),
+                    'indefinite' => $thing->properties->get('name_indefinite.nob'),
+                    'definite' => $thing->properties->get('name_definite.nob'),
                     'relativeTime' => $loan->relativeCreationTime(),
                     'library' => $loan->library->name,
                 ];

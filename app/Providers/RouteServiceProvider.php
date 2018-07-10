@@ -40,7 +40,7 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::bind('thing', function ($value) {
             return $value == '_new'
-                ? new Thing()
+                ? new Thing(['properties' => []])
                 : Thing::withTrashed()
                     ->with('items.loans')
                     ->with('items.allLoans')

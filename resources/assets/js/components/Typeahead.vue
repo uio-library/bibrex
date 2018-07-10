@@ -154,7 +154,7 @@ import Bloodhound from 'corejs-typeahead'
 
                       }
                       return `<div>
-                            <span class="right">(uten strekkode)</span>
+                            <span class="right">uten strekkode</span>
                             <span class="main">${d.name}</span>
                       </div>`;
                   },

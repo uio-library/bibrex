@@ -45,7 +45,7 @@
                       Ting:
                   </div>
                   <div class="col">
-                      <a href="{{ URL::action('ThingsController@getShow', $item->thing->id) }}">{{ $item->thing->name }}</a>
+                      <a href="{{ URL::action('ThingsController@show', $item->thing->id) }}">{{ $item->thing->name }}</a>
                   </div>
               </div>
           </li>

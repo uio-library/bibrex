@@ -11,14 +11,14 @@
 |
 */
 
-Route::get('/', function() {
+Route::get('/', function () {
     return redirect()->action('LoansController@getIndex');
 });
-Route::get('/loans/index', function() {
+Route::get('/loans/index', function () {
     return redirect()->action('LoansController@getIndex');
 });
 
-Route::get('/about', function() {
+Route::get('/about', function () {
     return Response::view('hello');
 });
 
@@ -31,8 +31,7 @@ Route::get('/logout', 'LibrariesController@getLogout');
 Route::get('/available/{library}.json', 'ThingsController@getAvailableJson');
 Route::get('/available/{library}', 'ThingsController@getAvailable');
 
-Route::middleware(['auth'])->group(function()
-{
+Route::middleware(['auth'])->group(function () {
     // --[[ LIBRARY ]]--
     Route::get('/libraries', 'LibrariesController@getIndex');
     Route::get('/libraries/create', 'LibrariesController@getCreate');
@@ -82,16 +81,13 @@ Route::middleware(['auth'])->group(function()
     Route::get('/items/restore/{item}', 'ItemsController@restore');
 
     // --[[ THINGS ]]--
-    Route::get('/things', 'ThingsController@getIndex');
+    Route::get('/things', 'ThingsController@index');
     Route::get('/things.json', 'ThingsController@json');
-    Route::get('/things/{thing}', 'ThingsController@getShow');
-    Route::get('/things/edit/{thing}', 'ThingsController@getEdit');
-    Route::post('/things/toggle/{thing}', 'ThingsController@toggle');
-    Route::post('/things/settings/{thing}', 'ThingsController@updateSetting');
-    Route::post('/things/{thing}', 'ThingsController@postUpdate');
-    Route::get('/things/destroy/{thing}', 'ThingsController@getDestroy');
-    Route::get('/things/restore/{thing}', 'ThingsController@getRestore');
-    // Route::delete('/things/{thing}', 'ThingsController@delete');
+    Route::get('/things/{thing}', 'ThingsController@show');
+    Route::post('/things/{thing}', 'ThingsController@upsert');
+    Route::post('/things/{thing}/settings', 'ThingsController@updateSettings');
+    Route::post('/things/{thing}/delete', 'ThingsController@delete');
+    Route::post('/things/{thing}/restore', 'ThingsController@restore');
 
     // --[[ REMINDER ]]--
     Route::get('/notifications', 'NotificationsController@index');
@@ -104,5 +100,4 @@ Route::middleware(['auth'])->group(function()
     // --[[ LOG ]]--
     Route::get('/logs', 'LogsController@getIndex');
     Route::post('/logs/destroy', 'LogsController@postDestroy');
-
 });

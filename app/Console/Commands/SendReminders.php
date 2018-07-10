@@ -49,18 +49,13 @@ class SendReminders extends Command
         foreach (Loan::with(
             'item',
             'item.thing',
-            'item.thing.libraries',
             'library',
             'user',
             'notifications'
         )->get() as $loan) {
-            $librarySettings = $loan->item->thing->libraries()
-                ->where('library_id', $loan->library->id)
-                ->first()
-                ->pivot
-                ->only('require_item', 'send_reminders');
+            $settings = $loan->getLibrarySettings();
 
-            if (!array_get($librarySettings, 'send_reminders')) {
+            if (!$settings->reminders) {
                 $this->comment("[{$loan->id}] Not sending reminders for {$loan->item->thing->name}" .
                     " from {$loan->library->name}.");
                 continue;
