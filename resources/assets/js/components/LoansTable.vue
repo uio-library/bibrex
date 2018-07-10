@@ -43,7 +43,7 @@
                           <a class="btn" title="Rediger forfallsdato" :href="loan.url + '/edit'">
                               <span v-if="loan.days_left > 1" style="color: green">om {{ loan.days_left }} dager</span>
                               <span v-else-if="loan.days_left == 1" style="color: orange">i morgen</span>
-                              <span v-else-if="loan.days_left == 0" style="color: orange">i dag</span>
+                              <span v-else-if="loan.days_left == 0" style="color: red">i dag</span>
                               <span v-else-if="loan.days_left == -1" style="color: red">i går</span>
                               <span v-else style="color: red">for {{ -loan.days_left }} dager siden</span>
                               <i class="far fa-pencil"></i>

@@ -87,14 +87,16 @@ class Loan extends Model
         if (is_null($this->due_at)) {
             return 999999;
         }
-        $d1 = new \DateTime($this->due_at);
-        $d2 = new \DateTime();
-        $diff = $d2->diff($d1);
-        $dl = intval($diff->format('%r%a'));
-        if ($dl > 0) {
-            $dl++;
+        $d1 = $this->due_at;
+        $d2 = Carbon::now();
+        $days = $d2->diffInDays($d1, false);
+        $hours = $d2->diffInHours($d1, false);
+
+        if ($hours > 0) {
+            $days++;
         }
-        return $dl;
+
+        return $days;
     }
 
     public function getDaysLeftAttribute()

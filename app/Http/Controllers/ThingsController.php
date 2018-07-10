@@ -173,6 +173,11 @@ class ThingsController extends Controller
             'properties.loan_time' => 'required|numeric|min:1',
         ], $this->messages)->validate();
 
+        if (!$thing->exists) {
+            // The frontend will redirect to update the url, so flash a status message to the new page.
+            \Session::flash('status', 'Tingen ble lagret.');
+        }
+
         $thing->name = $request->input('name');
         $thing->properties = $request->input('properties');
         $thing->save();
