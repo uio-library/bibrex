@@ -273,7 +273,7 @@ class LoansController extends Controller
 
         \Log::info(sprintf(
             'Returnerte %s (<a href="%s">Detaljer</a>).',
-            $loan->item->thing->properties->get('name_definite.nob'),
+            $loan->item->thing->properties->get('name_indefinite.nob'),
             action('LoansController@getShow', $loan->id)
         ));
 
