@@ -61,7 +61,7 @@ class Loan extends Model
      */
     public function getLibrarySettings()
     {
-        return $this->item->thing->getLibrarySettingsAttribute($this->library_id);
+        return $this->item->thing->getLibrarySettingsAttribute($this->library);
     }
 
     public function representation($plaintext = false)
