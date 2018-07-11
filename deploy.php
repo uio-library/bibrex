@@ -7,7 +7,7 @@ require 'vendor/deployer/recipes/recipe/slack.php';
 
 task('npm:install', 'npm install');
 task('npm:build', 'npm run production');
-task('bibrex:notify-version', 'php artisan bibrex:notify-version');
+task('bibrex:version-notify', 'php artisan bibrex:version-notify');
 
 // Hosts
 inventory('hosts.yml');
@@ -43,6 +43,6 @@ before('deploy:symlink', 'artisan:migrate');
 
 after('deploy:failed', 'slack:notify:failure');
 after('success', 'slack:notify:success');
-after('success', 'bibrex:notify-version');
+after('success', 'bibrex:version-notify');
 
 // Note to self: We don't make any attempt of clearing opcache since we assume that opcache.revalidate_path=1 is set.

@@ -220,10 +220,10 @@ class CheckoutCheckinTest extends DuskTestCase
                 $keyboard = $browser->visit(new LoansPage)
                     ->driver->getKeyboard();
 
-                if (s(config('testing.browser'))->contains('internet explorer')) {
+                if (s(config('testing.caps.browser'))->contains('internet explorer')) {
                     $this->markTestSkipped('Keyboard shortcuts do not work in IE11.');
                     return;
-                } elseif (s(config('testing.platform'))->contains('Windows')) {
+                } elseif (s(config('testing.caps.platform'))->contains('Windows')) {
                     $keyboard->sendKeys([WebDriverKeys::ALT, 'r']);
                     $keyboard->releaseKey(WebDriverKeys::ALT);
                 } else {
