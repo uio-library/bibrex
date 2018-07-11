@@ -22,7 +22,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
             /(bs-)?tooltip/, /^(fade|show)$/,    // VueBootstrap tooltip
             /dataTable/,                         // DataTables
             /^badge-/,                           // logs.index
-            /^col-/,                             // Bootstrap column layout
+            /col-/,                              // Bootstrap column layout used by datatables
         ],
    })
    .version();

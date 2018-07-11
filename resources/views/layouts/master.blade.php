@@ -18,7 +18,7 @@
 
   @if (Auth::check())
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
 
     <div class="container">
 
@@ -60,7 +60,7 @@
 
          <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Innlogget som {{ Auth::user()->name }}
+            {{ Auth::user()->name }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="{{ URL::action('LibrariesController@getMyAccount') }}">Kontoinnstillinger</a>
