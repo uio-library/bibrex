@@ -7,7 +7,7 @@
         {{ csrf_field() }}
 
         <h5 class="card-header">
-          Send ny påminnelse per epost
+          Ny påminnelse per epost
         </h5>
 
         <ul class="list-group list-group-flush">

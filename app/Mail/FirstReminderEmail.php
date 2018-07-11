@@ -15,7 +15,7 @@ class FirstReminderEmail extends Mailable
     protected $subjectTpl = [
         'eng' => '{thing} must be returned',
         'nob' => '{thing} må leveres tilbake',
-        'nno' => '{thing} må leveres tilbake',  // @TODO
+        'nno' => '{thing} må leverast tilbake',
     ];
 
     protected $data = [];
@@ -30,35 +30,23 @@ class FirstReminderEmail extends Mailable
         $sender = $loan->library;
         $lang = $loan->user->lang;
 
-        switch ($lang) {
-            case 'eng':
-                $subject = s($this->subjectTpl[$lang])
-                    ->replace('{thing}', $thing->properties->get('name_definite.eng'))
-                    ->upperCaseFirst();
-                $view = 'emails.first_reminder.eng_html';
-                $view_args = [
-                    'indefinite' => $thing->properties->get('name_indefinite.eng'),
-                    'definite' => $thing->properties->get('name_definite.eng'),
-                    'relativeTime' => $loan->relativeCreationTime(),
-                    'library' => $loan->library->name_eng,
-                ];
-                $sender_name = $sender->name_eng;
-                break;
+        $subject = s($this->subjectTpl[$lang])
+            ->replace('{thing}', $thing->properties->get('name_definite.' . $lang))
+            ->upperCaseFirst();
+        $view = 'emails.first_reminder.' . $lang;
+        $view_args = [
+            'indefinite' => $thing->properties->get('name_indefinite.' . $lang),
+            'definite' => s($thing->properties->get('name_definite.' . $lang))->upperCaseFirst(),
+            'relativeTime' => $loan->relativeCreationTime(),
+            'barcode' => $loan->item->barcode,
+        ];
 
-            default:
-                $subject = s($this->subjectTpl[$lang])
-                    ->replace('{thing}', $thing->properties->get('name_definite.nob'))
-                    ->upperCaseFirst();
-                    ;
-                $view = 'emails.first_reminder.nob_html';
-                $view_args = [
-                    'indefinite' => $thing->properties->get('name_indefinite.nob'),
-                    'definite' => $thing->properties->get('name_definite.nob'),
-                    'relativeTime' => $loan->relativeCreationTime(),
-                    'library' => $loan->library->name,
-                ];
-                $sender_name = $sender->name;
-                break;
+        if ($lang == 'eng') {
+            $view_args['library'] = $loan->library->name_eng;
+            $sender_name = $sender->name_eng;
+        } else {
+            $view_args['library'] = $loan->library->name;
+            $sender_name = $sender->name;
         }
 
         $this->data = [

@@ -81,11 +81,11 @@
                               {{ loan.item.thing.note }}
                           </div>
 
-                          <div class="text-danger" v-for="notification in loan.notifications">
-                              <a class="text-danger" :href="notification.url">
+                          <div v-for="notification in loan.notifications">
+                              <a class="btn text-danger" :href="notification.url">
                                   <em class="glyphicon glyphicon-envelope text-danger"></em>
-                                  Påminnelse</a>
-                              ble sendt {{ notification.created_at }}.
+                                  Påminnelse sendt {{ notification.created_at }}
+                              </a>
                           </div>
 
                       </td>

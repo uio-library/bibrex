@@ -116,9 +116,10 @@ class Loan extends Model
         return $hours;
     }
 
-    public function relativeCreationTime()
+    public function relativeCreationTime($lang = null)
     {
-        if ($this->user->lang == 'eng') {
+        $lang = $lang ?? $this->user->lang;
+        if ($lang == 'eng') {
             Carbon::setLocale('en');
             $msgs = [
                 'justnow' => 'just now',
@@ -154,14 +155,16 @@ class Loan extends Model
         }
         return str_replace(
             '{diff}',
-            $this->created_at->diffForHumans(Carbon::now(), true),
+            $this->created_at
+                ->setTime(0, 0, 0)
+                ->diffForHumans(Carbon::now(), true),
             $msgs['generic']
         );
     }
 
     public function getCreatedAtRelativeAttribute()
     {
-        return $this->relativeCreationTime();
+        return $this->relativeCreationTime('nob');
     }
 
     /**
