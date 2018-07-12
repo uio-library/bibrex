@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Item;
 use App\Loan;
 use App\Thing;
+use App\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -28,12 +29,14 @@ class RouteServiceProvider extends ServiceProvider
     {
         parent::boot();
 
+        Route::pattern('user', '([0-9]+|_new)');
+        Route::pattern('item', '([0-9]+|_new)');
+        Route::pattern('thing', '([0-9]+|_new)');
+
         Route::pattern('library', '[0-9]+');
-        Route::pattern('user', '[0-9]+');
         Route::pattern('user1', '[0-9]+');
         Route::pattern('user2', '[0-9]+');
         Route::pattern('loan', '[0-9]+');
-        Route::pattern('thing', '[0-9]+');
         Route::pattern('reminder', '[0-9]+');
         Route::pattern('notification', '[0-9]+');
         Route::pattern('ip', '[0-9]+');
@@ -51,6 +54,12 @@ class RouteServiceProvider extends ServiceProvider
             return $value == '_new'
                 ? new Item([ 'library_id' => \Auth::user()->id ])
                 : Item::withTrashed()->find($value) ?? abort(404);
+        });
+
+        Route::bind('user', function ($value) {
+            return $value == '_new'
+                ? new User()
+                : User::find($value) ?? abort(404);
         });
 
         Route::bind('loan', function ($value) {

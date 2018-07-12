@@ -2,57 +2,106 @@
     <div>
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" :class="{active: activeTab == 'checkout'}" id="nav-checkout-tab" href="#nav-checkout" role="tab" @click="onTabClick('checkout')" v-shortkey.once="checkoutShortkey" @shortkey="onTabClick('checkout')" v-b-tooltip.hover :title="'Snarvei: ' + checkoutShortkey.join('+')">Utlån</a>
+                <a class="nav-link" :class="{active: activeTab == 'checkout'}" id="nav-checkout-tab" href="#" role="tab" @click.prevent="onTabClick('checkout')" v-shortkey.once="checkoutShortkey" @shortkey="onTabClick('checkout')" v-b-tooltip.hover :title="'Snarvei: ' + checkoutShortkey.join('+')">Utlån</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" :class="{active: activeTab == 'checkin'}" id="nav-checkin-tab" href="#nav-checkin" role="tab" @click="onTabClick('checkin')" v-shortkey.once="checkinShortkey" @shortkey="onTabClick('checkin')" v-b-tooltip.hover :title="'Snarvei: ' + checkinShortkey.join('+')">Retur</a>
+                <a class="nav-link" :class="{active: activeTab == 'checkin'}" id="nav-checkin-tab" href="#" @click.prevent="onTabClick('checkin')" v-shortkey.once="checkinShortkey" @shortkey="onTabClick('checkin')" v-b-tooltip.hover :title="'Snarvei: ' + checkinShortkey.join('+')">Retur</a>
             </li>
         </ul>
         <div class="tab-content p-3 mb-3">
 
             <div class="tab-pane fade show" :class="{active: activeTab == 'checkout'}" id="nav-checkout" role="tabpanel" aria-labelledby="nav-checkout-tab">
                 <form method="post" class="form row px-2" @submit.prevent="checkout">
-                    <input name="_token" type="hidden" :value="csrf_token">
 
                     <div class="col-sm-5 px-2">
                         <label for="user">Til hvem?</label>
+                        <a id="userHelp" class="btn btn-link btn-small text-info" @click="showHelp1 = !showHelp1">
+                            <em class="far fa-question-circle"></em>
+                            Hjelp
+                        </a>
+                        <b-popover target="userHelp"
+                                 :show.sync="showHelp1"
+                                 triggers=""
+                                 placement="rightbottom"
+                                 ref="userHelpPopover"
+                                 title="Bruker">
+                            <ul>
+                                <li>
+                                    Her leser du vanligvis inn <a href="https://www.ub.uio.no/bruk/alt-om-lan/finn-lanenummer.html" target="_blank">låne-ID</a>, men du kan også skrive inn
+                                    personens navn.
+                                </li>
+                                <li>
+                                    <strong>Hvis personen ikke blir funnet</strong>:
+                                    Bibrex søker i sanntid mot Alma. Hvis en person ikke finnes der kan du skynde deg og registrere hen i <a href="https://bim.bibsys.no/" target="_blank">BIM</a> (<a href="https://www.uio.no/for-ansatte/enhetssider/ub/aktuelt/aktuelle-saker/2016/bim-bruksanvisning.pdf" target="_blank">bruksanvisning</a>).
+                                    I spesielle tilfeller, som når en student har fått et kort som ikke har blitt importert enda, kan du i stedet <a href="/users/_new/edit">opprette</a> en lokal bruker i Bibrex.
+                                </li>
+                                <li>
+                                    <strong>Effektivitetstips I</strong>: Du trenger ikke trykke i feltet før du leser inn eller begynner å skrive.
+                                </li>
+                                <li>
+                                    <strong>Effektivitetstips II</strong>: Still inn strekkodeleseren din din til å sende Enter på slutten, så hopper Bibrex rett til neste felt etter innlesing.
+                                </li>
+                            </ul>
+                        </b-popover>
+
                         <typeahead
                             :tabindex="1"
                             name="user"
                             :class="{'is-invalid': errors.user}"
+                            :value="currentUser"
                             @input="setCurrentUser($event)"
-                            prefetch="/users"
+                            prefetch="/users.json"
                             remote="/users/search-alma"
-                            placeholder="Til hvem?"
+                            placeholder="Navn eller låne-ID"
                             :min-length="4"
                             :alma="true"
                         ></typeahead>
-                        <div class="form-text text-muted" v-show="!errors.user">
+                        <!--<small class="form-text text-muted" v-show="!errors.user">
                             Navn eller låne-ID
-                        </div>
-                        <div class="invalid-feedback" v-show="errors.user">
-                          {{ errors.user }}
-                        </div>
+                        </small>-->
+                        <div class="text-danger" v-show="errors.user" v-html="errors.user"></div>
                     </div>
 
                     <div class="col-sm-5 px-2">
-                        <label for="thing">Hva?</label>
+                        <label for="thing">Hvilken ting?</label>
+                        <a id="thingHelp" class="btn btn-link btn-small text-info"  data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?" @click="showHelp2 = !showHelp2">
+                            <em class="far fa-question-circle"></em>
+                            Hjelp
+                        </a>
+                        <b-popover target="thingHelp"
+                                 :show.sync="showHelp2"
+                                 triggers=""
+                                 placement="rightbottom"
+                                 ref="thingHelpPopover"
+                                 title="Ting">
+                            <ul>
+                                <li>
+                                    Her leser du vanligvis inn strekkoden til tingen.
+                                </li>
+                                <li>
+                                    Hvis biblioteket tillater utlån av enkelte ting uten strekkode vil disse vises i en liste når du trykker i feltet eller begynner å skrive.
+                                </li>
+                                <li>
+                                    Finner du ikke tingen (eller et bestemt eksemplar av den), gå til siden <a href="/things">ting</a> for å registrere den.
+                                </li>
+                            </ul>
+                        </b-popover>
                         <typeahead
                             :tabindex="2"
                             name="thing"
                             :class="{'is-invalid': errors.thing}"
+                            :value="currentThing"
                             @input="setCurrentThing($event)"
                             prefetch="/things.json?withoutBarcode=1"
                             remote="/items/search"
+                            placeholder="Scann eller velg ting"
                             :min-length="0"
                             :limit="30"
                         ></typeahead>
-                        <small class="form-text text-muted" v-show="!errors.thing">
+                        <!--<small class="form-text text-muted" v-show="!errors.thing">
                             Scann eller velg ting
-                        </small>
-                        <div class="invalid-feedback" v-show="errors.thing">
-                          {{ errors.thing }}
-                        </div>
+                        </small>-->
+                        <div class="text-danger" v-show="errors.thing" v-html="errors.thing"></div>
                     </div>
 
                     <div class="col px-2">
@@ -67,7 +116,6 @@
 
             <div class="tab-pane fade show" :class="{active: activeTab == 'checkin'}" id="nav-checkin" role="tabpanel" aria-labelledby="nav-checkin-tab">
                 <form method="post" class="form row px-2" @submit.prevent="checkin">
-                    <input name="_token" type="hidden" :value="csrf_token">
 
                     <div class="col-sm-8 px-2">
                         <label for="barcode">Strekkode:</label>
@@ -99,12 +147,15 @@
 import { get } from 'lodash/object';
 import axios from 'axios';
 import platform from 'platform';
+import bPopover from 'bootstrap-vue/es/components/popover/popover';
 import Typeahead from './Typeahead';
 import SpinButton from './SpinButton';
 
 export default {
     props: {
         libraryId: Number,
+        user: Object,
+        thing: Object,
     },
     computed: {
         checkoutShortkey() {
@@ -124,6 +175,8 @@ export default {
     },
     data: () => {
         return {
+            showHelp1: false,
+            showHelp2: false,
             activeTab: 'checkout',
             errors: {
                 user: null,
@@ -134,7 +187,6 @@ export default {
             currentThing: {},
             currentBarcode: '',
             busy: false,
-            csrf_token: '',
         };
     },
     methods: {
@@ -163,21 +215,6 @@ export default {
             this.activeTab = tab;
             setTimeout(this.focusFirstTextInput.bind(this), 0);
         },
-        getSuccessMsg(loan) {
-            let msg = `Utlån av ${loan.item.thing.properties.name_indefinite.nob} til ${loan.user.name} registrert`;
-
-            switch (Math.floor(Math.random() * 20)) {
-                case 0:
-                    msg += ' (og verden har forøvrig ikke gått under)';
-                    break;
-                case 1:
-                    msg += ' (faktisk helt sant)';
-                    break;
-            }
-
-            msg += `. Lånetid: ${loan.days_left} ${loan.days_left == 1 ? 'dag' : 'dager'}.`;
-            return msg;
-        },
         checkout() {
 
             if (!this.currentThing.name) {
@@ -200,7 +237,11 @@ export default {
             .then(response => {
                 this.busy = false;
                 this.$root.$emit('updateLoansTable', {loan: response.data.loan});
-                this.$root.$emit('status', {message: this.getSuccessMsg(response.data.loan)});
+                this.$root.$emit('status', {
+                    message: get(response, 'data.status'),
+                    editLink: get(response, 'data.editLink'),
+                    variant: get(response, 'data.warn') ? 'warning' : 'success' ,
+                });
             })
             .catch(error => {
                 this.busy = false;
@@ -253,24 +294,32 @@ export default {
             });
         },
     },
+    created() {
+        this.currentUser = this.user || {name:""};
+        this.currentThing = this.thing || {name:""};
+    },
     mounted() {
-        this.csrf_token = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-
         window.addEventListener('keypress', (evt) => {
             if (evt.altKey || evt.ctrlKey || evt.metaKey) return;
-            if (evt.target == document.body && evt.key) {
-                var code = evt.which || evt.keyCode;
+            if (evt.target === document.body && evt.key) {
+                let code = evt.which || evt.keyCode;
                 if (code <= 32) {
                     return;
                 }
-
                 setTimeout(() => {
                     this.focusFirstTextInput().value += evt.key;
                 });
             }
         });
+        window.addEventListener('click', (evt) => {
+            if (['A', 'BUTTON', 'I', 'EM'].indexOf(evt.target.tagName) == -1) {
+                if (this.showHelp1) this.showHelp1 = false;
+                if (this.showHelp2) this.showHelp2 = false;
+            }
+        });
     },
     components: {
+        'b-popover': bPopover,
         'typeahead': Typeahead,
         'spin-button': SpinButton,
     }

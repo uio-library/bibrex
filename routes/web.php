@@ -49,11 +49,11 @@ Route::middleware(['auth'])->group(function () {
     // --[[ USER ]]--
     Route::get('/users', 'UsersController@getIndex');
     Route::get('/users/search-alma', 'UsersController@searchAlma');
-    Route::get('/users.json', 'UsersController@getIndexAsJson');
+    Route::get('/users.json', 'UsersController@json');
     Route::get('/users/{user}', 'UsersController@getShow');
     Route::get('/users/{user}/edit', 'UsersController@getEdit');
     Route::get('/users/{user}/sync', 'UsersController@getNcipLookup');
-    Route::put('/users/{user}', 'UsersController@putUpdate');
+    Route::post('/users/{user}', 'UsersController@upsert');
     Route::get('/users/merge/{user1}/{user2}', 'UsersController@getMerge');
     Route::post('/users/merge/{user1}/{user2}', 'UsersController@postMerge');
     Route::get('/users/delete/{user}', 'UsersController@deleteForm');

@@ -88,6 +88,80 @@ class CheckoutCheckinTest extends DuskTestCase
     }
 
     /**
+     * Test that we can enter the name of an non-existing user and get guided through the creation of a local user.
+     */
+    public function testCheckoutUsingNameOfNonExistingUser()
+    {
+        $this->browse(
+            function (Browser $browser) {
+                $faker = app('Faker\Generator');
+                $browser->loginAs('post@eksempelbiblioteket.no');
+
+                $lastname = $faker->lastName;
+                $firstname = $faker->firstName;
+                $fullname = "$lastname, $firstname";
+
+                $browser->visit(new LoansPage)
+                    ->type('user', $fullname)
+                    ->type('thing', $this->items[0]->barcode)
+                    ->clickLink('Lån ut', 'button')
+                    ->waitForText('Brukeren ble ikke funnet lokalt eller i Alma')
+                    ->clickLink('opprette en lokal bruker')
+                    ->waitForText('Opprett lokal bruker')
+                    ->assertInputValue('lastname', $lastname)
+                    ->assertInputValue('firstname', $firstname)
+                    ->type('email', $faker->email)
+                    ->press('Lagre')
+                    ->waitForText('Brukeren ble opprettet')
+                    ->assertInputValue('user', $fullname)
+                    ->type('thing', $this->items[0]->barcode)
+                    ->clickLink('Lån ut', 'button')
+                    ->waitForText('registrert')
+                    ->waitForText('nå nettopp');
+            }
+        );
+    }
+
+    /**
+     * Test that we can enter the barcode of an non-existing user and get guided through the creation of a local user.
+     */
+    public function testCheckoutUsingBarcodeOfNonExistingUser()
+    {
+        $this->browse(
+            function (Browser $browser) {
+                $faker = app('Faker\Generator');
+                $faker->addProvider(new \Tests\Faker\Library($faker));
+
+                $browser->loginAs('post@eksempelbiblioteket.no');
+
+                $barcode = $faker->userBarcode;
+                $lastname = $faker->lastname;
+                $firstname = $faker->firstname;
+                $fullname = "$lastname, $firstname";
+
+                $browser->visit(new LoansPage)
+                    ->type('user', $barcode)
+                    ->type('thing', $this->items[0]->barcode)
+                    ->clickLink('Lån ut', 'button')
+                    ->waitForText('Strekkoden ble ikke funnet lokalt eller i Alma')
+                    ->clickLink('opprett en lokal bruker')
+                    ->waitForText('Opprett lokal bruker')
+                    ->assertInputValue('barcode', $barcode)
+                    ->type('lastname', $lastname)
+                    ->type('firstname', $firstname)
+                    ->type('email', $faker->email)
+                    ->press('Lagre')
+                    ->waitForText('Brukeren ble opprettet')
+                    ->assertInputValue('user', $fullname)
+                    ->type('thing', $this->items[0]->barcode)
+                    ->clickLink('Lån ut', 'button')
+                    ->waitForText('registrert')
+                    ->waitForText('nå nettopp');
+            }
+        );
+    }
+
+    /**
      * Test that we can checkout an item using the name of a thing if loans_without_barcode is activated.
      */
     public function testCheckoutUsingNameOfThing()

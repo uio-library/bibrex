@@ -22,16 +22,21 @@
                   <tr v-for="loan in loans" :class="{ 'highlight': highlight.indexOf(loan.id) !== -1 }">
 
                       <td>
-                          <a :href="loan.url">{{ loan.item.thing.name }}</a>
-                          <span v-if="loan.item.barcode">(<samp>{{ loan.item.barcode }}</samp>)</span>
+                          <a :href="loan.url">{{ loan.item.thing.name }}
+                              <span v-if="loan.item.barcode">(<samp>{{ loan.item.barcode }}</samp>)</span>
+                          </a>
                       </td>
 
                       <td :data-order="loan.user.name">
-                          <i v-if="loan.user.in_alma" class="far fa-user-check text-success" title="Importert fra Alma"></i>
-                          <a v-else-if="loan.user.barcode" :href="loan.user.id + '/sync'" title="Prøv å importere brukeropplysninger fra Alma">
+                          <i v-if="loan.user.in_alma" class="far fa-user-check text-success" v-b-tooltip.hover title="Importert fra Alma"></i>
+                          <a v-else-if="loan.user.barcode"
+                              :href="loan.user.url + '/sync'"
+                              v-b-tooltip.hover
+                              title="Prøv å importere brukeropplysninger fra Alma"
+                          >
                               <i class="far fa-sync text-warning"></i>
                           </a>
-                          <i v-else class="far fa-exclamation-triangle text-danger"></i>
+                          <i v-else class="far far fa-user text-danger" v-b-tooltip.hover title="Mangler strekkode"></i>
                           <a :href="loan.user.url">{{ loan.user.name }}</a>
                       </td>
 
@@ -40,25 +45,25 @@
                       </td>
 
                       <td :data-order="loan.due_at">
-                          <a class="btn" title="Rediger forfallsdato" :href="loan.url + '/edit'">
-                              <span v-if="loan.days_left > 1" style="color: green">om {{ loan.days_left }} dager</span>
-                              <span v-else-if="loan.days_left == 1" style="color: orange">i morgen</span>
-                              <span v-else-if="loan.days_left == 0" style="color: red">i dag</span>
-                              <span v-else-if="loan.days_left == -1" style="color: red">i går</span>
-                              <span v-else style="color: red">for {{ -loan.days_left }} dager siden</span>
+                          <a :class="loan.dueDateClass" title="Rediger forfallsdato" :href="loan.url + '/edit'">
+                              {{ loan.dueDateText }}
                               <i class="far fa-pencil"></i>
                           </a>
                       </td>
 
                       <td>
-                          <div class="text-danger" v-if="!loan.user.barcode">
-                              <em class="far fa-exclamation-triangle"></em>
-                              OBS: Ingen låne-ID registrert på brukeren!
+                          <div v-if="!loan.user.barcode">
+                              <a :href="loan.user.url + '/edit'" class="text-danger">
+                                  <em class="far fa-exclamation-triangle"></em>
+                                  OBS: Ingen låne-ID registrert på brukeren!
+                              </a>
                           </div>
 
-                          <div class="text-danger" v-if="!loan.user.email">
-                              <em class="far fa-exclamation-triangle"></em>
-                              OBS: Ingen e-postadresse registrert på brukeren!
+                          <div v-if="!loan.user.email">
+                              <a :href="loan.user.url + '/edit'" class="text-danger">
+                                  <em class="far fa-exclamation-triangle"></em>
+                                  OBS: Ingen e-postadresse registrert på brukeren!
+                              </a>
                           </div>
 
                           <div class="text-info" v-if="loan.user.note">
@@ -66,23 +71,29 @@
                               {{ loan.user.note }}
                           </div>
 
-                          <div class="text-info" v-b-tooltip.hover title="Merknad på lånet" v-if="loan.note">
-                              <i class="far fa-comment"></i>
-                              {{ loan.note }}
+                          <div v-if="loan.note">
+                              <span class="text-info" v-b-tooltip.hover title="Merknad på lånet">
+                                  <i class="far fa-comment"></i>
+                                  {{ loan.note }}
+                              </span>
                           </div>
 
-                          <div class="text-info" v-b-tooltip.hover title="Merknad på eksemplaret" v-if="loan.item.note">
-                              <i class="far fa-comment"></i>
-                              {{ loan.item.note }}
+                          <div v-if="loan.item.note">
+                              <span class="text-info" v-b-tooltip.hover title="Merknad på eksemplaret">
+                                  <i class="far fa-comment"></i>
+                                  {{ loan.item.note }}
+                              </span>
                           </div>
 
-                          <div class="text-info" v-b-tooltip.hover title="Merknad på tingen" v-if="loan.item.thing.note">
-                              <i class="far fa-comment"></i>
-                              {{ loan.item.thing.note }}
+                          <div v-if="loan.item.thing.note">
+                              <span class="text-info" v-b-tooltip.hover title="Merknad på tingen">
+                                  <i class="far fa-comment"></i>
+                                  {{ loan.item.thing.note }}
+                              </span>
                           </div>
 
                           <div v-for="notification in loan.notifications">
-                              <a class="btn text-danger" :href="notification.url">
+                              <a class="text-danger" :href="notification.url">
                                   <em class="glyphicon glyphicon-envelope text-danger"></em>
                                   Påminnelse sendt {{ notification.created_at }}
                               </a>
@@ -137,7 +148,25 @@ export default {
                 this.loans = [];
                 Vue.nextTick(() => {
                     this.highlight = highlight;
-                    this.loans = res.data;
+                    this.loans = res.data.map(loan => {
+                        if (loan.days_left > 1) {
+                          loan.dueDateClass = 'text-success';
+                          loan.dueDateText = `om ${loan.days_left} dager`;
+                        } else if (loan.days_left == 1) {
+                          loan.dueDateClass = 'text-warning';
+                          loan.dueDateText = `i morgen`;
+                        } else if (loan.days_left == 0) {
+                          loan.dueDateClass = 'text-danger';
+                          loan.dueDateText = `i dag`;
+                        } else if (loan.days_left == -1) {
+                          loan.dueDateClass = 'text-danger';
+                          loan.dueDateText = `i går`;
+                        } else {
+                          loan.dueDateClass = 'text-danger';
+                          loan.dueDateText = `for ${-loan.days_left} dager siden`;
+                        }
+                        return loan;
+                    });
                 });
             })
             .catch(error => {

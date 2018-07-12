@@ -7,6 +7,8 @@ use Scriptotek\Alma\Users\User as AlmaUser;
 class User
 {
     public $primaryId;
+    public $barcode;
+    public $universityId;
     public $group;
     public $email;
     public $phone;
@@ -14,21 +16,15 @@ class User
     public $firstName;
     public $lastName;
     public $name;
-    public $barcode;
-    public $university_id;
     public $type = 'alma';
 
     protected $user;
-    protected $expanded = false;
 
-    protected function isLTID($value)
+    public static function isUserBarcode($value)
     {
-        return (                                            // If
-            preg_match('/^[0-9a-zA-Z]{10}$/', $value) &&    // ... it's 10 characters long
-            preg_match('/[0-9]{6,}/', $value)               // ... and contains at least six adjacent numbers
-        );                                                  // ... we assume it's a LTID :)
+        // 2-5 letters followed by 5-8 digits, making up 10 characters in total.
+        return preg_match('/^[a-zA-Z]{2}[0-9a-zA-Z]{3}[0-9a-zA-Z]{5}$/', $value);
     }
-
 
     public function __construct(AlmaUser $user)
     {
@@ -59,28 +55,16 @@ class User
         $this->name = $this->lastName . ', ' . $this->firstName;
     }
 
-    protected function expand()
-    {
-        if ($this->expanded) {
-            return;
-        }
-        $this->user->fetch();
-        $this->barcode = $this->user->getBarcode();
-        $this->university_id = $this->user->getUniversityId();
-    }
-
     public function getBarcode()
     {
-        if ($this->isLTID($this->primaryId)) {
+        if (self::isUserBarcode($this->primaryId)) {
             return $this->primaryId;
         }
-        $this->expand();
-        return $this->barcode;
+        return $this->user->barcode;
     }
 
     public function getUniversityId()
     {
-        $this->expand();
-        return $this->university_id;
+        return $this->user->universityId;
     }
 }

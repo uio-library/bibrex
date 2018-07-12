@@ -66,19 +66,10 @@ class Loan extends Model
 
     public function representation($plaintext = false)
     {
-        if ($this->item->thing->id == 1) {
-            $s = rtrim($this->item->title, ' :')
-                . ($this->item->subtitle ? ' : ' . $this->item->subtitle : '');
-            if (!$plaintext) {
-                $s .= ' <small>(' . $this->item->barcode . ')</small>';
-            }
-            return $s;
+        if ($this->item->barcode) {
+            return "{$this->item->thing->name} <samp>(#{$this->item->barcode})</samp>";
         } else {
-            if ($this->item->barcode) {
-                return "{$this->item->thing->name} <tt>(#{$this->item->barcode})</tt>";
-            } else {
-                return $this->item->thing->name;
-            }
+            return $this->item->thing->name;
         }
     }
 

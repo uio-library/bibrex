@@ -31,11 +31,16 @@
             <em>Ingen</em>
         </li>
       @endif
-      @foreach ($thing->items()->whereNotNull('barcode')->orderBy('library_id')->orderBy('barcode')->get() as $item)
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+      @foreach ($thing->items()->whereNotNull('barcode')->with('loans')->orderBy('library_id')->orderBy('barcode')->get() as $item)
+        <li class="list-group-item d-flex justify-content-between">
+          <div>
             <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->barcode }}</samp></a>
-            <span>{{ $item->note }}</span>
-            <span>{{ $item->library->name }}</span>
+              @if ($item->activeLoan)
+                <a href="{{ action('LoansController@getShow', $item->activeLoan->id) }}"><span class="badge badge-success">Utlånt</span></a>
+              @endif
+          </div>
+          <div>{{ $item->note }}</div>
+          <div>{{ $item->library->name }}</div>
         </li>
       @endforeach
     </ul>

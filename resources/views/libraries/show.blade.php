@@ -12,9 +12,8 @@
 
     <div class="card-body">
 
-      Navn: {{$library->name}}<br />
+      Navn: {{$library->name}} / {{$library->name_eng}}<br />
       Epost: {{$library->email}}<br />
-      Gjeste-LTID: {{$library->guest_ltid}}
 
     </div>
   </div>

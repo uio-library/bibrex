@@ -14,9 +14,11 @@ class UserExists implements Rule
      *
      * @param User $user
      */
-    public function __construct(User $user = null)
+    public function __construct(User $user = null, $suggestions = [])
     {
         $this->user = $user;
+        $suggestions['user'] = '_new';
+        $this->suggestions = $suggestions;
     }
 
     /**
@@ -38,12 +40,21 @@ class UserExists implements Rule
      */
     public function message()
     {
-        if (!array_get(\Auth::user()->options, 'guestcard_for_cardless_loans', false)) {
-            return 'Brukeren ble ikke funnet lokalt eller i Alma.' .
-                ' Hvis du vil at Bibrex skal opprette lokale brukere i slike tilfeller kan du skru på dette i' .
-                ' <a href="' . action('LibrariesController@getMyAccount') . '">kontoinnstillingene</a>.';
+        if (isset($this->suggestions['barcode'])) {
+            return sprintf(
+                'Strekkoden ble ikke funnet lokalt eller i Alma. ' .
+                'Sjekk om brukeren har fått nytt kort ved å søke på brukerens navn, eller ' .
+                '<a href="%s">opprett en lokal bruker</a>.',
+                action('UsersController@getEdit', $this->suggestions)
+            );
         }
 
-        return 'Brukeren ble ikke funnet lokalt eller i Alma.';
+        return sprintf(
+            'Brukeren ble ikke funnet lokalt eller i Alma. ' .
+            'Du kan registrere hen i <a href="%s" target="_blank">BIM</a> eller evt. ' .
+            '<a href="%s">opprette en lokal bruker</a>.',
+            'https://bim.bibsys.no/',
+            action('UsersController@getEdit', $this->suggestions)
+        );
     }
 }

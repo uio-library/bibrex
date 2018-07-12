@@ -31,6 +31,9 @@
 
   @endif--}}
 
-  <checkout-checkin :library-id="{{ \Auth::user()->id }}"></checkout-checkin>
+  <checkout-checkin :library-id="{{ $library_id }}"
+                    :user="{{ json_encode($user) }}"
+                    :thing="{{ json_encode($thing) }}"
+  ></checkout-checkin>
 
 @stop

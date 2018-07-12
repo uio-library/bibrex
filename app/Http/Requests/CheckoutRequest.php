@@ -8,6 +8,7 @@ use App\Rules\NotOnLoan;
 use App\Rules\RequiresBarcode;
 use App\Rules\ThingExists;
 use App\Rules\UniqueAlmaUser;
+use App\Rules\UserBarcodeExists;
 use App\Rules\UserExists;
 use App\Thing;
 use App\User;
@@ -85,7 +86,6 @@ class CheckoutRequest extends FormRequest
         // ======================== Lookup or import user ========================
 
         $user = null;
-        $localUser = false;
 
         if (empty(array_get($input, 'user.name'))) {
             // No user was entered
@@ -106,13 +106,13 @@ class CheckoutRequest extends FormRequest
 
             if (strpos($userValue, ',') !== false) {
                 // Try looking up local user by name
-                $name = explode(',', $userValue);
-                $name = array_map('trim', $name);
-                $user = User::where('lastname', '=', $name[0])
-                    ->where('firstname', '=', $name[1])
+                $fullname = explode(',', $userValue);
+                $fullname = array_map('trim', $fullname);
+                $user = User::where('lastname', '=', $fullname[0])
+                    ->where('firstname', '=', $fullname[1])
                     ->first();
             } else {
-                $name = null;
+                $fullname = null;
 
                 // Try looking up local user by barcode
                 $user = User::where('barcode', '=', $userValue)
@@ -140,29 +140,27 @@ class CheckoutRequest extends FormRequest
             }
 
             if (is_null($user)) {
-                if (!array_get($lib->options, 'guestcard_for_cardless_loans', false)) {
-                    return ['user' => [new UserExists(null)]];
+                // User was not found locally or in Alma.
+
+                // If the input looks like a barcode, we will make suggestions based on that.
+                if (AlmaUser::isUserBarcode($userValue)) {
+                    return ['user' => [new UserExists(null, [
+                        'barcode' => $userValue,
+                    ])]];
                 }
 
-                // If user was not found in Alma, create a local user if possible.
-                if (!is_null($name)) {
-                    $user = User::create([
-                        'firstname' => $name[0],
-                        'lastname' => $name[1]
-                    ]);
-                    \Log::info('Oppretter lokal bruker: ' . $user->lastname . ', ' . $user->firstname);
-                    $localUser = true;
-                } else {
-                    // Create local user for card??
-                    // if ($this->isLTID($user_input)) {
-                    // }
+                // If the input looks like a name, we will make suggestions based on that.
+                if (!is_null($fullname)) {
+                    return ['user' => [new UserExists(null, [
+                        'firstname' => $fullname[1],
+                        'lastname' => $fullname[0],
+                    ])]];
                 }
             }
         }
 
         $this->user = $user;
         $this->item = $item;
-        $this->localUser = $localUser;
 
         return [
             'user' => [new UserExists($user)],

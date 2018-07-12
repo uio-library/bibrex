@@ -19,7 +19,7 @@ class ThingsTest extends DuskTestCase
         $this->faker = $this->app->make('Faker\Generator');
     }
 
-    public function testCreateThing()
+    public function testCanCreateThing()
     {
         $thingName = $this->faker->sentence(3);
         $this->browse(

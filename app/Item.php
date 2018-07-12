@@ -44,6 +44,13 @@ class Item extends Model
         return $this->belongsTo(Library::class, 'library_id');
     }
 
+    public function activeLoan()
+    {
+        return $this->hasOne(Loan::class)
+            ->with('user')
+            ->whereNull('deleted_at');
+    }
+
     public function loans()
     {
         return $this->hasMany(Loan::class)

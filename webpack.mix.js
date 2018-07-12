@@ -20,6 +20,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
             /^alert-/, /^visible/,               // Alerts
             /^tt-/, /typeahead/,                 // Typeahead.vue
             /(bs-)?tooltip/, /^(fade|show)$/,    // VueBootstrap tooltip
+            /popover/, /arrow/,                  // VueBootstrap popover
             /dataTable/,                         // DataTables
             /^badge-/,                           // logs.index
             /col-/,                              // Bootstrap column layout used by datatables

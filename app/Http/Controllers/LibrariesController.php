@@ -31,11 +31,6 @@ class LibrariesController extends Controller
 
     protected $lib;
 
-    public function __construct(Library $lib)
-    {
-        $this->libFactory = $lib;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -98,8 +93,7 @@ class LibrariesController extends Controller
         );
         \Validator::make($request->all(), $rules, $this->messages)->validate();
 
-        $lib = new $this->libFactory();
-
+        $lib = new Library();
         $lib->password = $this->validateAndHashPassword($request->input('password'), $request->input('password2'));
         $lib->name = $request->input('name');
         $lib->name_eng = $request->input('name_eng');
@@ -118,18 +112,14 @@ class LibrariesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  string  $id
+     * @param Library $library
      * @return Response
      */
-    public function getShow($id)
+    public function getShow(Library $library)
     {
-        $lib = $this->libFactory->find($id);
-        if (!$lib) {
-            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-        }
-        return response()->view('libraries.show', array(
-            'library' => $lib
-        ));
+        return response()->view('libraries.show', [
+            'library' => $library
+        ]);
     }
 
     public function getLogin()
@@ -178,35 +168,22 @@ class LibrariesController extends Controller
 
     public function getMyAccount()
     {
-        $lib = Auth::user();
-        if (!$lib) {
-            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-        }
         return response()->view('libraries.my', array(
-            'library' => $lib
+            'library' => Auth::user(),
         ));
     }
 
     public function postStoreMyAccount(Request $request)
     {
-        $lib = Auth::user();
-        if (!$lib) {
-            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-        }
+        $library = Auth::user();
+        $library->name = $request->input('name');
+        $library->email = $request->input('email');
+        $library->guest_ltid = $request->input('guest_ltid') ? $request->input('guest_ltid') : null;
+        $library->email = $request->input('email') ? $request->input('email') : null;
 
-        $lib->name = $request->input('name');
-        $lib->email = $request->input('email');
-        $lib->guest_ltid = $request->input('guest_ltid') ? $request->input('guest_ltid') : null;
-        $lib->email = $request->input('email') ? $request->input('email') : null;
-
-        $options = $lib->options;
-        $options['guestcard_for_nonworking_cards'] = ($request->input('guestcard_for_nonworking_cards') == 'true');
-        $options['guestcard_for_cardless_loans'] = ($request->input('guestcard_for_cardless_loans') == 'true');
-        $lib->options = $options;
-
-        if (!$lib->save()) {
+        if (!$library->save()) {
             return redirect()->back()
-                ->withErrors($lib->errors)
+                ->withErrors($library->errors)
                 ->withInput();
         }
 
@@ -216,33 +193,26 @@ class LibrariesController extends Controller
                 ->with('password', $password);
         }
 
-        return redirect()->action('LibrariesController@getShow', $lib->id)
+        return redirect()->action('LibrariesController@getShow', $library->id)
             ->with('status', 'Kontoinformasjonen ble lagret.');
     }
 
     public function getPassword()
     {
-        $lib = Auth::user();
-        if (!$lib) {
-            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-        }
+        $library = Auth::user();
         return response()->view('libraries.password', array(
-            'library' => $lib,
+            'library' => $library,
             'password' => Session::get('password'),
         ));
     }
 
     public function postPassword(Request $request)
     {
-        $lib = Auth::user();
-        if (!$lib) {
-            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-        }
+        $library = Auth::user();
+        $library->password = $this->validateAndHashPassword($request->input('password'), $request->input('password1'));
+        $library->save();
 
-        $lib->password = $this->validateAndHashPassword($request->input('password'), $request->input('password1'));
-        $lib->save();
-
-        return redirect()->action('LibrariesController@getShow', $lib->id)
+        return redirect()->action('LibrariesController@getShow', $library->id)
             ->with('status', 'Nytt passord ble satt.');
     }
 
@@ -253,31 +223,23 @@ class LibrariesController extends Controller
      */
     public function getMyIps()
     {
-
-        $lib = Auth::user();
-        if (!$lib) {
-            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-        }
-
-        return response()->view('libraries.ips.index', array(
-            'library' => $lib
-        ));
+        return response()->view('libraries.ips.index', [
+            'library' => Auth::user(),
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
+     * @param Request $request
      * @return Response
      */
     public function storeIp(Request $request)
     {
-        $lib = Auth::user();
-        if (!$lib) {
-            return response()->view('errors.404', array('what' => 'Biblioteket'), 404);
-        }
+        $library = Auth::user();
 
         $ip = new LibraryIp(array(
-            'library_id' => $lib->id,
+            'library_id' => $library->id,
             'ip' => $request->input('ip')
         ));
 
@@ -299,9 +261,9 @@ class LibrariesController extends Controller
      */
     public function removeIp(LibraryIp $ip)
     {
-        $lib = Auth::user();
+        $library = Auth::user();
 
-        if ($ip->library_id != $lib->id) {
+        if ($ip->library_id != $library->id) {
             return redirect()->action('LibrariesController@getMyIps')
                 ->with('status', 'IP-adressen hører ikke til ditt bibliotek.');
         }

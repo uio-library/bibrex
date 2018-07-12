@@ -11,7 +11,6 @@ export default {
         },
     },
     mounted() {
-        console.log('Mounting table', new Date());
         var $hl = $(this.$el).find('.highlight');
         setTimeout(() => {
             $hl.addClass('highlight-active');

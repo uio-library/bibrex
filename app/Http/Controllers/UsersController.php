@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Alma\User as AlmaUser;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use LimitIterator;
@@ -13,9 +14,10 @@ class UsersController extends Controller
 {
 
     private $messages = [
-        'barcode.regex' => 'Strekkoden er ikke på riktig format.',
-        'barcode.unique' => 'Det finnes allerede en annen bruker med denne strekkoden. ' .
-            'Du kan eventuelt slå dem sammen i brukeroversikten.',
+        'barcode.regex' => 'Låne-ID er ikke på riktig format.',
+        'university_id.regex' => 'Feide-ID er ikke på riktig format (brukernavn@institusjon.no).',
+        'barcode.unique' => 'Det finnes allerede en annen bruker med denne strekkoden.',
+        'university_id.unique' => 'Det finnes allerede en annen bruker med denne Feide-IDen.',
         'lastname.required' => 'Etternavn må fylles inn.',
         'firstname.required' => 'Fornavn må fylles inn.',
         'email.required_without' => 'Enten e-post eller telefonnummer må fylles inn.',
@@ -42,13 +44,32 @@ class UsersController extends Controller
             );
         }
 
-        if ($request->ajax()) {
-            return response()->json($users);
-        }
-
         return response()->view('users.index', [
             'users' => $users,
         ]);
+    }
+
+    /**
+     * Display a listing of the resource as json.
+     *
+     * @param  Request $request
+     * @return Response
+     */
+    public function json(Request $request)
+    {
+        $users = [];
+        foreach (User::get() as $user) {
+            $users[] = [
+                'id' => $user->id,
+                'primaryId' => $user->alma_primary_id,
+                'group' => $user->alma_user_group,
+                'name' => $user->lastname . ', ' . $user->firstname,
+                'barcode' => $user->barcode,
+                'type' => 'local',
+            ];
+        }
+
+        return response()->json($users);
     }
 
     /**
@@ -103,14 +124,14 @@ class UsersController extends Controller
     public function getNcipLookup(AlmaClient $alma, User $user)
     {
         if (!$user->barcode) {
-            return back()->with('error', 'Du må registrere Låne-ID for brukeren før du kan importere.');
+            return back()->with('error', 'Du må registrere låne-ID for brukeren før du kan importere.');
         }
         $query = 'ALL~' . $user->barcode;
         $users = collect($alma->users->search($query, ['limit' => 1]))->map(function ($u) {
             return new AlmaUser($u);
         });
         if (!count($users)) {
-            return back()->with('error', 'Brukeren ble ikke funnet i Alma. Kanskje hen har fått ny låntaker-ID?');
+            return back()->with('error', 'Fant ikke låne-ID-en ' . $user->barcode . ' i Alma 😭 ');
         }
 
         $user->mergeFromAlmaResponse($users[0]);
@@ -123,10 +144,20 @@ class UsersController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param User $user
+     * @param Request $request
      * @return Response
      */
-    public function getEdit(User $user)
+    public function getEdit(User $user, Request $request)
     {
+        if (!$user->id) {
+            $user->barcode = $request->barcode;
+            $user->university_id = $request->university_id;
+            $user->lastname = $request->lastname;
+            $user->firstname = $request->firstname;
+            $user->phone = $request->phone;
+            $user->email = $request->email;
+        }
+
         return response()->view('users.edit', array(
             'user' => $user
         ));
@@ -139,10 +170,11 @@ class UsersController extends Controller
      * @param  Request $request
      * @return Response
      */
-    public function putUpdate(User $user, Request $request)
+    public function upsert(User $user, Request $request)
     {
         \Validator::make($request->input(), [
             'barcode' => 'nullable|regex:/^[0-9a-zA-Z]{10}$/|unique:users,barcode' . ($user->id ? ',' . $user->id : ''),
+            'university_id' => 'nullable|regex:/@/|unique:users,university_id' . ($user->id ? ',' . $user->id : ''),
             'lastname' => 'required',
             'firstname' => 'required',
             'email' => 'requiredWithout:phone',
@@ -150,14 +182,27 @@ class UsersController extends Controller
         ], $this->messages)->validate();
 
         $user->barcode = $request->input('barcode');
+        $user->university_id = $request->input('university_id');
         $user->lastname = $request->input('lastname');
         $user->firstname = $request->input('firstname');
         $user->phone = $request->input('phone');
         $user->email = $request->input('email');
         $user->note = $request->input('note');
         $user->lang = $request->input('lang');
+        $user->last_loan_at = Carbon::now();
+        $newUser = !$user->exists;
         if (!$user->save()) {
             dd('Oi');
+        }
+
+        if ($newUser) {
+            return redirect()->action('LoansController@getIndex')
+                ->with('status', 'Brukeren ble opprettet.')
+                ->with('user', [
+                    'type' => 'local',
+                    'id' => $user->id,
+                    'name' => $user->lastname . ', ' . $user->firstname,
+                ]);
         }
 
         return redirect()->action('UsersController@getShow', $user->id)
@@ -209,6 +254,21 @@ class UsersController extends Controller
     }
 
     /**
+     * Show the form for creating the specified resource.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function createForm(Request $request)
+    {
+        $user = User::make();
+
+        return response()->view('users.create', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
      * Show the form for deleting the specified resource.
      *
      * @param User $user
@@ -248,6 +308,6 @@ class UsersController extends Controller
         \Log::info(sprintf('Slettet brukeren med ID %d', $user_id));
 
         return redirect()->action('UsersController@getIndex')
-            ->with('status', "Brukeren $name ble slettet.");
+            ->with('status', "Brukeren $name ble slettet (men slapp av, du har ikke drept noen).");
     }
 }

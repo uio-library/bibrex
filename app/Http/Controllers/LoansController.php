@@ -43,15 +43,19 @@ class LoansController extends Controller
      */
     public function getIndex(Request $request)
     {
-        $library = \Auth::user();
+        $user = $request->input('user')
+            ? ['name' => $request->input('user')]
+            : $request->session()->get('user');
 
-        $r = response()->view('loans.index', array(
-            'loan_ids' => \Session::get('loan_ids', array()),
-            'tab' => \Session::get('tab', 'default'),
-        ));
+        $thing = $request->input('thing')
+            ? ['name' => $request->input('thing')]
+            : $request->session()->get('thing');
 
-        $r->header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');
-        return $r;
+        return response()->view('loans.index', [
+            'library_id' => \Auth::user()->id,
+            'user' => $user,
+            'thing' => $thing,
+        ])->header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');
     }
 
     /**
@@ -120,19 +124,26 @@ class LoansController extends Controller
 
         $loan->load('user', 'item', 'item.thing');
 
-        if ($request->localUser) {
-            return response()->json([
-                'status' => 'Utlånet ble registrert. VIKTIG: Siden dette er en ny låner må du registrere ' .
-                    'litt informasjon om vedkommende.',
-                'user' => action('UsersController@getEdit', $request->user->id),
-                'loan' => $loan,
-            ]);
-        } else {
-            return response()->json([
-                'status' => 'Utlånet ble registrert.',
-                'loan' => $loan,
-            ]);
-        }
+        // getSuccessMsg(loan) {
+        //     let msg = `Utlån av ${loan.item.thing.properties.name_indefinite.nob} til ${loan.user.name} registrert`;
+
+        //     switch (Math.floor(Math.random() * 20)) {
+        //         case 0:
+        //             msg += ' (og verden har forøvrig ikke gått under)';
+        //             break;
+        //         case 1:
+        //             msg += ' (faktisk helt sant)';
+        //             break;
+        //     }
+
+        //     msg += `. Lånetid: ${loan.days_left} ${loan.days_left == 1 ? 'dag' : 'dager'}.`;
+        //     return msg;
+        // },
+
+        return response()->json([
+            'status' => 'Utlånet ble registrert.',
+            'loan' => $loan,
+        ]);
     }
 
     /**
@@ -221,7 +232,8 @@ class LoansController extends Controller
                 ->find($request->input('loan'));
         } else {
             return response()->json([
-                'status' => 'Ingenting ble returnert.',
+                'status' => 'Ingenting har blitt retunert. Det kan argumenteres for at dette ' .
+                    'var en unødvendig operasjon, men hvem vet.',
             ], 200);
         }
 
@@ -246,7 +258,8 @@ class LoansController extends Controller
                 ], 422);
             }
             return response()->json([
-                'error' => 'Bibrex kjente ikke igjen strekkoden «' . $request->input('barcode') . '».',
+                'error' => 'Bibrex kan ikke huske å ha sett strekkoden «' . $request->input('barcode') . '» før. ' .
+                    'Er den registrert?',
             ], 422);
         }
 

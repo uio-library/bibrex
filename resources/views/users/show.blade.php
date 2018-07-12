@@ -6,11 +6,17 @@
 
     <div class="card-header" >
         <div class="row align-items-center">
-            <h5 class="col mb-0">Brukerinformasjon</h5>
+            <h5 class="col mb-0">
+            @if ($user->in_alma)
+              Importert bruker
+            @else
+              Lokal bruker
+            @endif
+            </h5>
 
             <a href="{{ URL::action('UsersController@getNcipLookup', $user->id) }}" class="col col-auto mx-1 btn btn-primary">
                 <i class="far fa-sync-alt"></i>
-                Re-importer fra Alma
+                Importer fra Alma
             </a>
 
             <a href="{{ URL::action('UsersController@getEdit', $user->id) }}" class="col col-auto mx-1 btn btn-primary">
@@ -38,9 +44,6 @@
               <samp>{{ $user->barcode }}</samp>
             @else
               <em>Mangler</em>
-            @endif
-            @if ($user->barcode)
-            : <span>{{ $user->in_alma ? 'finnes i Alma' : 'finnes ikke i Alma' }}</span>
             @endif
           </td>
         </tr>
@@ -92,6 +95,22 @@
             {{ $user->created_at }}
           </td>
         </tr>
+        <tr>
+          <th>
+            Siste aktivitet:
+          </th>
+          <td>
+            {{ $user->last_loan_at }}
+            <div>
+              @if ($user->in_alma)
+                <small>(Importerte brukere slettes fra Bibrex etter {{ config('bibrex.user_storage_time.imported') }} dager med inaktivitet)</small>
+              @else
+                <small>(Lokale brukere slettes fra Bibrex etter {{ config('bibrex.user_storage_time.local') }} dager med inaktivitet)</small>
+              @endif
+            </div>
+          </td>
+        </tr>
+
           <tr>
               <th>
                   Merknad:
@@ -108,13 +127,13 @@
   <div class="card my-3">
 
     <h5 class="card-header">
-        Aktive utlån
+        Aktive lån
     </h5>
 
     <ul class="list-group list-group-flush">
         @if (count($user->loans) == 0)
             <li class="list-group-item">
-                <em>Ingen utlån</em>
+                <em>Ingen lån</em>
             </li>
         @else
            @foreach ($user->loans as $loan)
@@ -122,7 +141,7 @@
                 <div class="row">
                     <div class="col">
                         <a href="{{ URL::action('LoansController@getShow', $loan->id) }}">
-                          {{ $loan->representation() }}
+                          {!! $loan->representation() !!}
                         </a>
                     </div>
                     <div class="col">
