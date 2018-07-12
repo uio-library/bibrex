@@ -1,17 +1,19 @@
+// For IE11 support
+import 'babel-polyfill';
 
-// window._ = require('lodash');
-window.Popper = require('popper.js').default;
+// Error logging to Sentry
+import Raven from 'raven-js';
+Raven
+    .config('https://51e9cb7c8a32430fbfd160e1e5028860@sentry.io/1229992')
+    .install();
 
-/**
- * We'll load jQuery and the Bootstrap jQuery plugin which provides support
- * for JavaScript based Bootstrap features such as modals and tabs. This
- * code may be modified to fit the specific needs of your application.
- */
 
+// Import the datatables jquery plugin
 window.$ = window.jQuery = require('jquery');
 require('datatables.net-bs4');
 
-// At least for now, use the standard bootstrap js for the navbar dropdowns and tabs.
+// At least for now, use the standard bootstrap js for the navbar dropdowns.
+import Popper from 'popper.js';
 import 'bootstrap';
 
 /**
