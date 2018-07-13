@@ -28,18 +28,12 @@ test_base: &test_base
     # Platform setup
 
     - run:
-        name: Install and start Sauce Labs proxy in the background
+        name: Install and start Browserstack proxy in the background
         command: |
-          curl -sSL https://saucelabs.com/downloads/sc-${SAUCE_VERSION}-linux.tar.gz | tar -xzv
-          cd sc-*-linux
-          ./bin/sc --user=${SAUCE_USERNAME} \
-             --api-key=${SAUCE_ACCESS_KEY} \
-             --readyfile=~/sauce_is_ready \
-             --tunnel-identifier="CircleCI-${CIRCLE_BUILD_NUM}" \
-             --tunnel-domains=bibrex.test
+          wget https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip
+          unzip BrowserStackLocal-linux-x64.zip
+          ./BrowserStackLocal --key ${BROWSERSTACK_KEY} --local-identifier circleci-${CIRCLE_BUILD_NUM}
         background: true
-        environment:
-          SAUCE_VERSION: 4.4.12
 
     - run:
         name: Install PHP extensions
@@ -83,8 +77,8 @@ test_base: &test_base
     - run:
         name: Run Dusk tests
         command: |
-          TEST_HOST="http://${SAUCE_USERNAME}:${SAUCE_ACCESS_KEY}@ondemand.saucelabs.com/wd/hub" \
-          SAUCE_TUNNEL="CircleCI-${CIRCLE_BUILD_NUM}" \
+          SELENIUM_HOST="http://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub" \
+          BROWSERSTACK_LOCAL_IDENTIFIER="circleci-${CIRCLE_BUILD_NUM}" \
           php artisan dusk --testdox
 
     - store_artifacts:
@@ -191,58 +185,47 @@ jobs:
             - repo
 
   # Use values from https://wiki.saucelabs.com/display/DOCS/Platform+Configurator#/
-  test_win7_chrome:
+  test_win_chrome:
     <<: *test_base
     environment:
-      - TEST_PLATFORM: "Windows 7"
-      - TEST_BROWSER: "chrome"
-      - TEST_BROWSER_VERSION: "latest"
+      - SELENIUM_PLATFORM: "Windows"
+      - SELENIUM_BROWSER_NAME: "chrome"
 
-  test_win7_ie11:
+  test_win_ie11:
     <<: *test_base
     environment:
-      - TEST_PLATFORM: "Windows 7"
-      - TEST_BROWSER: "internet explorer"
-      - TEST_BROWSER_VERSION: "11.0"
+      - SELENIUM_PLATFORM: "Windows"
+      - SELENIUM_BROWSER_NAME: "internet explorer"
+      - SELENIUM_BROWSER_VERSION: "11"
 
-  test_win7_firefox:
+  test_win_firefox:
     <<: *test_base
     environment:
-      - TEST_PLATFORM: "Windows 7"
-      - TEST_BROWSER: "firefox"
-      - TEST_BROWSER_VERSION: "61.0"
+      - SELENIUM_PLATFORM: "Windows"
+      - SELENIUM_BROWSER_NAME: "firefox"
+      - SELENIUM_BROWSER_VERSION: "61"
 
-  test_win10_firefox:
+  test_win_edge:
     <<: *test_base
     environment:
-      - TEST_PLATFORM: "Windows 10"
-      - TEST_BROWSER: "firefox"
-      - TEST_BROWSER_VERSION: "61.0"
-
-  test_win10_edge:
-    <<: *test_base
-    environment:
-      - TEST_PLATFORM: "Windows 10"
-      - TEST_BROWSER: "MicrosoftEdge"
-      - TEST_BROWSER_VERSION: "16.16299"
+      - SELENIUM_PLATFORM: "Windows"
+      - SELENIUM_BROWSER_NAME: "edge"
+      - SELENIUM_BROWSER_VERSION: "17"
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
-      - test_win7_chrome:
+      - test_win_chrome:
           requires:
             - build
-      - test_win7_ie11:
+      - test_win_ie11:
           requires:
             - build
-      - test_win7_firefox:
-          requires:
-            - build
-      - test_win10_firefox:
-          requires:
-            - build
-      - test_win10_edge:
+      # - test_win_firefox:
+      #     requires:
+      #       - build
+      - test_win_edge:
           requires:
             - build

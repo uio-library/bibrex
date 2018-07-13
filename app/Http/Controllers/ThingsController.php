@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Item;
 use App\Library;
 use App\Thing;
 use Illuminate\Http\Request;
@@ -48,17 +49,27 @@ class ThingsController extends Controller
             ->get();
 
         $things = $things->map(function ($thing) use ($libraryId) {
-                $items = $thing->items->whereNotIn('barcode', [null]);
-                return [
-                    'type' => 'thing',
-                    'id' => $thing->id,
-                    'name' => $thing->name,
-                    'library_settings' => $thing->library_settings,
-                    'properties' => $thing->properties,
-                    'loan_time' => $thing->loan_time,
-                    'items_total' => $items->count(),
-                    'items_mine' => $items->where('library_id', $libraryId)->count(),
-                ];
+            $all = $thing->items->whereNotIn('barcode', [null]);
+            $avail = $all->filter(function (Item $item) {
+                return is_null($item->activeLoan);
+            });
+            $mine = $all->where('library_id', $libraryId);
+            $avail_mine = $avail->where('library_id', $libraryId);
+
+            return [
+                'type' => 'thing',
+                'id' => $thing->id,
+                'name' => $thing->name,
+                'library_settings' => $thing->library_settings,
+                'properties' => $thing->properties,
+                'loan_time' => $thing->loan_time,
+
+                'items_total' => $all->count(),
+                'items_mine' => $mine->count(),
+
+                'avail_total' => $avail->count(),
+                'avail_mine' => $avail_mine->count(),
+            ];
         });
 
         return response()->view('things.index', [
@@ -227,8 +238,12 @@ class ThingsController extends Controller
      */
     public function delete(Thing $thing)
     {
-        if ($thing->items()->count() != 0) {
+        if ($thing->items()->whereNotNull('barcode')->count() != 0) {
             return $this->miscErrorResponse('Kan ikke slette ting med eksemplarer.');
+        }
+
+        if (count($thing->activeLoans()) != 0) {
+            return $this->miscErrorResponse('Kan ikke slette ting med aktive lån.');
         }
 
         \Log::info(sprintf(
@@ -239,7 +254,8 @@ class ThingsController extends Controller
         $thing->delete();
 
         return response()->json([
-            'status' => 'Tingen «' . $thing->name . '» ble sletta.'
+            'status' => 'Tingen «' . $thing->name . '» ble sletta.',
+            'thing' => $thing,
         ]);
     }
 
@@ -259,7 +275,8 @@ class ThingsController extends Controller
         ));
 
         return response()->json([
-            'status' => 'Tingen «' . $thing->name . '» ble gjenopprettet.'
+            'status' => 'Tingen «' . $thing->name . '» ble gjenopprettet.',
+            'thing' => $thing,
         ]);
     }
 }

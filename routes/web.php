@@ -28,9 +28,6 @@ Route::get('/libraries/login', 'LibrariesController@getLogin')->name('login');
 Route::post('/libraries/login', 'LibrariesController@postLogin');
 Route::get('/logout', 'LibrariesController@getLogout');
 
-Route::get('/available/{library}.json', 'ThingsController@getAvailableJson');
-Route::get('/available/{library}', 'ThingsController@getAvailable');
-
 Route::middleware(['auth'])->group(function () {
     // --[[ LIBRARY ]]--
     Route::get('/libraries', 'LibrariesController@getIndex');

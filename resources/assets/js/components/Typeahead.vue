@@ -5,7 +5,6 @@
                ref="textinput"
                autocomplete="off"
                :name="name"
-               :value="currentValue ? currentValue.name : ''"
                :placeholder="placeholder"
                class="form-control typeahead"
                style="display: block"
@@ -58,7 +57,6 @@
         },
         data: () => {
             return {
-                currentValue: {},
                 selectedId: '',
                 waitingTimer: null,
                 waitingSince: null,
@@ -66,7 +64,6 @@
         },
         methods: {
             setValue(value) {
-                this.currentValue = value;
                 this.$emit('input', value);
             },
             focusNextElement () {
@@ -184,8 +181,13 @@
                       name: ev.currentTarget.value,
                   });
               })
+              .on('change', (ev) => {
+                  this.selectedId = '';
+                  this.setValue({
+                      name: ev.currentTarget.value,
+                  });
+              })
               .on('typeahead:select', (ev, datum) => {
-                  console.log('SELECT EL');
                   this.selectedId = datum.id ? datum.id : datum.primaryId;
                   this.setValue({
                       type: datum.type,
@@ -196,7 +198,6 @@
                   this.focusNextElement();
               })
               .on('typeahead:autocomplete', (ev, datum) => {
-                  console.log('SELECT AC');
                   this.selectedId = datum.id ? datum.id : datum.primaryId;
                   this.setValue({
                       type: datum.type,
@@ -210,7 +211,11 @@
           }
         },
         mounted() {
-            this.currentValue = this.value;
+            // We don't want to bind to the text input, since we're giving control of it to Typeahead,
+            // but we want to control the initial value
+            this.$refs.textinput.value = this.value ? this.value.name : '';
+
+            // Initialize Typeahead in next tick
             Vue.nextTick(this.init.bind(this));
         }
     }

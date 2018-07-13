@@ -11,7 +11,8 @@
           <th>Lånetid</th>
           <th>Påminnelser</th>
           <th>Utlån uten strekkode</th>
-          <th>Eksemplarer<br><small>Mitt bibliotek / totalt</small></th>
+          <th>Mitt bibliotek<br><small>Tilgjengelig / totalt</small></th>
+          <th>Alle bibliotek<br><small>Tilgjengelig / totalt</small></th>
         </tr>
       </thead>
       <tbody>
@@ -41,7 +42,13 @@
           </td>
 
           <td>
+            {{ thing.avail_mine}}
+            /
             {{ thing.items_mine}}
+          </td>
+
+          <td>
+            {{ thing.avail_total}}
             /
             {{ thing.items_total}}
           </td>

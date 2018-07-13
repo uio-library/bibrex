@@ -12,21 +12,27 @@ class LoginTest extends DuskTestCase
 {
     use DatabaseMigrations;
 
+    public function setUp()
+    {
+        parent::setUp();
+
+        $faker = app('Faker\Generator');
+        $faker->seed(1234);
+    }
+
     public function testLogin()
     {
-        $user = factory(Library::class)->create(
-            [
-            'email' => 'user@example.net',
-            ]
-        );
+        $user = factory(Library::class)->create();
 
         $this->browse(
             function (Browser $browser) use ($user) {
                 $browser->visit(new LoginPage)
+                    ->waitForText('Logg inn')
+                    ->pause(500)
                     ->type('email', $user->email)
                     ->type('password', 'secret')
                     ->press('Logg inn')
-                    ->pause(500)
+                    ->waitForText('Utlån')
                     ->assertPathIs('/loans');
             }
         );

@@ -21,14 +21,19 @@ class LibrariesTest extends DuskTestCase
             $pw = $faker->password(8);
 
             $browser->visit(new LibrariesPage)
-                ->assertSee('Bibliotek (1)')
+                ->waitForText('Bibliotek (1)')
                 ->clickLink('Nytt bibliotek')
-                ->assertSee('Opprett nytt bibliotek')
+                ->waitForText('Opprett nytt bibliotek')
                 ->type('name', $name)
+                ->pause(300)
                 ->type('name_eng', $faker->company)
+                ->pause(300)
                 ->type('email', $faker->email)
+                ->pause(300)
                 ->type('password', $pw)
+                ->pause(300)
                 ->type('password2', $pw)
+                ->pause(300)
                 ->press('Lagre')
                 ->waitForText('Biblioteket ble opprettet')
                 ->assertSee('Bibliotek (2)');

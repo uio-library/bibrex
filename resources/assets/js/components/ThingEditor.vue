@@ -224,6 +224,8 @@ export default {
             .then(response => {
                 this.busy = false;
                 this.status = response.data.status;
+                this.original = cloneDeep(response.data.thing);
+                this.current = cloneDeep(response.data.thing);
             })
             .catch(error => {
                 this.busy = false;
@@ -236,6 +238,8 @@ export default {
             .then(response => {
                 this.busy = false;
                 this.status = response.data.status;
+                this.original = cloneDeep(response.data.thing);
+                this.current = cloneDeep(response.data.thing);
             })
             .catch(error => {
                 this.busy = false;

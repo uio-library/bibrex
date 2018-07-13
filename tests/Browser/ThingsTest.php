@@ -17,11 +17,12 @@ class ThingsTest extends DuskTestCase
     {
         parent::setUp();
         $this->faker = $this->app->make('Faker\Generator');
+        $this->faker->seed(1234);
     }
 
     public function testCanCreateThing()
     {
-        $thingName = $this->faker->sentence(3);
+        $thingName = $this->faker->sentence(2);
         $this->browse(
             function (Browser $browser) use ($thingName) {
                 $browser->loginAs('post@eksempelbiblioteket.no');
@@ -29,7 +30,9 @@ class ThingsTest extends DuskTestCase
 
                 $browser->visit(new ThingsPage)
                     ->clickLink('Ny ting')
+                    ->pause(300)
                     ->type('name', $thingName)
+                    ->pause(300)
                     ->type('name_indefinite.nob', $this->faker->sentence(3))
                     ->type('name_definite.nob', $this->faker->sentence(3))
                     ->type('name_indefinite.nno', $this->faker->sentence(3))
@@ -37,14 +40,10 @@ class ThingsTest extends DuskTestCase
                     ->type('name_indefinite.eng', $this->faker->sentence(3))
                     ->type('name_definite.eng', $this->faker->sentence(3))
                     ->type('loan_time', $this->faker->randomDigitNotNull)
+                    ->pause(300)
                     ->press('Lagre')
-                    ->waitForText('Tingen ble lagret.')
-                    ->assertSee($thingName);
-
-                $thing = Thing::find(1);
-
-                $browser->visit(new LoansPage)
-                    ->assertDontSee('Ingen ting er aktivert enda');
+                    ->waitForText('Tingen ble lagret')
+                    ->waitForText($thingName);
             }
         );
     }

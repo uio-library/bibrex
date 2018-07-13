@@ -1,19 +1,18 @@
-[![Build Status](http://img.shields.io/travis/scriptotek/bibrex.svg?style=flat)](https://travis-ci.org/scriptotek/bibrex)
-[![Coverage Status](http://img.shields.io/coveralls/scriptotek/bibrex.svg?style=flat)](https://coveralls.io/r/scriptotek/bibrex?branch=master)
-[![Stories in Ready](https://badge.waffle.io/scriptotek/bibrex.svg?label=ready&title=Ready&style=flat)](http://waffle.io/scriptotek/bibrex)
+[![CircleCI](https://circleci.com/gh/scriptotek/bibrex.svg?style=svg)](https://circleci.com/gh/scriptotek/bibrex)
+[![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=V0wybHdCbS9TQW9oRSs1ZitMMGxrdm04MWdQc0xWcU1NYzd5eTF1OFlRMD0tLXA5QktBekZUeEtTMnY0SnJPTXBoMkE9PQ==--b995a549fd2d22ceb6ee2ad93d5956d5254223ea)](https://www.browserstack.com/automate/public-build/V0wybHdCbS9TQW9oRSs1ZitMMGxrdm04MWdQc0xWcU1NYzd5eTF1OFlRMD0tLXA5QktBekZUeEtTMnY0SnJPTXBoMkE9PQ==--b995a549fd2d22ceb6ee2ad93d5956d5254223ea)
+
 
 ## BIBREX
 
-Simple lending system using NCIP to connect to a library system.
+A simple lending system for things that integrates with Alma.
 
 ### Install
 
-1. `composer install` to update server-side deps. 
+1. `composer install` to update server-side deps.
 2. Update config files in `app/config`
 3. `php artisan migrate` to create the database tables
 4. `php artisan db:seed` to seed initial database data
 5. Make sure `app/storage` is writable by the www user.
-
 
 ### Development
 
@@ -22,6 +21,20 @@ Refresh database:
 Disable logging to database when refreshing the database:
 
     LOG_CHANNEL=single php artisan migrate:refresh
+
+### Tests
+
+To run browser tests, download and start Selenium, then run `artisan dusk`
+
+	wget https://selenium-release.storage.googleapis.com/3.8/selenium-server-standalone-3.13.0.jar
+	java -jar selenium-server-standalone-3.13.0.jar &
+	TEST_BROWSER=chrome artisan dusk
+
+Unfortunately, testing with Firefox doesn't work at the moment due to an incompability between Selenium and php-webdriver.
+See https://github.com/facebook/php-webdriver/issues/469.
+
+Continuous integration browser testing supported by <br>
+<a href="https://www.browserstack.com/"><img width="160" src="./doc/browserstack.svg" alt="BrowserStack"></a>
 
 ### Anonymizing returned loans
 

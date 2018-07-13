@@ -6,6 +6,8 @@ use App\Item;
 use App\Loan;
 use App\Thing;
 use App\User;
+use Closure;
+use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverKeys;
 use Tests\DuskTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -33,6 +35,9 @@ class CheckoutCheckinTest extends DuskTestCase
     {
         parent::setUp();
 
+        $faker = app('Faker\Generator');
+        $faker->seed(1234);
+
         // Make a few things
         $this->things = factory(Thing::class, 5)->create();
 
@@ -59,6 +64,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $browser->loginAs('post@eksempelbiblioteket.no');
 
                 $browser->visit(new LoansPage)
+                    ->waitForText('Til hvem?')
                     ->type('user', $this->users[0]->barcode)
                     ->type('thing', $this->items[0]->barcode)
                     ->clickLink('Lån ut', 'button')
@@ -78,6 +84,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $browser->loginAs('post@eksempelbiblioteket.no');
 
                 $browser->visit(new LoansPage)
+                    ->waitForText('Til hvem?')
                     ->type('user', $this->users[0]->name)
                     ->type('thing', $this->items[0]->barcode)
                     ->clickLink('Lån ut', 'button')
@@ -102,6 +109,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $fullname = "$lastname, $firstname";
 
                 $browser->visit(new LoansPage)
+                    ->waitForText('Til hvem?')
                     ->type('user', $fullname)
                     ->type('thing', $this->items[0]->barcode)
                     ->clickLink('Lån ut', 'button')
@@ -140,6 +148,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $fullname = "$lastname, $firstname";
 
                 $browser->visit(new LoansPage)
+                    ->waitForText('Til hvem?')
                     ->type('user', $barcode)
                     ->type('thing', $this->items[0]->barcode)
                     ->clickLink('Lån ut', 'button')
@@ -174,13 +183,19 @@ class CheckoutCheckinTest extends DuskTestCase
             function (Browser $browser) {
                 $browser->loginAs('post@eksempelbiblioteket.no');
 
+                // First try a thing that cannot be loaned by name
                 $browser->visit(new LoansPage)
+                    ->waitForText('Til hvem?')
                     ->type('user', $this->users[0]->barcode)
                     ->type('thing', $this->things[0]->name)
                     ->clickLink('Lån ut', 'button')
                     ->waitForText('Utlån av denne tingen må gjøres med strekkode');
 
-                $browser->type('thing', $this->things[1]->name)
+                // Then try a thing that can be loaned by name
+                $browser->visit(new LoansPage)
+                    ->waitForText('Til hvem?')
+                    ->type('user', $this->users[0]->barcode)
+                    ->type('thing', $this->things[1]->name)
                     ->clickLink('Lån ut', 'button')
                     ->waitForText('registrert')
                     ->waitForText('nå nettopp');
@@ -210,6 +225,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $browser->loginAs('post@eksempelbiblioteket.no');
 
                 $browser->visit(new LoansPage)
+                    ->waitForText('Til hvem?')
                     ->click('#nav-checkin-tab')
                     ->waitForText('Strekkode:')
                     ->type('barcode', $item->barcode)
@@ -227,17 +243,32 @@ class CheckoutCheckinTest extends DuskTestCase
     {
         $this->browse(
             function (Browser $browser) {
-                $browser->loginAs('post@eksempelbiblioteket.no');
+                $browser->loginAs('post@eksempelbiblioteket.no')
+                    ->visit(new LoansPage)
+                    ->waitForText('Til hvem?');
 
-                $keyboard = $browser->visit(new LoansPage)
-                    ->driver->getKeyboard();
+                $bn = $browser->driver->getCapabilities()->getBrowserName();
+                if (!preg_match('/(chrome)/i', $bn)) {
+                    $this->markTestSkipped('Skipping keyboard tests in unsupported browsers');
 
-                $keyboard->sendKeys([
-                    $this->users[0]->barcode,
-                    WebDriverKeys::TAB,
-                    $this->items[0]->barcode,
-                    WebDriverKeys::ENTER,
-                ]);
+                    // IE11 problem 1:
+                    // - Initially the active element is "body". Pressing TAB once shifts the focus to "html". Whaaaat?
+                    //   https://automate.browserstack.com/builds/ea3e5eccf1332e734d4b9e9b3275d82ec3b46b40/sessions/635d8d15ce72cbcb8b0129aa0a02ee088796d72d#automate_button
+
+                    // IE11 problem 2:
+                    // - pressing Tab causes the text input to be selected instead :/
+                    //   https://automate.browserstack.com/builds/ea3e5eccf1332e734d4b9e9b3275d82ec3b46b40/sessions/f9785ef217417a1744575c52b414da446a31c36d#automate_button
+
+                    // Firefox problems: See CI-status.md
+
+                    // Edge also has problems. At least it requires an initial tab.
+                }
+
+                $this->type($browser, $this->users[0]->barcode);
+                $this->type($browser, WebDriverKeys::TAB);
+
+                $this->type($browser, $this->items[0]->barcode);
+                $this->type($browser, WebDriverKeys::ENTER);
 
                 $browser->waitForText('registrert')
                     ->waitForText('nå nettopp');
@@ -254,15 +285,29 @@ class CheckoutCheckinTest extends DuskTestCase
             function (Browser $browser) {
                 $browser->loginAs('post@eksempelbiblioteket.no');
 
-                $keyboard = $browser->visit(new LoansPage)
-                    ->driver->getKeyboard();
+                $browser->visit(new LoansPage);
+                $browser->waitForText('Til hvem?');
 
-                $keyboard->sendKeys([
-                    $this->users[0]->barcode,
-                    WebDriverKeys::ENTER,
-                    $this->items[0]->barcode,
-                    WebDriverKeys::ENTER,
-                ]);
+                $bn = $browser->driver->getCapabilities()->getBrowserName();
+                if (!preg_match('/(chrome)/i', $bn)) {
+                    $this->markTestSkipped('Skipping keyboard tests in unsupported browsers');
+
+                    // IE11 problem 1:
+                    // - Initially the active element is "body". Pressing TAB once shifts the focus to "html". Whaaaat?
+                    //   https://automate.browserstack.com/builds/ea3e5eccf1332e734d4b9e9b3275d82ec3b46b40/sessions/635d8d15ce72cbcb8b0129aa0a02ee088796d72d#automate_button
+
+                    // IE11 problem 2:
+                    // - pressing Tab causes the text input to be selected instead :/
+                    //   https://automate.browserstack.com/builds/ea3e5eccf1332e734d4b9e9b3275d82ec3b46b40/sessions/f9785ef217417a1744575c52b414da446a31c36d#automate_button
+
+                    // Firefox problems: See CI-status.md
+                }
+
+                $this->type($browser, $this->users[0]->barcode);
+                $this->type($browser, WebDriverKeys::ENTER);
+
+                $this->type($browser, $this->items[0]->barcode);
+                $this->type($browser, WebDriverKeys::ENTER);
 
                 $browser->waitForText('registrert')
                     ->waitForText('nå nettopp');
@@ -289,29 +334,52 @@ class CheckoutCheckinTest extends DuskTestCase
 
         $this->browse(
             function (Browser $browser) use ($item) {
-                $browser->loginAs('post@eksempelbiblioteket.no');
+                $browser->loginAs('post@eksempelbiblioteket.no')
+                    ->visit(new LoansPage)
+                    ->waitForText('Til hvem?');
 
-                $keyboard = $browser->visit(new LoansPage)
-                    ->driver->getKeyboard();
+                $bn = $browser->driver->getCapabilities()->getBrowserName();
+                if (!preg_match('/(chrome)/i', $bn)) {
+                    $this->markTestSkipped('Skipping keyboard tests in unsupported browsers');
 
-                if (s(config('testing.caps.browser'))->contains('internet explorer')) {
-                    $this->markTestSkipped('Keyboard shortcuts do not work in IE11.');
-                    return;
-                } elseif (s(config('testing.caps.platform'))->contains('Windows')) {
-                    $keyboard->sendKeys([WebDriverKeys::ALT, 'r']);
-                    $keyboard->releaseKey(WebDriverKeys::ALT);
+                    // IE11 problem 1:
+                    // - Initially the active element is "body". Pressing TAB once shifts the focus to "html". Whaaaat?
+                    //   https://automate.browserstack.com/builds/ea3e5eccf1332e734d4b9e9b3275d82ec3b46b40/sessions/635d8d15ce72cbcb8b0129aa0a02ee088796d72d#automate_button
+
+                    // IE11 problem 2:
+                    // - pressing Tab causes the text input to be selected instead :/
+                    //   https://automate.browserstack.com/builds/ea3e5eccf1332e734d4b9e9b3275d82ec3b46b40/sessions/f9785ef217417a1744575c52b414da446a31c36d#automate_button
+
+                    // Firefox problems: See CI-status.md
+                }
+
+                if (in_array(strtolower($browser->driver->getCapabilities()->getPlatform()), ['windows', 'win8', 'xp'])) {
+                    // https://www.browserstack.com/automate/capabilities
+                    $this->type($browser, [WebDriverKeys::ALT, 'r']);
+                    //$activeElement->releaseKey(WebDriverKeys::ALT);
                 } else {
-                    $keyboard->sendKeys([WebDriverKeys::CONTROL, 'r']);
-                    $keyboard->releaseKey(WebDriverKeys::CONTROL);
+                    $this->type($browser, [WebDriverKeys::CONTROL, 'r']);
+                    //$activeElement->releaseKey(WebDriverKeys::CONTROL);
                 }
 
                 $browser->waitForText('Strekkode:');
                 // $browser->pause(500);
 
-                $keyboard->sendKeys([$item->barcode, WebDriverKeys::ENTER]);
+                $this->type($browser, $item->barcode);
+                $this->type($browser, WebDriverKeys::ENTER);
+
                 $browser->waitForText('ble returnert')
                     ->pause(1000); // Give the loans table some time to update, to avoid errors in the log from the xhr request.
             }
         );
+    }
+
+    protected function type(Browser $browser, $keys)
+    {
+        $browser->pause(300);  // To avoid Internet Explorer 11 from choking
+        $activeElement = $browser->driver->switchTo()->activeElement();
+
+        // print("\nSending keys to " . $activeElement->getTagName() . ': ' . json_encode($keys) . "\n");
+        $activeElement->sendKeys($keys);
     }
 }
