@@ -68,7 +68,7 @@ class CheckoutCheckinTest extends DuskTestCase
                     ->type('user', $this->users[0]->barcode)
                     ->type('thing', $this->items[0]->barcode)
                     ->clickLink('Lån ut', 'button')
-                    ->waitForText('registrert')
+                    ->waitForText('Lånte ut')
                     ->waitForText('nå nettopp');
             }
         );
@@ -88,7 +88,7 @@ class CheckoutCheckinTest extends DuskTestCase
                     ->type('user', $this->users[0]->name)
                     ->type('thing', $this->items[0]->barcode)
                     ->clickLink('Lån ut', 'button')
-                    ->waitForText('registrert')
+                    ->waitForText('Lånte ut')
                     ->waitForText('nå nettopp');
             }
         );
@@ -124,7 +124,7 @@ class CheckoutCheckinTest extends DuskTestCase
                     ->assertInputValue('user', $fullname)
                     ->type('thing', $this->items[0]->barcode)
                     ->clickLink('Lån ut', 'button')
-                    ->waitForText('registrert')
+                    ->waitForText('Lånte ut')
                     ->waitForText('nå nettopp');
             }
         );
@@ -164,7 +164,7 @@ class CheckoutCheckinTest extends DuskTestCase
                     ->assertInputValue('user', $fullname)
                     ->type('thing', $this->items[0]->barcode)
                     ->clickLink('Lån ut', 'button')
-                    ->waitForText('registrert')
+                    ->waitForText('Lånte ut')
                     ->waitForText('nå nettopp');
             }
         );
@@ -197,7 +197,7 @@ class CheckoutCheckinTest extends DuskTestCase
                     ->type('user', $this->users[0]->barcode)
                     ->type('thing', $this->things[1]->name)
                     ->clickLink('Lån ut', 'button')
-                    ->waitForText('registrert')
+                    ->waitForText('Lånte ut')
                     ->waitForText('nå nettopp');
             }
         );
@@ -230,7 +230,7 @@ class CheckoutCheckinTest extends DuskTestCase
                     ->waitForText('Strekkode:')
                     ->type('barcode', $item->barcode)
                     ->clickLink('Returner', 'button')
-                    ->waitForText('ble returnert')
+                    ->waitForText('Returnerte')
                         ->pause(1000); // Give the loans table some time to update, to avoid errors in the log from the xhr request.
             }
         );
@@ -270,7 +270,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $this->type($browser, $this->items[0]->barcode);
                 $this->type($browser, WebDriverKeys::ENTER);
 
-                $browser->waitForText('registrert')
+                $browser->waitForText('Lånte ut')
                     ->waitForText('nå nettopp');
             }
         );
@@ -309,7 +309,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $this->type($browser, $this->items[0]->barcode);
                 $this->type($browser, WebDriverKeys::ENTER);
 
-                $browser->waitForText('registrert')
+                $browser->waitForText('Lånte ut')
                     ->waitForText('nå nettopp');
             }
         );
@@ -368,7 +368,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $this->type($browser, $item->barcode);
                 $this->type($browser, WebDriverKeys::ENTER);
 
-                $browser->waitForText('ble returnert')
+                $browser->waitForText('Returnerte')
                     ->pause(1000); // Give the loans table some time to update, to avoid errors in the log from the xhr request.
             }
         );

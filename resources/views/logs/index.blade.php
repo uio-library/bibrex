@@ -2,7 +2,11 @@
 
 @section('content')
 
-    <div class="card">
+    <div class="card" v-pre><!--
+
+        NOTE: v-pre skips Vue compilation for this element and all its children!
+
+        -->
         <div class="card-header">
             <div class="row align-items-center">
                 <h5 class="col mb-0">Logg</h5>
@@ -22,10 +26,10 @@
                         <td>
                             <?php
                             if (strpos($item->message, PHP_EOL) !== false) {
-                                $spl = explode(PHP_EOL, $item->message);
+                                $spl = explode(PHP_EOL, htmlspecialchars($item->message));
                                 $i0 = array_shift($spl);
-                                echo '<div><a href="#" onclick="$(this).parent().next(\'.message-collapsed\').toggle(); return false;"">' . $i0 . '</a></div>';
-                                echo '<div class="message-collapsed" style="display:none;">' . implode('<br />', $spl) . '</div>';
+                                echo '<div><a href="#" onclick="$(this).parent().next(\'.message-collapsed\').toggle(); return false;">' . $i0 . '</a></div>';
+                                echo '<div class="message-collapsed" style="display:none;">' . implode('<br>', $spl) . '</div>';
                             } else {
                                 echo $item->message;
                             }

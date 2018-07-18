@@ -7,6 +7,7 @@ Raven
     .config('https://51e9cb7c8a32430fbfd160e1e5028860@sentry.io/1229992')
     .install();
 
+window.Raven = Raven;
 
 // Import the datatables jquery plugin
 window.$ = window.jQuery = require('jquery');

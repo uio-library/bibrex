@@ -213,7 +213,39 @@ export default {
         },
         onTabClick(tab) {
             this.activeTab = tab;
-            setTimeout(this.focusFirstTextInput.bind(this), 0);
+            setTimeout(this.focusFirstTextInput.bind(this), 150);  // Small timeout for IE11
+        },
+        handleError(what, error) {
+            this.busy = false;
+            if (!error.response) {
+                // Some kind of network error. No response at all from server.
+                Raven.captureException(error);
+                console.error(error);
+                this.$root.$emit('error', {
+                    message: `Serveren svarer ikke. ${what} kunne trolig ikke gjennomføres.
+                        Last siden på nytt og prøv på nytt. Meld fra hvis feilen vedvarer!`,
+                });
+            } else if (error.response.status === 422) {
+                // Standard validation error
+                this.$root.$emit('error', {message: 'Utlånet kunne ikke gjennomføres. Se detaljer over.'});
+                this.errors = {
+                    thing: get(error, 'response.data.errors.thing.0'),
+                    user: get(error, 'response.data.errors.user.0'),
+                };
+            } else {
+                // We got some kind of error response from the server, typically a 5xx error.
+                console.error(error.response);
+                Raven.captureException(error, {
+                    extra: {
+                        response: error.response
+                    },
+                });
+
+                this.$root.$emit('error', {message: `${what} kunne ikke gjennomføres fordi det skjedde noe uventet.
+                    Du kan evt. prøve på nytt i en annen nettleser. Feilen er forøvrig logget og vil bli analysert,
+                    men det hjelper jo ikke deg akkurat nå.`
+                });
+            }
         },
         checkout() {
 
@@ -243,24 +275,7 @@ export default {
                     variant: get(response, 'data.warn') ? 'warning' : 'success' ,
                 });
             })
-            .catch(error => {
-                this.busy = false;
-                if (error.response && error.response.status === 422) {
-                    this.$root.$emit('error', {message: 'Utlånet kunne ikke gjennomføres. Se detaljer over.'});
-                    this.errors = {
-                        thing: get(error, 'response.data.errors.thing.0'),
-                        user: get(error, 'response.data.errors.user.0'),
-                    };
-                } else {
-                    console.error(error);
-                    if (error.code == 'ECONNABORTED') {
-                        this.$root.$emit('error', {message: 'Serveren svarer ikke. Utlånet ble antakelig ikke gjennomført. Last siden på nytt og prøv på nytt.'});
-                    } else {
-                        this.$root.$emit('error', {message: 'Utlånet kunne ikke gjennomføres fordi det skjedde noe uventet.' +
-                            ' Feilen er forøvrig logget og vil bli analysert, men det hjelper jo ikke deg akkurat nå.'});
-                    }
-                }
-            });
+            .catch(error => this.handleError('Utlånet', error));
         },
         checkin() {
             this.busy = true;
@@ -277,21 +292,7 @@ export default {
                 });
                 this.$root.$emit('updateLoansTable', {loan: response.data.loan});
             })
-            .catch(error => {
-                this.busy = false;
-                if (error.response && error.response.status === 422) {
-                    this.$root.$emit('error', {message: get(error, 'response.data.error')});
-                } else {
-                    console.error(error);
-                    if (error.code == 'ECONNABORTED') {
-                        this.$root.$emit('error', {message: 'Serveren svarer ikke. Last siden på nytt og prøv på nytt.'});
-                    } else {
-                        this.$root.$emit('error', {message: 'Tingen kunne ikke returneres fordi det skjedde noe uventet!' +
-                            ' Du kan eventuelt prøve på nytt i en annen nettleser.' +
-                            ' Feilen er forøvrig logget og vil bli analysert, men det hjelper jo ikke deg akkurat nå.'});
-                    }
-                }
-            });
+            .catch(error => this.handleError('Innleveringen', error));
         },
     },
     created() {

@@ -189,13 +189,13 @@ class Loan extends Model
 
     public function found()
     {
-        $this->restore();
-        $this->is_lost = false;
-        $this->save();
-
         if ($this->item->is_lost) {
             $this->item->found();
         }
+
+        $this->is_lost = false;
+        $this->save();
+        $this->delete();
     }
 
     /**

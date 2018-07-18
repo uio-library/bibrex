@@ -182,7 +182,11 @@ class CheckoutRequest extends FormRequest
         }
         $user->mergeFromAlmaResponse($almaUser);
         $user->save();
-        \Log::info('Importerte bruker fra Alma: "' . $almaUser->primaryId. '"');
+
+        \Log::info(sprintf(
+            'Importerte en bruker fra Alma (<a href="%s">Detaljer</a>)',
+            action('UsersController@getShow', $user->id)
+        ));
 
         return $user;
     }

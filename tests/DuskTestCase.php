@@ -88,33 +88,36 @@ abstract class DuskTestCase extends BaseTestCase
         // Mark tests as passed or failed on BrowserStack
         // https://www.browserstack.com/automate/rest-api
 
-        $status = ($this->getStatus() == BaseTestRunner::STATUS_PASSED) ? 'passed' : 'failed';
-        $reason = $this->getStatusMessage();
-        $reportStatus = ($this->sessionId && $this->getStatus() != BaseTestRunner::STATUS_SKIPPED);
-        if ($status == 'failed') {
-            $this->failing = true;
-        }
+        // If we are using BrowserStack, check if we have sessions available before starting
+        if (config('testing.browserstack.key')) {
+            $status = ($this->getStatus() == BaseTestRunner::STATUS_PASSED) ? 'passed' : 'failed';
+            $reason = $this->getStatusMessage();
+            $reportStatus = ($this->sessionId && $this->getStatus() != BaseTestRunner::STATUS_SKIPPED);
+            if ($status == 'failed') {
+                $this->failing = true;
+            }
 
-        if ($this->failing && $status == 'passed') {
-            // If one of the tests failed, we consider the whole session to be failing.
-            $reportStatus = false;
-        }
+            if ($this->failing && $status == 'passed') {
+                // If one of the tests failed, we consider the whole session to be failing.
+                $reportStatus = false;
+            }
 
-        if ($reportStatus) {
-            $http = new HttpClient();
-            $http->request('PUT', sprintf('https://api.browserstack.com/automate/sessions/%s.json', $this->sessionId), [
-                RequestOptions::HEADERS => [
-                    'Content-Type' => 'application/json',
-                ],
-                RequestOptions::JSON => [
-                    'status' => $status,
-                    'reason' => $reason,
-                ],
-                RequestOptions::AUTH => [
-                    config('testing.browserstack.user'),
-                    config('testing.browserstack.key'),
-                ],
-            ]);
+            if ($reportStatus) {
+                $http = new HttpClient();
+                $http->request('PUT', sprintf('https://api.browserstack.com/automate/sessions/%s.json', $this->sessionId), [
+                    RequestOptions::HEADERS => [
+                        'Content-Type' => 'application/json',
+                    ],
+                    RequestOptions::JSON => [
+                        'status' => $status,
+                        'reason' => $reason,
+                    ],
+                    RequestOptions::AUTH => [
+                        config('testing.browserstack.user'),
+                        config('testing.browserstack.key'),
+                    ],
+                ]);
+            }
         }
 
         parent::tearDown();

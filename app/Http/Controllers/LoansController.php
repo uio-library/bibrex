@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use function Stringy\create as s;
 
 class LoansController extends Controller
 {
@@ -90,6 +91,23 @@ class LoansController extends Controller
         }
     }
 
+
+    /**
+     * Logs the response and returns it.
+     *
+     * @param Loan $loan
+     * @return Response
+     */
+    protected function loggedResponse($data)
+    {
+        if (isset($data['error'])) {
+            \Log::info($data['error']);
+            return response()->json($data, 422);
+        }
+        \Log::info($data['status']);
+        return response()->json($data, 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -114,12 +132,6 @@ class LoansController extends Controller
         $request->user->last_loan_at = Carbon::now();
         $request->user->save();
 
-        \Log::info(sprintf(
-            'Lånte ut %s (<a href="%s">Detaljer</a>).',
-            $request->item->thing->properties->get('name_indefinite.nob'),
-            action('LoansController@getShow', $loan->id)
-        ));
-
         event(new LoanTableUpdated('checkout', $request, $loan));
 
         $loan->load('user', 'item', 'item.thing');
@@ -140,8 +152,12 @@ class LoansController extends Controller
         //     return msg;
         // },
 
-        return response()->json([
-            'status' => 'Utlånet ble registrert.',
+        return $this->loggedResponse([
+            'status' => sprintf(
+                'Lånte ut %s (<a href="%s">Detaljer</a>).',
+                $request->item->thing->properties->get('name_indefinite.nob'),
+                action('LoansController@getShow', $loan->id)
+            ),
             'loan' => $loan,
         ]);
     }
@@ -219,89 +235,92 @@ class LoansController extends Controller
      */
     public function checkin(Request $request)
     {
-        $status = null;
-        $undoLink = null;
-        if ($request->input('barcode')) {
-            $loan = Loan::with(['item', 'item.thing', 'user'])
-                ->whereHas('item', function ($query) use ($request) {
-                    $query->where('barcode', '=', $request->input('barcode'));
-                })
-                ->first();
-        } elseif ($request->input('loan')) {
+        // Validate the request
+
+        if ($request->input('loan')) {
+            // Check-in by loan id
+
             $loan = Loan::with(['item', 'item.thing', 'user'])
                 ->find($request->input('loan'));
-        } else {
-            return response()->json([
-                'status' => 'Ingenting har blitt retunert. Det kan argumenteres for at dette ' .
-                    'var en unødvendig operasjon, men hvem vet.',
-            ], 200);
-        }
 
-        if (is_null($loan)) {
+            if (is_null($loan)) {
+                return $this->loggedResponse(['error' => sprintf(
+                    'Lånet ble ikke funnet: %s',
+                    $request->input('loan')
+                )]);
+            }
+        } elseif ($request->input('barcode')) {
+            // Check-in by barcode
+
             $loan = Loan::with(['item', 'item.thing', 'user'])
-                ->withTrashed()
                 ->whereHas('item', function ($query) use ($request) {
                     $query->where('barcode', '=', $request->input('barcode'));
                 })
-                ->orderBy('updated_at', 'desc')
                 ->first();
-        }
 
-        if (is_null($loan)) {
-            $item = Item::withTrashed()->where('barcode', '=', $request->input('barcode'))->first();
-            if ($item) {
-                return response()->json([
-                    'error' => sprintf(
-                        'Denne %s var ikke utlånt.',
-                        $item->formattedLink(false)
-                    )
-                ], 422);
+            if (is_null($loan)) {
+                // There's no active loan, but let's check if the barcode exists at all
+                // and if the item is perhaps lost.
+
+                $item = Item::withTrashed()->where('barcode', '=', $request->input('barcode'))->first();
+                if (is_null($item)) {
+                    return $this->loggedResponse(['error' => sprintf(
+                        'Bibrex kan ikke huske å ha sett strekkoden «%s» før. Er den registrert?',
+                        $request->input('barcode')
+                    )]);
+                }
+
+                // Get the last loan
+                $loan = $item->loans()->withTrashed()->orderBy('updated_at', 'desc')->first();
+
+                if (is_null($loan)) {
+                    // It has never been loaned out
+                    return $this->loggedResponse(['status' => sprintf(
+                        '%s har egentlig aldri vært utlånt, så vidt Bibrex kan se.',
+                        s($item->thing->properties->get('name_definite.nob'))->upperCaseFirst()
+                    )]);
+                }
+
+                // At this point we have a non-active $loan object, which might or might not be lost.
             }
+        } else {
             return response()->json([
-                'error' => 'Bibrex kan ikke huske å ha sett strekkoden «' . $request->input('barcode') . '» før. ' .
-                    'Er den registrert?',
-            ], 422);
+                'status' => 'Ingenting har blitt returnert. Det kan argumenteres for at dette var en ' .
+                    'unødvendig operasjon, men hvem vet.'
+            ]);
         }
 
         if ($loan->is_lost) {
-            $status = sprintf(
-                'Denne %s var registrert som tapt, men ikke nå lenger (takket være deg)!',
-                $loan->item->formattedLink(false)
-            );
             $loan->found();
-        } elseif ($loan->item->trashed()) {
-            $status = sprintf(
-                'Du store min hatt, denne %s har faktisk blitt kassert i mellomtiden!',
-                $loan->item->formattedLink(false)
-            );
+
+            return $this->loggedResponse(['status' => sprintf(
+                '%s var registrert som tapt, men er nå tilbake!',
+                $loan->item->formattedLink(true)
+            )]);
         } elseif ($loan->trashed()) {
-            $status = sprintf(
-                'Denne %s var strengt tatt ikke utlånt (men det går helt greit).',
-                $loan->item->formattedLink(false)
-            );
-        } else {
-            $status = sprintf('%s ble returnert.', $loan->item->formattedLink(true));
-            $undoLink = action('LoansController@restore', $loan->id);
+            return $this->loggedResponse(['status' => sprintf(
+                '%s var allerede levert (men det går greit).',
+                $loan->item->formattedLink(true)
+            )]);
         }
 
-        \Log::info(sprintf(
-            'Returnerte %s (<a href="%s">Detaljer</a>).',
-            $loan->item->thing->properties->get('name_indefinite.nob'),
-            action('LoansController@getShow', $loan->id)
-        ));
-
-        $user = $loan->user;
+        // At last, the normal checkin
 
         $loan->checkIn();
 
+        $user = $loan->user;
         $user->last_loan_at = Carbon::now();
         $user->save();
 
         event(new LoanTableUpdated('checkin', $request, $loan));
 
-        return response()->json([
-            'status' => $status,
-            'undoLink' => $undoLink,
+        return $this->loggedResponse([
+            'status' => sprintf(
+                'Returnerte %s (<a href="%s">Detaljer</a>).',
+                $loan->item->thing->properties->get('name_indefinite.nob'),
+                action('LoansController@getShow', $loan->id)
+            ),
+            'undoLink' => action('LoansController@restore', $loan->id),
         ]);
     }
 
