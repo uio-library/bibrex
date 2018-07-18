@@ -187,6 +187,7 @@ export default {
             currentThing: {},
             currentBarcode: '',
             busy: false,
+            idleSince: (new Date()).getTime(),
         };
     },
     methods: {
@@ -225,9 +226,14 @@ export default {
                     message: `Serveren svarer ikke. ${what} kunne trolig ikke gjennomføres.
                         Last siden på nytt og prøv på nytt. Meld fra hvis feilen vedvarer!`,
                 });
+            } else if (error.response.status === 419) {
+                // CSRF token/session timeout
+                this.$root.$emit('error', {
+                    message: `Siden har vært inaktiv for lenge. Last siden på nytt og prøv igjen.`
+                });
             } else if (error.response.status === 422) {
-                // Standard validation error
-                this.$root.$emit('error', {message: 'Utlånet kunne ikke gjennomføres. Se detaljer over.'});
+                // Validation error
+                this.$root.$emit('error', {message: `${what} kunne ikke gjennomføres. Se detaljer over.`});
                 this.errors = {
                     thing: get(error, 'response.data.errors.thing.0'),
                     user: get(error, 'response.data.errors.user.0'),
@@ -294,6 +300,15 @@ export default {
             })
             .catch(error => this.handleError('Innleveringen', error));
         },
+        checkIdleTime() {
+            let oneHour = 3600000;
+            let idleHours = ((new Date()).getTime() - this.idleSince) / oneHour;
+            if (idleHours > 12) {
+                window.location.reload();
+            } else {
+                setTimeout(() => this.checkIdleTime(), oneHour);
+            }
+        }
     },
     created() {
         this.currentUser = this.user || {name:""};
@@ -318,6 +333,10 @@ export default {
                 if (this.showHelp2) this.showHelp2 = false;
             }
         });
+
+        window.addEventListener('click', () => { this.idleSince = (new Date()).getTime(); })
+        window.addEventListener('keypress', () => { this.idleSince = (new Date()).getTime(); })
+        this.checkIdleTime();
     },
     components: {
         'b-popover': bPopover,
