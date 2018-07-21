@@ -14,6 +14,9 @@
         </div>
 
         <div class="card-body">
+            <p class="pb-2">
+                Loggmeldinger oppbevares i {{ config('logging.channels.postgres.days') }} dager før de slettes.
+            </p>
             <table>
                 @foreach ($items as $item)
                     <tr>

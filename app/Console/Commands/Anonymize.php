@@ -56,6 +56,7 @@ class Anonymize extends Command
             $loan->save();
             $c++;
         }
+        $this->info("$c lån ble anonymisert");
         if ($c > 0) {
             \Log::info("Anonymiserte $c lån");
         }

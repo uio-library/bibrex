@@ -61,6 +61,7 @@ return [
         'postgres' => [
             'driver' => 'custom',
             'via' => CreateDatabaseLogger::class,
+            'days' => 7,
         ],
 
         'slack' => [
