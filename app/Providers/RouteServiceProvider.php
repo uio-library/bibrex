@@ -27,8 +27,6 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        parent::boot();
-
         Route::pattern('user', '([0-9]+|_new)');
         Route::pattern('item', '([0-9]+|_new)');
         Route::pattern('thing', '([0-9]+|_new)');
@@ -40,6 +38,8 @@ class RouteServiceProvider extends ServiceProvider
         Route::pattern('reminder', '[0-9]+');
         Route::pattern('notification', '[0-9]+');
         Route::pattern('ip', '[0-9]+');
+
+        parent::boot();
 
         Route::bind('thing', function ($value) {
             return $value == '_new'
