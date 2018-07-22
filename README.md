@@ -1,6 +1,6 @@
 [![CircleCI](https://circleci.com/gh/scriptotek/bibrex.svg?style=svg)](https://circleci.com/gh/scriptotek/bibrex)
 [![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=V0wybHdCbS9TQW9oRSs1ZitMMGxrdm04MWdQc0xWcU1NYzd5eTF1OFlRMD0tLXA5QktBekZUeEtTMnY0SnJPTXBoMkE9PQ==--b995a549fd2d22ceb6ee2ad93d5956d5254223ea)](https://www.browserstack.com/automate/public-build/V0wybHdCbS9TQW9oRSs1ZitMMGxrdm04MWdQc0xWcU1NYzd5eTF1OFlRMD0tLXA5QktBekZUeEtTMnY0SnJPTXBoMkE9PQ==--b995a549fd2d22ceb6ee2ad93d5956d5254223ea)
-
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/scriptotek/bibrex/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/scriptotek/bibrex/?branch=master)
 
 ## BIBREX
 
