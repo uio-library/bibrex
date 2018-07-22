@@ -101,10 +101,10 @@ class LoansController extends Controller
     protected function loggedResponse($data)
     {
         if (isset($data['error'])) {
-            \Log::info($data['error']);
+            \Log::info($data['error'], ['library' => \Auth::user()->name]);
             return response()->json($data, 422);
         }
-        \Log::info($data['status']);
+        \Log::info($data['status'], ['library' => \Auth::user()->name]);
         return response()->json($data, 200);
     }
 
@@ -186,19 +186,22 @@ class LoansController extends Controller
             'due_at' => 'required|date',
         ]);
 
-        $old_date = $loan->due_at;
+        $oldDate = $loan->due_at;
 
         $loan->due_at = Carbon::parse($request->due_at);
         $loan->note = $request->note;
         $loan->save();
 
-        \Log::info(sprintf(
-            'Endret forfallsdato for <a href="%s">utlånet</a> av %s fra %s til %s.',
-            action('LoansController@getShow', $loan->id),
-            $loan->item->thing->properties->get('name_indefinite.nob'),
-            $old_date->toDateString(),
-            $loan->due_at->toDateString()
-        ));
+        if ($oldDate != $loan->due_at) {
+            \Log::info(sprintf(
+                'Endret forfallsdato for <a href="%s">utlånet</a> av %s fra %s til %s.',
+                action('LoansController@getShow', $loan->id),
+                $loan->item->thing->properties->get('name_indefinite.nob'),
+                $oldDate->toDateString(),
+                $loan->due_at->toDateString()
+            ), ['library' => \Auth::user()->name]);
+        }
+
         event(new LoanTableUpdated('update', $request, $loan));
 
         return redirect()->action('LoansController@getIndex')
@@ -214,15 +217,12 @@ class LoansController extends Controller
      */
     public function lost(Loan $loan, Request $request)
     {
-        \Log::info('Registrerte ' . $loan->item->thing->properties->get('name_indefinite.nob') . ' som tapt' .
-            ' (<a href="'. action('LoansController@getShow', $loan->id) . '">Detaljer</a>)');
-
         $loan->lost();
 
         event(new LoanTableUpdated('lost', $request, $loan));
 
-        return response()->json([
-            'status' => sprintf('%s ble registrert som tapt.', $loan->item->formattedLink(true)),
+        return $this->loggedResponse([
+            'status' => sprintf('Registrerte %s som tapt.', $loan->item->formattedLink(false, false)),
             'undoLink' => action('LoansController@restore', $loan->id),
         ]);
     }
@@ -333,12 +333,6 @@ class LoansController extends Controller
      */
     public function restore(Loan $loan, Request $request)
     {
-        \Log::info(sprintf(
-            'Angret retur av %s (<a href="%s">Detaljer</a>).',
-            $loan->item->thing->properties->get('name_indefinite.nob'),
-            action('LoansController@getShow', $loan->id)
-        ));
-
         if ($loan->is_lost) {
             $loan->found();
         } else {
@@ -347,12 +341,12 @@ class LoansController extends Controller
 
         event(new LoanTableUpdated('restore', $request, $loan));
 
-        return response()->json([
+        return $this->loggedResponse([
             'status' => sprintf(
-                'Angret. %s er fortsatt utlånt til %s.',
-                $loan->item->formattedLink(true),
-                $loan->user->name
-            ),
+                '%s er fortsatt utlånt (<a href="%s">Detaljer</a>).',
+                s($loan->item->thing->properties->get('name_definite.nob'))->upperCaseFirst(),
+                action('LoansController@getShow', $loan->id)
+            )
         ]);
     }
 }

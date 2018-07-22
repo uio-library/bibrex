@@ -8,6 +8,7 @@ use App\Thing;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Rule;
+use function Stringy\create as s;
 
 class ItemsController extends Controller
 {
@@ -116,11 +117,21 @@ class ItemsController extends Controller
             'thing' => 'exists:things,id',
         ], $this->messages)->validate();
 
+        $isNew = !$item->exists;
+
         $item->barcode = $request->input('barcode');
         $item->note = $request->input('note');
         $item->thing_id = intval($request->input('thing'));
-
         $item->save();
+
+        if ($isNew) {
+            \Log::info(sprintf(
+                'Registrerte %s <a href="%s">%s</a>.',
+                s($item->thing->properties->get('name_definite.nob'))->lowerCaseFirst(),
+                action('ItemsController@show', $item->id),
+                $item->barcode
+            ), ['library' => \Auth::user()->name]);
+        }
 
         return redirect()->action('ThingsController@show', $item->thing->id)
             ->with('status', 'Eksemplaret ' . $item->barcode . ' ble lagret!');
@@ -163,7 +174,7 @@ class ItemsController extends Controller
             $item->thing->properties->get('name_definite.nob'),
             action('ItemsController@show', $item->id),
             $item->barcode
-        ));
+        ), ['library' => \Auth::user()->name]);
         $item->delete();
 
         return redirect()->action('ItemsController@show', $item->id)
@@ -185,7 +196,7 @@ class ItemsController extends Controller
             $item->thing->properties->get('name_definite.nob'),
             action('ItemsController@show', $item->id),
             $item->barcode
-        ));
+        ), ['library' => \Auth::user()->name]);
 
         return redirect()->action('ItemsController@show', $item->id)
             ->with('status', 'Eksemplaret ble gjenopprettet.');

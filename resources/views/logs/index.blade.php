@@ -14,13 +14,14 @@
         </div>
 
         <div class="card-body">
-            <p class="pb-2">
+            <p>
                 Loggmeldinger oppbevares i {{ config('logging.channels.postgres.days') }} dager før de slettes.
             </p>
-            <table>
+        </div>
+            <table class="table table-striped table-sm">
                 @foreach ($items as $item)
                     <tr>
-                        <td valign="top" style="white-space:nowrap">
+                        <td valign="top" style="white-space:nowrap; padding-left: 20px">
                             <small style="white-space:nowrap">{{ $item->time }}</small>
                         </td>
                         <td valign="top" style="white-space:nowrap">
@@ -38,10 +39,13 @@
                             }
                             ?>
                         </td>
+                        <td style="white-space:nowrap; text-align: right; padding-right: 20px;">
+                                                        <small>{{ array_get($item->context, 'library') }}</small>
+
+                        </td>
                     </tr>
                 @endforeach
             </table>
-        </div>
     </div>
 
 @stop
