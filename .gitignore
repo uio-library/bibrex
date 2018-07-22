@@ -3,7 +3,8 @@
 composer.phar
 composer.lock
 .env
-.env.local.php
+.env.ba*
+.env.dusk
 .env.php
 .DS_Store
 /public/components/
@@ -23,3 +24,6 @@ app/config/packages/aws
 /storage/debugbar
 /hosts.yml
 *.log
+current_domain
+*.jar
+.circleci/*.sh
