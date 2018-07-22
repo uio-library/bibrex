@@ -12,6 +12,7 @@ window.Raven = Raven;
 // Import the datatables jquery plugin
 window.$ = window.jQuery = require('jquery');
 require('datatables.net-bs4');
+require('datatables.net-select');
 
 // At least for now, use the standard bootstrap js for the navbar dropdowns.
 import Popper from 'popper.js';

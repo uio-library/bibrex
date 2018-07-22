@@ -28,6 +28,7 @@ Vue.component('datatable', require('./components/Datatable.vue'));
 Vue.component('loans-table', require('./components/LoansTable.vue'));
 Vue.component('things-table', require('./components/ThingsTable.vue'));
 Vue.component('items-table', require('./components/ItemsTable.vue'));
+Vue.component('users-table', require('./components/UsersTable.vue'));
 
 const app = new Vue({
     el: '#app'

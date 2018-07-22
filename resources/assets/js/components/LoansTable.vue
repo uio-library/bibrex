@@ -32,11 +32,11 @@
                           <a v-else-if="loan.user.barcode"
                               :href="loan.user.url + '/sync'"
                               v-b-tooltip.hover
-                              title="Prøv å importere brukeropplysninger fra Alma"
+                              title="Lokal bruker med låne-ID. Prøv å importere brukeropplysninger fra Alma"
                           >
-                              <i class="far fa-sync text-warning"></i>
+                              <i class="far fa-user text-warning"></i>
                           </a>
-                          <i v-else class="far far fa-user text-danger" v-b-tooltip.hover title="Mangler strekkode"></i>
+                          <i v-else class="far far fa-user text-danger" v-b-tooltip.hover title="Lokal bruker uten låne-ID"></i>
                           <a :href="loan.user.url">{{ loan.user.name }}</a>
                       </td>
 

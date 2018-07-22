@@ -40,7 +40,9 @@ class UsersController extends Controller
                 'group' => $user->alma_user_group,
                 'name' => $user->lastname . ', ' . $user->firstname,
                 'barcode' => $user->barcode,
-                'type' => 'local',
+                'in_alma' => $user->in_alma,
+                'created_at' => $user->created_at->toDateTimestring(),
+                'note' => $user->note,
             );
         }
 

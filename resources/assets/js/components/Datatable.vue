@@ -9,6 +9,9 @@ export default {
         sortOrder: {
             type: Array,
         },
+        checkboxes: {
+            type: Boolean,
+        },
     },
     mounted() {
         var $hl = $(this.$el).find('.highlight');
@@ -19,8 +22,7 @@ export default {
               $hl.removeClass('highlight-active');
         }, 3000);
 
-
-        $(this.$el).DataTable({
+        let options = {
             order: this.sortOrder,
             paging: false,
             info: false,
@@ -51,6 +53,26 @@ export default {
                     "sSortDescending": ": aktiver for å sortere kolonnen synkende"
                 }
             },
+        };
+
+        if (this.checkboxes) {
+            options.columnDefs = [ {
+                orderable: false,
+                className: 'select-checkbox',
+                targets: 0
+            } ];
+            options.select = {
+                style:    'multi',
+                selector: 'td:first-child'
+            };
+        }
+
+        let table = $(this.$el).DataTable(options);
+
+        table.on( 'select', (e, dt, node, config) => {
+            this.$emit('select', table.rows({ selected: true }).toArray()[0]);
+        }).on( 'deselect', () => {
+            this.$emit('select', table.rows({ selected: true }).toArray()[0]);
         });
     },
     beforeDestroy: function() {
