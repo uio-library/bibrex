@@ -14,7 +14,7 @@
     <datatable :sort-order="[[ 1, 'asc' ]]" :checkboxes="true" @select="select">
       <thead>
         <tr>
-          <th></th>
+          <th class="select-checkbox"></th>
           <th>Navn</th>
           <th>Låne-ID</th>
           <th>Merknader</th>
