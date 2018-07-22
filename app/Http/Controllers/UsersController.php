@@ -32,19 +32,22 @@ class UsersController extends Controller
      */
     public function getIndex(Request $request)
     {
-        $users = [];
-        foreach (User::with('loans')->orderBy('lastname')->get() as $user) {
-            $users[] = array(
-                'id' => $user->id,
-                'primaryId' => $user->alma_primary_id,
-                'group' => $user->alma_user_group,
-                'name' => $user->lastname . ', ' . $user->firstname,
-                'barcode' => $user->barcode,
-                'in_alma' => $user->in_alma,
-                'created_at' => $user->created_at->toDateTimestring(),
-                'note' => $user->note,
-            );
-        }
+        $users = User::with('loans')
+            ->where('lastname', '!=', '(anonymisert)')
+            ->orderBy('lastname')
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'primaryId' => $user->alma_primary_id,
+                    'group' => $user->alma_user_group,
+                    'name' => $user->lastname . ', ' . $user->firstname,
+                    'barcode' => $user->barcode,
+                    'in_alma' => $user->in_alma,
+                    'created_at' => $user->created_at->toDateTimestring(),
+                    'note' => $user->note,
+                ];
+            });
 
         return response()->view('users.index', [
             'users' => $users,
