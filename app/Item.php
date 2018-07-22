@@ -79,13 +79,20 @@ class Item extends Model
     public function found()
     {
         $this->restore();
-        $this->is_lost = false;
-        $this->save();
+
+        if ($this->is_lost) {
+            \Log::info(sprintf(
+                'Registrerte %s som funnet.',
+                $this->formattedLink(false, false)
+            ), ['library' => \Auth::user()->name]);
+            $this->is_lost = false;
+            $this->save();
+        }
     }
 
-    public function formattedLink($ucfirst = false)
+    public function formattedLink($ucfirst = false, $definite = true)
     {
-        $name = s($this->thing->properties->get('name_definite.nob'));
+        $name = s($this->thing->properties->get($definite ? 'name_definite.nob' : 'name_indefinite.nob'));
         $name = $ucfirst ? $name->upperCaseFirst() : $name->lowerCaseFirst();
 
         return sprintf(

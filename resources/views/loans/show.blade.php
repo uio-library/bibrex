@@ -29,6 +29,12 @@
                 <div class="col">
                     @if ($loan->item->barcode)
                         <a href="{{ URL::action('ItemsController@show', $loan->item->id) }}"><samp>{{ $loan->item->barcode }}</samp></a>
+                        @if ($loan->item->trashed())
+                            <span class="text-danger">
+                                <i class="far fa-exclamation-triangle"></i>
+                                Eksemplaret er slettet
+                            </span>
+                        @endif
                     @else
                         <em>ikke registrert</em>
                     @endif

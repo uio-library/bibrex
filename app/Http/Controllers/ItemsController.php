@@ -178,7 +178,8 @@ class ItemsController extends Controller
      */
     public function restore(Item $item)
     {
-        $item->restore();
+        $item->found();
+
         \Log::info(sprintf(
             'Gjenopprettet %s <a href="%s">%s</a>.',
             $item->thing->properties->get('name_definite.nob'),

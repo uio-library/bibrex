@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Alma\User as AlmaUser;
 use App\Item;
 use App\Rules\NotOnLoan;
+use App\Rules\NotTrashed;
 use App\Rules\RequiresBarcode;
 use App\Rules\ThingExists;
 use App\Rules\UniqueAlmaUser;
@@ -54,14 +55,14 @@ class CheckoutRequest extends FormRequest
         } elseif (!array_get($input, 'thing.type')) {
             // A thing was entered manually, not selected from the typeahead menu.
             // First check if the value matches a barcode.
-            $item = Item::where('barcode', '=', array_get($input, 'thing.name'))->first();
+            $item = Item::withTrashed()->where('barcode', '=', array_get($input, 'thing.name'))->first();
 
             if (is_null($item)) {
                 // Next, check if it matches a thing name.
                 $thing = Thing::where('name', '=', array_get($input, 'thing.name'))->first();
             }
         } elseif (array_get($input, 'thing.type') == 'item') {
-            $item = Item::where('id', '=', array_get($input, 'thing.id'))->first();
+            $item = Item::withTrashed()->where('id', '=', array_get($input, 'thing.id'))->first();
         } elseif (array_get($input, 'thing.type') == 'thing') {
             $thing = Thing::where('id', '=', array_get($input, 'thing.id'))->first();
         }
@@ -164,7 +165,7 @@ class CheckoutRequest extends FormRequest
 
         return [
             'user' => [new UserExists($user)],
-            'thing' => [new ThingExists($item), new NotOnLoan($item)],
+            'thing' => [new ThingExists($item), new NotTrashed($item), new NotOnLoan($item)],
         ];
     }
 
