@@ -40,7 +40,9 @@ class User extends Authenticatable
      *
      * @static array
      */
-    public static $editableAttributes = ['barcode', 'university_id','lastname', 'firstname', 'phone', 'email', 'lang'];
+    public static $editableAttributes = [
+        'barcode', 'university_id','lastname', 'firstname', 'phone', 'email', 'lang', 'note'
+    ];
 
     public function loans()
     {

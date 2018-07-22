@@ -12,11 +12,22 @@
 
     <div class="card-body">
 
-      <p>
+      <p class="mb-2">
         Se over og gjør eventuelle rettinger i brukeropplysningene før du trykker «Lagre».
-        Lån fra begge brukerne vil bli samlet. Evt. lån som må overføres fra midlertidig kort
-        blir ikke overført umiddelbart, men ved neste synkronisering.
+        Lån fra begge brukerne vil bli samlet.
       </p>
+
+      @if (!empty($user1->barcode) && !empty($user2->barcode) && ($user1->barcode != $user2->barcode))
+        <p class="mb-2 text-danger">
+          <i class="far far fa-exclamation-triangle"></i> OBS: Brukerne har ulike låne-ID!
+        </p>
+      @endif
+
+      @if (!empty($user1->university_id) && !empty($user2->university_id) && ($user1->university_id != $user2->university_id))
+        <p class="mb-2 text-danger">
+          <i class="far far fa-exclamation-triangle"></i> OBS: Brukerne har ulike Feide-ID!
+        </p>
+      @endif
 
       <table class="table">
 
@@ -116,6 +127,21 @@
 
         <tr>
           <th>
+            Merknader:
+          </th>
+          <td>
+            {{ $user1->note }}
+          </td>
+          <td>
+            {{ $user2->note }}
+          </td>
+          <td>
+            <input type="text" name="note" value="{{ $merged['note'] }}" />
+          </td>
+        </tr>
+
+        <tr>
+          <th>
             Telefon:
           </th>
           <td>
@@ -169,21 +195,6 @@
     </div>
 
     <div class="card-footer">
-
-      @if (!empty($user1->barcode) && !empty($user2->barcode) && ($user1->barcode != $user2->barcode))
-        <p style="padding:1em 0;">
-          <i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i> OBS: Ulike låne-ID!
-        </p>
-      @endif
-
-      @if (!empty($user1->university_id) && !empty($user2->university_id) && ($user1->university_id != $user2->university_id))
-        <p style="padding:1em 0;">
-          <i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i> OBS: Ulike Feide-ID!
-        </p>
-      @endif
-
-
-
       <a href="{{ URL::action('UsersController@getShow', $user1->id) }}" class="btn btn-default">Avbryt</a>
       {{ Form::submit('Lagre', array('class' => 'btn btn-success')) }}
     </div>
