@@ -112,6 +112,17 @@
               </div>
           </li>
 
+          <li class="list-group-item">
+              <div class="row">
+                  <div class="col-sm-2">
+                      Antall utlån:
+                  </div>
+                  <div class="col">
+                      {{ $item->loans()->withTrashed()->count() }}
+                  </div>
+              </div>
+          </li>
+
       </ul>
   </div>
 

@@ -63,7 +63,9 @@
         <li class="list-group-item">
             <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->barcode }}</samp></a>
             {{ $item->is_lost ? '(tapt)' : '(slettet)' }}
+            @if ($item->note)
             Note: {{ $item->note }}
+            @endif
         </li>
       @endforeach
     </ul>
