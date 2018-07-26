@@ -19,7 +19,7 @@ class DatabaseLoggingHandler extends AbstractProcessingHandler
     public function read()
     {
         $rows = [];
-        foreach ($this->connection->table('log')->orderBy('time', 'desc')->select()->limit(500)->get() as $row) {
+        foreach ($this->connection->table('log')->orderBy('id', 'desc')->select()->limit(500)->get() as $row) {
             $row->context = json_decode($row->context, true);
             $rows[] = $row;
         }

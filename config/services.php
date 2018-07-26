@@ -16,6 +16,7 @@ return [
 
     'alma' => [
         'key' => env('ALMA_KEY'),
+        'webhook_secret' => env('ALMA_WEBHOOK_SECRET'),
     ],
 
     'mailgun' => [
