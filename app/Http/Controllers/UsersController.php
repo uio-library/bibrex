@@ -164,9 +164,12 @@ class UsersController extends Controller
      */
     protected function findAlmaUser(AlmaClient $alma, array $queries)
     {
-        foreach ($queries as $query) {
-            foreach ($alma->users->search($query, ['limit' => 1]) as $user) {
-                return new AlmaUser($user);
+        foreach ($queries as $key => $val) {
+            if (!empty($val)) {
+                $query = $key . '~' . $val;
+                foreach ($alma->users->search($query, ['limit' => 1]) as $user) {
+                    return new AlmaUser($user);
+                }
             }
         }
 
@@ -186,10 +189,10 @@ class UsersController extends Controller
         }
 
         $queries = [
-            'identifiers~' . $user->university_id,
-            'identifiers~' . $user->barcode,
-            'ALL~' . $user->university_id,
-            'ALL~' . $user->barcode,
+            'identifiers' => $user->university_id,
+            'identifiers' => $user->barcode,
+            'ALL' => $user->university_id,
+            'ALL' => $user->barcode,
         ];
 
         $almaUser = $this->findAlmaUser($alma, $queries);
