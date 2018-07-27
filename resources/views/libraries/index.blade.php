@@ -8,7 +8,7 @@
         <div class="row align-items-center">
             <h5 class="col mb-0">Bibliotek ({{ count($libraries) }})</h5>
             <a href="{{ URL::action('LibrariesController@getCreate') }}" class="col col-auto mr-2 btn btn-success">
-                <i class="far fa-plus-hexagon"></i>
+                <i class="far fa-university"></i>
                 Nytt bibliotek
             </a>
         </div>

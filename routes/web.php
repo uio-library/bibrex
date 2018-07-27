@@ -49,7 +49,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/users.json', 'UsersController@json');
     Route::get('/users/{user}', 'UsersController@getShow');
     Route::get('/users/{user}/edit', 'UsersController@getEdit');
-    Route::get('/users/{user}/sync', 'UsersController@getNcipLookup');
+    Route::get('/users/{user}/sync', 'UsersController@sync');
+    Route::get('/users/{user}/connect', 'UsersController@connectForm');
+    Route::post('/users/{user}/connect', 'UsersController@connect');
     Route::post('/users/{user}', 'UsersController@upsert');
     Route::get('/users/merge/{user1}/{user2}', 'UsersController@getMerge');
     Route::post('/users/merge/{user1}/{user2}', 'UsersController@postMerge');

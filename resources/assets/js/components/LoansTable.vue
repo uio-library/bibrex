@@ -55,14 +55,14 @@
                           <div v-if="!loan.user.barcode">
                               <a :href="loan.user.url + '/edit'" class="text-danger">
                                   <em class="far fa-exclamation-triangle"></em>
-                                  OBS: Ingen låne-ID registrert på brukeren!
+                                  Bruker mangler låne-ID!
                               </a>
                           </div>
 
                           <div v-if="!loan.user.email">
                               <a :href="loan.user.url + '/edit'" class="text-danger">
                                   <em class="far fa-exclamation-triangle"></em>
-                                  OBS: Ingen e-postadresse registrert på brukeren!
+                                  Bruker mangler e-postadresse!
                               </a>
                           </div>
 

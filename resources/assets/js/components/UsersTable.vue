@@ -7,7 +7,7 @@
     <div style="float:left; margin-top: 10px;" class="col col-auto" v-b-tooltip.hover title="Merk to brukere som du ønsker å slå sammen." v-b-tooltip.hover>
         <button id="flett" class="btn btn-success" @click="merge" style="width:100%;" :disabled="selection.length != 2">
             <i class="far fa-compress-alt"></i>
-            Flett to brukere
+            Slå sammen to brukere
         </button>
     </div>
 
@@ -30,7 +30,11 @@
             <a :href="'/users/' + user.id">{{ user.name }}</a>
           </td>
           <td>
-            {{ user.barcode }}
+            <span v-if="user.barcode">{{ user.barcode }}</span>
+            <span v-else class="text-danger">
+              <em class="far fa-exclamation-triangle"></em>
+              Mangler låne-ID
+            </span>
           </td>
           <td>
             {{ user.note }}

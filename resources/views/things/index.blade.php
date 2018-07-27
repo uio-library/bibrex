@@ -6,7 +6,9 @@
 
     <div class="card-header">
         <div class="row align-items-center">
-            <h5 class="col mb-0">Ting ({{ count($things) }})</h5>
+            <h5 class="col mb-0">
+              Ting ({{ count($things) }})
+            </h5>
             <a href="{{ URL::action('ThingsController@show', '_new') }}" class="col col-auto mr-2 btn btn-success">
                 <i class="far fa-plus-hexagon"></i>
                 Ny ting

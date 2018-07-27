@@ -8,7 +8,7 @@
       )) }}
 
 <div class="card-header">
-      <h5 class="card-title">Opprett nytt bibliotek</h5>
+      <h5 class="card-title">Nytt bibliotek</h5>
     </div>
 
  <div class="card-body">

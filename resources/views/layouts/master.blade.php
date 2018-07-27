@@ -22,7 +22,10 @@
 
     <div class="container">
 
-      <a class="navbar-brand" href="/" title="Spiser alle tingene dine.">BIBREX</a>
+      <a class="navbar-brand" href="/" title="Spiser alle tingene dine.">
+        <em class="far fa-heart-rate"></em>
+        BIBREX
+      </a>
 
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -55,11 +58,14 @@
         <ul class="navbar-nav ml-auto">
 
           <li class="nav-item {{ strpos($_SERVER['REQUEST_URI'], '/about') === 0 ? ' active':'' }}">
-           <a class="nav-link" href="/about">Hjelp</a>
+           <a class="nav-link" href="/about">
+            <em class="far fa-question-circle"></em> Hjælp
+          </a>
          </li>
 
          <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <em class="far fa-university"></em>
             {{ Auth::user()->name }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">

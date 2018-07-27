@@ -155,7 +155,7 @@ class User extends Authenticatable
             return $errors;
         }
 
-        \Log::info('Fletter bruker ' . $user->id . ' inn i bruker ' . $this->id);
+        \Log::info('Slo sammen to brukere (' . $user->id . ' og ' . $this->id . ')');
 
         foreach ($user->loans as $loan) {
             $loan->user_id = $this->id;

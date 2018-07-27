@@ -7,17 +7,9 @@
     <div class="card-header" >
         <div class="row align-items-center">
             <h5 class="col mb-0">
-            @if ($user->in_alma)
-              Importert bruker
-            @else
-              Lokal bruker
-            @endif
+              <em class="far fa-user"></em>
+              Brukerdetaljer
             </h5>
-
-            <a href="{{ URL::action('UsersController@getNcipLookup', $user->id) }}" class="col col-auto mx-1 btn btn-primary">
-                <i class="far fa-sync-alt"></i>
-                Importer fra Alma
-            </a>
 
             <a href="{{ URL::action('UsersController@getEdit', $user->id) }}" class="col col-auto mx-1 btn btn-primary">
                 <i class="far fa-pencil-alt"></i>
@@ -34,7 +26,50 @@
 
     <div class="card-body">
 
+        @if ($user->blocks)
+            <alert variant="danger" :closable="false">
+                Blokkeringsmerknader fra Alma:
+                <ul>
+                    @foreach ($user->blocks as $block)
+                        <li>
+                            {{ array_get($block, 'block_description.desc') }}
+                            ({{ $block['block_note'] }}) –
+                            {{ array_get($block, 'created_date') }}
+                        </li>
+                    @endforeach
+                </ul>
+            </alert>
+        @endif
+
       <table class="table">
+        <tr>
+          <th>
+            Navn:
+          </th>
+          <td>
+            {{ $user->lastname }}, {{ $user->firstname }}
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Type:
+          </th>
+          <td>
+            @if ($user->in_alma)
+              Alma-bruker
+                <a href="{{ URL::action('UsersController@sync', $user->id) }}" class="col col-auto mx-1 btn link-btn">
+                    <i class="far fa-sync-alt"></i>
+                    Hent oppdaterte data fra Alma
+                </a>
+            @else
+              Lokal bruker
+                <a href="{{ URL::action('UsersController@connectForm', $user->id) }}" class="col col-auto mx-1 btn btn-primary">
+                    <i class="far fa-link"></i>
+                    Koble med Alma-bruker
+                </a>
+            @endif
+          </td>
+        </tr>
         <tr>
           <th>
             Låne-ID:
@@ -43,7 +78,10 @@
             @if ($user->barcode)
               <samp>{{ $user->barcode }}</samp>
             @else
-              <em>Mangler</em>
+              <span class="text-danger">
+                <em class="far fa-exclamation-triangle"></em>
+                Mangler låne-ID
+              </span>
             @endif
           </td>
         </tr>
@@ -52,15 +90,10 @@
             Feide-ID:
           </th>
           <td>
-            {!! $user->university_id ? $user->university_id : '<em>Mangler</em>' !!}
-          </td>
-        </tr>
-        <tr>
-          <th>
-            Navn:
-          </th>
-          <td>
-            {{ $user->lastname }}, {{ $user->firstname }}
+            @if ($user->university_id)
+              <samp>{{ $user->university_id }}</samp>
+            @else
+            @endif
           </td>
         </tr>
         <tr>
@@ -95,6 +128,14 @@
             {{ $user->created_at }}
           </td>
         </tr>
+          <tr>
+              <th>
+                  Sist importert fra Alma:
+              </th>
+              <td>
+                  {{ $user->last_import_at }}
+              </td>
+          </tr>
         <tr>
           <th>
             Siste aktivitet:
@@ -159,25 +200,3 @@
   </div>
 @stop
 
-
-@section('scripts')
-
-<script type='text/javascript'>
-  $(document).ready(function() {
-    $('#barcode a').on('click', function() {
-
-      $('#barcode span').html('<img src="/img/spinner2.gif" /> ');
-
-      $.get('{{ URL::action("UsersController@getNcipLookup", $user->id) }}', function(user) {
-        if (user.exists) {
-          $('#barcode span').html('finnes i BIBSYS');
-        } else {
-          $('#barcode span').html('finnes ikke i BIBSYS');
-        }
-      });
-
-    });
-  });
-</script>
-
-@stop

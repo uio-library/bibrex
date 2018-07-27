@@ -106,40 +106,100 @@ class UsersController extends Controller
      */
     public function getShow(User $user)
     {
-        // if (is_numeric($id)) {
-        //  $user = User::find($id);
-        // } else {
-        //  $user = User::where('ltid','=',$id)->first();
-        // }
-
-        if (!$user) {
-            return response()->view('errors.404', array('what' => 'Brukeren'), 404);
-        }
-        return response()->view('users.show', array(
-                'user' => $user
-            ));
+        return response()->view('users.show', [
+            'user' => $user,
+        ]);
     }
 
     /**
-     * Display BIBSYS NCIP info for the specified user.
+     * Display form for connecting local user to external user.
      *
-     * @param  int  $id
+     * @param User $user
      * @return Response
      */
-    public function getNcipLookup(AlmaClient $alma, User $user)
+    public function connectForm(User $user)
     {
-        if (!$user->barcode) {
-            return back()->with('error', 'Du må registrere låne-ID for brukeren før du kan importere.');
+        return response()->view('users.connect', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Connect local user to external user.
+     *
+     * @param User $user
+     * @param Request $request
+     * @param AlmaClient $alma
+     * @return Response
+     */
+    public function connect(User $user, Request $request, AlmaClient $alma)
+    {
+        $barcode = $request->barcode;
+        if (empty($barcode)) {
+            return back()->with('error', 'Du må registrere låne-ID.');
         }
-        $query = 'ALL~' . $user->barcode;
-        $users = collect($alma->users->search($query, ['limit' => 1]))->map(function ($u) {
+        $users = collect($alma->users->search('identifiers~' . $barcode, ['limit' => 1]))->map(function ($u) {
             return new AlmaUser($u);
         });
         if (!count($users)) {
             return back()->with('error', 'Fant ikke låne-ID-en ' . $user->barcode . ' i Alma 😭 ');
         }
 
+        $barcode = $users[0]->getBarcode();
+        $other = User::where('barcode', '=', $barcode)->first();
+        if (!is_null($other) && $other->id != $user->id) {
+            return back()->with('error', 'Låne-ID-en er allerede koblet til en annen Bibrex-bruker ' .
+                '(' . $other->name . '). Du kan slå dem sammen fra brukeroversikten.');
+        }
+
         $user->mergeFromAlmaResponse($users[0]);
+        $user->save();
+
+        return redirect()->action('UsersController@getShow', $user->id)
+            ->with('status', 'Bibrex-brukeren ble koblet med Alma-brukeren!');
+    }
+
+    /**
+     * Find the first Alma user matching a query.
+     */
+    protected function findAlmaUser(AlmaClient $alma, array $queries)
+    {
+        foreach ($queries as $query) {
+            foreach ($alma->users->search($query, ['limit' => 1]) as $user) {
+                return new AlmaUser($user);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Import user data from Alma.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function sync(AlmaClient $alma, User $user)
+    {
+        if (!$user->barcode) {
+            return back()->with('error', 'Du må registrere låne-ID for brukeren før du kan importere.');
+        }
+
+        $queries = [
+            'identifiers~' . $user->university_id,
+            'identifiers~' . $user->barcode,
+            'ALL~' . $user->university_id,
+            'ALL~' . $user->barcode,
+        ];
+
+        $almaUser = $this->findAlmaUser($alma, $queries);
+        if (is_null($almaUser)) {
+            $user->in_alma = false;
+            $user->save();
+            return back()->with('error', 'Fant ikke brukeren i Alma 😭');
+        }
+
+        $user->mergeFromAlmaResponse($almaUser);
         $user->save();
 
         return back()->with('status', 'Brukeropplysninger ble oppdatert fra Alma.');

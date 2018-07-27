@@ -1,12 +1,16 @@
 <template>
     <div class="alert" :class="cssClasses" v-show="visible">
-        <button type="button" class="close" @click="close()">&times;</button>
+        <button v-if="closable" type="button" class="close" @click="close()">&times;</button>
         <slot/>
     </div>
 </template>
 <script>
 export default {
     props: {
+        closable: {
+            type: Boolean,
+            default: true,
+        },
         variant: {
             type: String,
             default: 'info',
