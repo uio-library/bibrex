@@ -11,7 +11,7 @@
 
         <h5 class="card-header">
             @if (!$item->id)
-                Registrer nytt eksemplar
+                Nytt eksemplar
             @else
                 Rediger eksemplar
             @endif
@@ -23,8 +23,11 @@
                 <div class="row">
                     {{ Form::label('thing', 'Ting: ', ['class' => 'col-sm-3 col-form-label']) }}
                     <div class="col-sm-9">
-                        <input type="text" readonly class="form-control-plaintext" id="staticType" value="{{  $item->thing->name }}">
-                        <input type="hidden" name="thing" value="{{ $item->thing->id }}">
+                        <select name="thing" class="form-control">
+                            @foreach ($things as $thing)
+                                <option value="{{ $thing->id }}"{{ $item->thing && $item->thing->id == $thing->id ? ' selected="selected"' : ''}}> {{ $thing->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             </li>
@@ -41,7 +44,7 @@
 
             <li class="list-group-item">
                 <div class="row">
-                    {{ Form::label('note', 'Merknad: ', ['class' => 'col-sm-3 col-form-label']) }}
+                    {{ Form::label('note', 'Eksemplarinfo: ', ['class' => 'col-sm-3 col-form-label']) }}
                     <div class="col-sm-9">
                         @component('components.text', ['name' => 'note', 'value' => $item->note])
                         @endcomponent

@@ -75,7 +75,7 @@
           <li class="list-group-item">
               <div class="row">
                   <div class="col-sm-2">
-                      Merknad:
+                      Eksemplarinfo:
                   </div>
                   <div class="col">
                       {{ $item->note }}

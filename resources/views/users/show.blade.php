@@ -26,21 +26,6 @@
 
     <div class="card-body">
 
-        @if ($user->blocks)
-            <alert variant="danger" :closable="false">
-                Blokkeringsmerknader fra Alma:
-                <ul>
-                    @foreach ($user->blocks as $block)
-                        <li>
-                            {{ array_get($block, 'block_description.desc') }}
-                            ({{ $block['block_note'] }}) –
-                            {{ array_get($block, 'created_date') }}
-                        </li>
-                    @endforeach
-                </ul>
-            </alert>
-        @endif
-
       <table class="table">
         <tr>
           <th>

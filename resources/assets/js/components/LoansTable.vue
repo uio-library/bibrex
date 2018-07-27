@@ -15,7 +15,7 @@
                         <th>Utlånt</th>
                         <th>Forfall</th>
                         <th>Merknader</th>
-                        <th>Knapper</th>
+                        <th>Handlinger</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,7 +23,7 @@
 
                       <td>
                           <a :href="loan.url">{{ loan.item.thing.name }}
-                              <span v-if="loan.item.barcode">(<samp>{{ loan.item.barcode }}</samp>)</span>
+                              <span v-if="loan.item.note">({{ loan.item.note }})</span>
                           </a>
                       </td>
 
@@ -66,29 +66,15 @@
                               </a>
                           </div>
 
-                          <div class="text-info" v-if="loan.user.note">
-                              <i class="far fa-comment"></i>
+                          <div v-if="loan.user.note" class="text-info" v-b-tooltip.hover title="Brukermerknad">
+                              <i class="far fa-info-circle"></i>
                               {{ loan.user.note }}
                           </div>
 
                           <div v-if="loan.note">
-                              <span class="text-info" v-b-tooltip.hover title="Merknad på lånet">
-                                  <i class="far fa-comment"></i>
+                              <span class="text-warning" v-b-tooltip.hover title="Lånemerknad">
+                                  <i class="far fa-comment-alt"></i>
                                   {{ loan.note }}
-                              </span>
-                          </div>
-
-                          <div v-if="loan.item.note">
-                              <span class="text-info" v-b-tooltip.hover title="Merknad på eksemplaret">
-                                  <i class="far fa-comment"></i>
-                                  {{ loan.item.note }}
-                              </span>
-                          </div>
-
-                          <div v-if="loan.item.thing.note">
-                              <span class="text-info" v-b-tooltip.hover title="Merknad på tingen">
-                                  <i class="far fa-comment"></i>
-                                  {{ loan.item.thing.note }}
                               </span>
                           </div>
 

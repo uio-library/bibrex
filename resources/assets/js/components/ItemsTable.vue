@@ -5,7 +5,7 @@
         <tr>
           <th>Ting</th>
           <th>Strekkode</th>
-          <th>Merknader</th>
+          <th>Eksemplarinfo</th>
           <th>Utlån</th>
         </tr>
       </thead>
