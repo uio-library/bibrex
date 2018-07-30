@@ -6,6 +6,7 @@ use App\Console\Commands\Anonymize;
 use App\Console\Commands\DeleteInactiveUsers;
 use App\Console\Commands\PurgeLogs;
 use App\Console\Commands\SendReminders;
+use App\Console\Commands\SyncUsers;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -35,6 +36,7 @@ class Kernel extends ConsoleKernel
             ->dailyAt('04:00')
             ->then(function () {
                 $this->call(PurgeLogs::class);
+                $this->call(SyncUsers::class);
             });
     }
 

@@ -164,23 +164,6 @@ class UsersController extends Controller
     }
 
     /**
-     * Find the first Alma user matching a query.
-     */
-    protected function findAlmaUser(AlmaClient $alma, array $queries)
-    {
-        foreach ($queries as $key => $val) {
-            if (!empty($val)) {
-                $query = $key . '~' . $val;
-                foreach ($alma->users->search($query, ['limit' => 1]) as $user) {
-                    return new AlmaUser($user);
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Import user data from Alma.
      *
      * @param  int  $id
@@ -192,21 +175,11 @@ class UsersController extends Controller
             return back()->with('error', 'Du må registrere låne-ID for brukeren før du kan importere.');
         }
 
-        $queries = [
-            'identifiers' => $user->university_id,
-            'identifiers' => $user->barcode,
-            'ALL' => $user->university_id,
-            'ALL' => $user->barcode,
-        ];
-
-        $almaUser = $this->findAlmaUser($alma, $queries);
-        if (is_null($almaUser)) {
-            $user->in_alma = false;
+        if (!$user->updateFromAlma($alma)) {
             $user->save();
+
             return back()->with('error', 'Fant ikke brukeren i Alma 😭');
         }
-
-        $user->mergeFromAlmaResponse($almaUser);
         $user->save();
 
         return back()->with('status', 'Brukeropplysninger ble oppdatert fra Alma.');

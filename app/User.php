@@ -192,4 +192,49 @@ class User extends Authenticatable
     {
         return $this->fees !== 0;
     }
+
+    /**
+     * Find the first Alma user matching a query.
+     * @param AlmaClient $alma
+     * @param array $queries
+     * @return AlmaUser|null
+     */
+    protected function findAlmaUser(AlmaClient $alma, array $queries)
+    {
+        foreach ($queries as $query) {
+            if (!empty($query[1])) {
+                foreach ($alma->users->search($query[0] . '~' . $query[1], ['limit' => 1]) as $user) {
+                    return new AlmaUser($user);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Update the user object with fresh user data from Alma.
+     * Returns true if successful, false if the user could no longer be found in Alma.
+     *
+     * @param AlmaClient $alma
+     * @return bool
+     */
+    public function updateFromAlma(AlmaClient $alma)
+    {
+        $queries = [
+            ['identifiers', $this->university_id],
+            ['identifiers', $this->barcode],
+            ['ALL', $this->university_id],
+            ['ALL', $this->barcode],
+        ];
+
+        $almaUser = $this->findAlmaUser($alma, $queries);
+        if (is_null($almaUser)) {
+            $this->in_alma = false;
+            return false;
+        }
+
+        $this->mergeFromAlmaResponse($almaUser);
+        return true;
+    }
 }

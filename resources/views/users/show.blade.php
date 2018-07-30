@@ -138,10 +138,10 @@
         </tr>
           <tr>
               <th>
-                  Sist importert fra Alma:
+                  Sist oppdatert:
               </th>
               <td>
-                  {{ $user->last_import_at }}
+                  {{ $user->updated_at }}
               </td>
           </tr>
         <tr>

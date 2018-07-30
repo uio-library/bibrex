@@ -67,17 +67,23 @@ class WebhooksController extends Controller
             ->first();
 
         if (is_null($localUser)) {
-            \Log::debug('Ignoring notification about user not in Bibrex.');
+            \Log::debug('Ignorerer Alma-brukeroppdateringsvarsel for bruker som ikke er i Bibrex.');
         } else {
             $localUser->mergeFromAlmaResponse($almaUser);
-            $localUser->save();
-            \Log::info(sprintf(
-                "Updated user '%s' from Alma %s %s notification\n%s",
-                $primaryId,
-                $data['cause'],
-                $data['method'],
-                $request->getContent()
-            ));
+            if ($localUser->isDirty()) {
+                $localUser->save();
+                \Log::info(sprintf(
+                    'Oppdaterte brukeren <a href="%s">%s</a> fra Alma (%s %s).',
+                    action('UsersController@getShow', $localUser->id),
+                    $localUser->name,
+                    $data['cause'],
+                    $data['method']
+                ));
+            } else {
+                \Log::debug(
+                    'Alma-brukeroppdateringsvarsel førte ikke til noen endringer på den tilknyttede Bibrex-brukeren.'
+                );
+            }
         }
 
         // Say yo to Alma
