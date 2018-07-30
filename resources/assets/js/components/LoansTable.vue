@@ -59,16 +59,32 @@
                               </a>
                           </div>
 
-                          <div v-if="!loan.user.email">
+                          <div v-for="blocknote in loan.user.blocks">
+                              <span class="text-danger" v-b-tooltip.hover title="Blokkeringsmelding i Alma">
+                                  <em class="far fa-exclamation-triangle"></em>
+                                  {{ blocknote.block_description.desc }}
+                              </span>
+                          </div>
+
+                          <div v-if="loan.user.fees != 0">
+                              <span class="text-danger" v-b-tooltip.hover title="Utestående gebyr i Alma">
+                                  <em class="far fa-exclamation-triangle"></em>
+                                  Bruker har {{ loan.user.fees }},- i utestående gebyr i Alma.
+                              </span>
+                          </div>
+
+                          <div v-if="!loan.user.email" class="text-danger">
                               <a :href="loan.user.url + '/edit'" class="text-danger">
                                   <em class="far fa-exclamation-triangle"></em>
                                   Bruker mangler e-postadresse!
                               </a>
                           </div>
 
-                          <div v-if="loan.user.note" class="text-info" v-b-tooltip.hover title="Brukermerknad">
-                              <i class="far fa-info-circle"></i>
-                              {{ loan.user.note }}
+                          <div v-if="loan.user.note" class="text-info">
+                              <span class="text-info" v-b-tooltip.hover title="Brukermerknad">
+                                  <i class="far fa-info-circle"></i>
+                                  {{ loan.user.note }}
+                              </span>
                           </div>
 
                           <div v-if="loan.note">

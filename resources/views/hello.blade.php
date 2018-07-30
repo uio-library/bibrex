@@ -5,20 +5,21 @@
 
 <div class="card mb-3">
     <div class="card-header">
-        <h5>Korleis fungerer Bibrex?</h5>
+        <h5>Ting og eksemplar</h5>
     </div>
     <div class="card-body">
         <ul>
             <li>
-                Bibrex inneholder ei samling av <em>ting</em>, og for kvar ting kan det finnast eit eller fleire <em>eksemplar</em>.
+                Bibrex inneholder ei samling av <em>ting</em>. Kvar ting kan ha <em>eksemplar</em>.
             </li>
             <li>
-                Tinga delast for alle bibliotek, men kvart bibliotek kan velje hvilke dei vil aktivere.
+                Ein <em>ting</em> i Bibrex er definert som noko som fyllar ei viss <em>funksjon</em> for brukaren.
+                Tinga er felles for alle bibliotek.
             </li>
             <li>
-                Når du registrerer eit nytt eksemplar blir du bedt om å legge inn ein unik ID for eksemplaret.
-                Denne kan du ta frå ei strekkode eller dikte opp sjølv og registrere i ei RFID-brikke.
-                Bibrex bryr seg kun om at den er unik – og vil bjeffe på deg om han ikkje er det.
+                Eit <em>eksemplar</em> høyrer til eit bestemt bibliotek. Eksemplar treng ikkje vara av samme modell
+                eller samme produsent så lenge dei fyllar den samme <em>funksjonen</em>.
+                Modellinformasjon kan likevel registreres i feltet «Eksemplarinfo» om en ønsker det.
             </li>
         </ul>
     </div>
@@ -32,7 +33,7 @@
     <div class="card-body">
         <ul>
             <li>
-                Standard lånetid kan setjast for kvar ting, men merk at lånetida er felles for alle bibliotek!
+                Standard lånetid kan setjast for kvar ting, men merk at denne er felles for alle bibliotek!
             </li>
             <li>
                 Lånetida <em>rundast ned</em> til næraste natt.
@@ -100,6 +101,9 @@
                     </li>
                     <li>
                         Epost og telefon for å kunne sende påminningar.
+                    </li>
+                    <li>
+                        Blokkeringsmeldinger og størrelsen på utestående gebyr for å kunne avgjøre om brukeren kan få låne.
                     </li>
                 </ul>
             </li>

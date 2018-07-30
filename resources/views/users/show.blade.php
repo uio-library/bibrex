@@ -20,11 +20,34 @@
                   <i class="far fa-trash"></i>
                   Slett
               </a>
-
         </div>
     </div>
 
     <div class="card-body">
+
+        @if ($user->blocks)
+            <alert variant="danger" :closable="false">
+                Blokkeringsmerknader:
+                <ul>
+                    @foreach ($user->blocks as $block)
+                        <li>
+                            {{ array_get($block, 'block_description.desc') }}
+                            @if (isset($block['block_note']))
+                              ({{ array_get($block, 'block_note') }})
+                            @endif –
+                            {{ array_get($block, 'created_date') }}
+                        </li>
+                    @endforeach
+                </ul>
+            </alert>
+        @endif
+
+        @if ($user->fees)
+            <alert variant="danger" :closable="false">
+                {{ $user->fees }},- i utestående gebyr i Alma.
+            </alert>
+        @endif
+
 
       <table class="table">
         <tr>

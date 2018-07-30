@@ -1,11 +1,6 @@
 <template>
     <div>
 
-        <div v-if="error.message">
-            <alert variant="danger" @close="error={}">
-                <div v-html="error.message"></div>
-            </alert>
-        </div>
 
         <div v-if="status.message">
             <alert variant="success" @close="status={}">
@@ -58,7 +53,7 @@
                 clearTimeout(this.timeout);
                 this.timeout = setTimeout(() => {
                     this.status = {};
-                }, 30000);
+                }, 120000);
             });
 
             this.$root.$on('error', error => {
@@ -69,7 +64,7 @@
                 clearTimeout(this.timeout);
                 this.timeout = setTimeout(() => {
                     this.error = {};
-                }, 30000);
+                }, 120000);
             });
 
         },

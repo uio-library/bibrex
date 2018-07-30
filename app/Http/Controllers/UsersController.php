@@ -46,6 +46,8 @@ class UsersController extends Controller
                     'in_alma' => $user->in_alma,
                     'created_at' => $user->created_at->toDateTimestring(),
                     'note' => $user->note,
+                    'blocks' => $user->blocks,
+                    'fees' => $user->fees,
                 ];
             });
 
@@ -138,21 +140,23 @@ class UsersController extends Controller
         if (empty($barcode)) {
             return back()->with('error', 'Du må registrere låne-ID.');
         }
-        $users = collect($alma->users->search('identifiers~' . $barcode, ['limit' => 1]))->map(function ($u) {
+        $almaUsers = collect($alma->users->search('identifiers~' . $barcode, ['limit' => 1]))->map(function ($u) {
             return new AlmaUser($u);
         });
-        if (!count($users)) {
+        if (!count($almaUsers)) {
             return back()->with('error', 'Fant ikke låne-ID-en ' . $user->barcode . ' i Alma 😭 ');
         }
 
-        $barcode = $users[0]->getBarcode();
+        $almaUser = $almaUsers[0];
+
+        $barcode = $almaUser->getBarcode();
         $other = User::where('barcode', '=', $barcode)->first();
         if (!is_null($other) && $other->id != $user->id) {
             return back()->with('error', 'Låne-ID-en er allerede koblet til en annen Bibrex-bruker ' .
                 '(' . $other->name . '). Du kan slå dem sammen fra brukeroversikten.');
         }
 
-        $user->mergeFromAlmaResponse($users[0]);
+        $user->mergeFromAlmaResponse($almaUser);
         $user->save();
 
         return redirect()->action('UsersController@getShow', $user->id)

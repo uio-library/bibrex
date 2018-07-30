@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Alma\User as AlmaUser;
 use App\Item;
+use App\Rules\ConfirmationNeeded;
 use App\Rules\NotOnLoan;
 use App\Rules\NotTrashed;
 use App\Rules\RequiresBarcode;
@@ -164,6 +165,7 @@ class CheckoutRequest extends FormRequest
         $this->item = $item;
 
         return [
+            'confirmed' => [new ConfirmationNeeded($user)],
             'user' => [new UserExists($user)],
             'thing' => [new ThingExists($item), new NotTrashed($item), new NotOnLoan($item)],
         ];

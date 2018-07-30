@@ -16,6 +16,7 @@ class User
     public $firstName;
     public $lastName;
     public $name;
+    public $blocks;
     public $type = 'alma';
 
     protected $user;
@@ -53,6 +54,7 @@ class User
         $this->primaryId = $user->primary_id;
         $this->group = $user->user_group->desc;
         $this->name = $this->lastName . ', ' . $this->firstName;
+        $this->blocks = $user->user_block ?: [];
     }
 
     public function getBarcode()
@@ -66,5 +68,10 @@ class User
     public function getUniversityId()
     {
         return $this->user->universityId;
+    }
+
+    public function getFees()
+    {
+        return $this->user->fees->total_sum;
     }
 }

@@ -37,7 +37,18 @@
             </span>
           </td>
           <td>
-            {{ user.note }}
+              {{ user.note }}
+
+              <div v-if="user.blocks.length" class="text-danger">
+                  <em class="far fa-exclamation-triangle"></em>
+                  Blokkeringsmerknader i Alma
+              </div>
+
+              <div v-if="user.fees != 0" class="text-danger">
+                  <em class="far fa-exclamation-triangle"></em>
+                  {{ user.fees }},- i utestående gebyr i Alma
+              </div>
+
           </td>
           <td>
             {{ user.created_at }}

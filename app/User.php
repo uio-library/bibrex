@@ -21,6 +21,16 @@ class User extends Authenticatable
      */
     protected $fillable = ['barcode', 'university_id', 'in_alma', 'firstname', 'lastname', 'phone', 'email', 'lang'];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'blocks' => 'array',
+        'fees' => 'integer',
+    ];
+
    /**
      * The attributes that should be mutated to dates.
      *
@@ -101,6 +111,8 @@ class User extends Authenticatable
         $this->email = $au->email;
         $this->phone = $au->phone;
         $this->lang = $au->lang;
+        $this->blocks = $au->blocks;
+        $this->fees = $au->getFees();
     }
 
     protected function mergeAttribute($key, User $user)
@@ -174,5 +186,10 @@ class User extends Authenticatable
         $this->save();
 
         return null;
+    }
+
+    public function hasFees()
+    {
+        return $this->fees !== 0;
     }
 }

@@ -104,6 +104,24 @@
                         <div class="text-danger" v-show="errors.thing" v-html="errors.thing"></div>
                     </div>
 
+                <alert variant="danger" class="col col-12" v-if="this.showConfirmation">
+                    <strong>OBS!</strong>
+                    <div v-html="errors.confirmed"></div>
+                    <p>
+                        Vil du fremdeles gjennomføre dette utlånet?
+                    </p>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="confirmCheckout" v-model="confirmed">
+                        <label class="form-check-label" for="confirmCheckout">Ja, jeg ønsker allikevel å gjennomføre dette utlånet</label>
+                    </div>
+                </alert>
+
+                    <div class="col px-2" v-if="this.showConfirmation">
+                        <label>&nbsp;</label>
+
+                        <button type="button" class="btn btn-danger" style="display:block; width: 100%" @click="abort()">Nei, avbryt utlånet</button>
+                    </div>
+
                     <div class="col px-2">
                         <label>&nbsp;</label>
                         <spin-button :busy="this.busy" class="checkout" tabindex="3">
@@ -119,7 +137,9 @@
 
                     <div class="col-sm-8 px-2">
                         <label for="barcode">Strekkode:</label>
-                        <input class="form-control" tabindex="1" type="text" name="barcode" v-model="currentBarcode" autocomplete="off">
+                        <input class="form-control" tabindex="1" type="text" name="barcode"
+                            :class="{'is-invalid': errors.barcode}" v-model="currentBarcode" autocomplete="off">
+                        <div class="text-danger" v-show="errors.barcode" v-html="errors.barcode"></div>
                         <small class="form-text text-muted">
                             &nbsp;
                         </small>
@@ -134,6 +154,12 @@
                     </div>
                 </form>
             </div>
+        </div>
+
+        <div v-if="errorMessage && !this.showConfirmation">
+            <alert variant="danger" @close="resetStatus()">
+                <div v-html="errorMessage"></div>
+            </alert>
         </div>
 
         <checkout-checkin-status></checkout-checkin-status>
@@ -158,6 +184,9 @@ export default {
         thing: Object,
     },
     computed: {
+        showConfirmation() {
+            return !this.errors.user && !this.errors.thing && this.errors.confirmed;
+        },
         checkoutShortkey() {
             if (platform.os.family == 'OS X') {
                 return ['ctrl', 'e'];
@@ -178,15 +207,18 @@ export default {
             showHelp1: false,
             showHelp2: false,
             activeTab: 'checkout',
+            errorMessage: '',
             errors: {
                 user: null,
                 thing: null,
                 barcode: null,
+
             },
             currentUser: {},
             currentThing: {},
             currentBarcode: '',
             busy: false,
+            confirmed: false,
             idleSince: (new Date()).getTime(),
         };
     },
@@ -198,6 +230,7 @@ export default {
         },
         resetStatus() {
             this.$root.$emit('status', {});
+            this.errorMessage = '';
             this.errors = {
                 user: null,
                 thing: null,
@@ -216,27 +249,30 @@ export default {
             this.activeTab = tab;
             setTimeout(this.focusFirstTextInput.bind(this), 150);  // Small timeout for IE11
         },
+        abort() {
+            this.confirmed = false;
+            this.resetStatus();
+        },
         handleError(what, error) {
             this.busy = false;
+            this.confirmed = false;
             if (!error.response) {
                 // Some kind of network error. No response at all from server.
                 Raven.captureException(error);
                 console.error(error);
-                this.$root.$emit('error', {
-                    message: `Serveren svarer ikke. ${what} kunne trolig ikke gjennomføres.
-                        Last siden på nytt og prøv på nytt. Meld fra hvis feilen vedvarer!`,
-                });
+                this.errorMessage = `Serveren svarer ikke. ${what} kunne trolig ikke gjennomføres.
+                        Last siden på nytt og prøv på nytt. Meld fra hvis feilen vedvarer!`;
             } else if (error.response.status === 419) {
                 // CSRF token/session timeout
-                this.$root.$emit('error', {
-                    message: `Siden har vært inaktiv for lenge. Last siden på nytt og prøv igjen.`
-                });
+                this.errorMessage = `Siden har vært inaktiv for lenge. Last siden på nytt og prøv igjen.`;
             } else if (error.response.status === 422) {
                 // Validation error
-                this.$root.$emit('error', {message: `${what} kunne ikke gjennomføres. Se detaljer over.`});
+                this.errorMessage = `${what} kunne ikke gjennomføres. Se detaljer over.`;
                 this.errors = {
                     thing: get(error, 'response.data.errors.thing.0'),
                     user: get(error, 'response.data.errors.user.0'),
+                    barcode: get(error, 'response.data.errors.barcode.0'),
+                    confirmed: get(error, 'response.data.errors.confirmed.0'),
                 };
             } else {
                 // We got some kind of error response from the server, typically a 5xx error.
@@ -247,10 +283,9 @@ export default {
                     },
                 });
 
-                this.$root.$emit('error', {message: `${what} kunne ikke gjennomføres fordi det skjedde noe uventet.
+                this.errorMessage = `${what} kunne ikke gjennomføres fordi det skjedde noe uventet.
                     Du kan evt. prøve på nytt i en annen nettleser. Feilen er forøvrig logget og vil bli analysert,
-                    men det hjelper jo ikke deg akkurat nå.`
-                });
+                    men det hjelper jo ikke deg akkurat nå.`;
             }
         },
         checkout() {
@@ -271,12 +306,15 @@ export default {
             axios.post('/loans/checkout', {
                 user: this.currentUser,
                 thing: this.currentThing,
+                confirmed: this.confirmed,
             })
             .then(response => {
                 this.busy = false;
+                this.confirmed = false;
                 this.$root.$emit('updateLoansTable', {loan: response.data.loan});
                 this.$root.$emit('status', {
                     message: get(response, 'data.status'),
+                    warnings: get(response, 'data.warnings'),
                     editLink: get(response, 'data.editLink'),
                     variant: get(response, 'data.warn') ? 'warning' : 'success' ,
                 });
@@ -294,6 +332,7 @@ export default {
                 this.busy = false;
                 this.$root.$emit('status', {
                     message: get(response, 'data.status'),
+                    warnings: get(response, 'data.warnings'),
                     undoLink: get(response, 'data.undoLink'),
                 });
                 this.$root.$emit('updateLoansTable', {loan: response.data.loan});
