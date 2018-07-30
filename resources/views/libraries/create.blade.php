@@ -17,55 +17,53 @@
 
 	    <label for="name" class="col-sm-2 control-label">Norsk navn</label>
 	    <div class="col-sm-10">
-	      {{ Form::text('name', null, array(
-	      	'id' => 'name',
-            'class' => 'form-control'
-        )) }}
+            @component('components.text', ['name' => 'name', 'value' => old('name')])
+            @endcomponent
 	    </div>
 	  </div>
 
     <div class="form-group row">
         <label for="name" class="col-sm-2 control-label">Engelsk navn</label>
         <div class="col-sm-10">
-          {{ Form::text('name_eng', null, array(
-            'id' => 'name_eng',
-            'class' => 'form-control'
-        )) }}
+            @component('components.text', ['name' => 'name_eng', 'value' => old('name_eng')])
+            @endcomponent
         </div>
     </div>
 
     <div class="form-group row">
 	    <label for="email" class="col-sm-2 control-label">E-post </label>
 	    <div class="col-sm-10">
-	      {{ Form::text('email', null, array(
-	      	'id' => 'email',
-            'class' => 'form-control'
-        )) }}
+            @component('components.text', ['name' => 'email', 'value' => old('email'), 'type' => 'email'])
+            @endcomponent
 	    </div>
 	  </div>
 
-    <div class="form-group row">
+         <div class="form-group row">
+             <label for="library_code" class="col-sm-2 col-form-label">Bibliotekskode:</label>
+             <div class="col-sm-10">
+                 @component('components.text', ['name' => 'library_code', 'value' => old('library_code')])
+                 @endcomponent
+             </div>
+         </div>
+
+     <div class="form-group row">
 	    <label for="password" class="col-sm-2 control-label">Passord </label>
 	    <div class="col-sm-10">
-	      {{ Form::password('password',  array(
-	      	'id' => 'password',
-            'class' => 'form-control'
-        )) }}
-	    </div>
+            @component('components.text', ['name' => 'password', 'value' => old('password'), 'type' => 'password'])
+            @endcomponent
+        </div>
 	  </div>
 
     <div class="form-group row">
 	    <label for="password2" class="col-sm-2 control-label">Gjenta passord </label>
 	    <div class="col-sm-10">
-	      {{ Form::password('password2', array(
-	      	'id' => 'password2',
-            'class' => 'form-control'
-        )) }}
+            @component('components.text', ['name' => 'password2', 'value' => old('password2'), 'type' => 'password'])
+            @endcomponent
 	    </div>
 	  </div>
 
     <button type="submit" class="btn btn-success">
-      Lagre bibliotek
+      Opprett
     </button>
 
     <img src="/img/spinner2.gif" class="spinner" />

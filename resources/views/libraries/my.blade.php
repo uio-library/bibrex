@@ -48,6 +48,16 @@
 
         <li class="list-group-item">
             <div class="form-group row">
+                <label for="library_code" class="col-sm-2 col-form-label">Bibliotekskode:</label>
+                <div class="col-sm-10">
+                    @component('components.text', ['name' => 'library_code', 'value' => $library->library_code])
+                    @endcomponent
+                </div>
+            </div>
+        </li>
+
+        <li class="list-group-item">
+            <div class="form-group row">
                 <label for="password" class="col-sm-2 col-form-label">Passord:</label>
                 <div class="col-sm-10">
                     @component('components.text', ['name' => 'password'])

@@ -90,6 +90,7 @@ class LibrariesController extends Controller
             'name' => 'required|unique:libraries,name',
             'name_eng' => 'required|unique:libraries,name_eng',
             'email' => 'required|email|unique:libraries,email',
+            'library_code' => 'required|unique:libraries,library_code',
         );
         \Validator::make($request->all(), $rules, $this->messages)->validate();
 
@@ -98,6 +99,7 @@ class LibrariesController extends Controller
         $lib->name = $request->input('name');
         $lib->name_eng = $request->input('name_eng');
         $lib->email = $request->input('email');
+        $lib->library_code = $request->input('library_code');
 
         if (!$lib->save()) {
             return redirect()->back()
@@ -178,8 +180,9 @@ class LibrariesController extends Controller
         $library = Auth::user();
         $library->name = $request->input('name');
         $library->email = $request->input('email');
-        $library->guest_ltid = $request->input('guest_ltid') ? $request->input('guest_ltid') : null;
-        $library->email = $request->input('email') ? $request->input('email') : null;
+        $library->guest_ltid = $request->input('guest_ltid');
+        $library->email = $request->input('email');
+        $library->library_code = $request->input('library_code');
 
         if (!$library->save()) {
             return redirect()->back()

@@ -14,6 +14,7 @@
 
       Navn: {{$library->name}} / {{$library->name_eng}}<br />
       Epost: {{$library->email}}<br />
+      Bibliotekskode: {{$library->library_code}}<br />
 
     </div>
   </div>

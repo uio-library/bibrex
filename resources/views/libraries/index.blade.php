@@ -19,7 +19,7 @@
       @foreach ($libraries as $lib)
         <li class="list-group-item">
         	<h5>
-                {{ $lib->name }}
+                {{ $lib->name }} ({{ $lib->library_code }})
             </h5>
         	Totalt {{ $lib->getLoansCount() }} utlån, {{ $lib->getActiveLoansCount() }} aktive.
         	<br>
