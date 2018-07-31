@@ -108,10 +108,10 @@
                 </ul>
             </li>
             <li>
-                Brukare importert frå Alma blir sletta eit år etter dei sist lånte noko.
+                Brukare importert frå Alma blir sletta {{ config('bibrex.user_storage_time.imported') }} dagar etter dei sist lånte noko.
             </li>
             <li>
-                Manuelt oppretta brukare blir sletta fem år etter dei sist lånte noko.
+                Manuelt oppretta brukare blir sletta {{ config('bibrex.user_storage_time.local') }} dagar etter dei sist lånte noko.
             </li>
             <li>
                 Lån anonymiserast fyrste natt etter tingen har blitt levert.
