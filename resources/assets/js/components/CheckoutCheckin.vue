@@ -2,10 +2,10 @@
     <div>
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" :class="{active: activeTab == 'checkout'}" id="nav-checkout-tab" href="#" role="tab" @click.prevent="onTabClick('checkout')" v-shortkey.once="checkoutShortkey" @shortkey="onTabClick('checkout')" v-b-tooltip.hover :title="'Snarvei: ' + checkoutShortkey.join('+')">Utlån</a>
+                <a class="nav-link" :class="{active: activeTab == 'checkout'}" id="nav-checkout-tab" href="#" role="tab" @click.prevent="selectTab('checkout')" v-shortkey.once="checkoutShortkey" @shortkey="selectTab('checkout')" v-b-tooltip.hover :title="'Snarvei: ' + checkoutShortkey.join('+')">Utlån</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" :class="{active: activeTab == 'checkin'}" id="nav-checkin-tab" href="#" @click.prevent="onTabClick('checkin')" v-shortkey.once="checkinShortkey" @shortkey="onTabClick('checkin')" v-b-tooltip.hover :title="'Snarvei: ' + checkinShortkey.join('+')">Retur</a>
+                <a class="nav-link" :class="{active: activeTab == 'checkin'}" id="nav-checkin-tab" href="#" @click.prevent="selectTab('checkin')" v-shortkey.once="checkinShortkey" @shortkey="selectTab('checkin')" v-b-tooltip.hover :title="'Snarvei: ' + checkinShortkey.join('+')">Retur</a>
             </li>
         </ul>
         <div class="tab-content p-3 mb-3">
@@ -245,9 +245,12 @@ export default {
             this.currentUser = value;
             Vue.set(this.errors, 'user', null);
         },
-        onTabClick(tab) {
+        selectTab(tab) {
             this.activeTab = tab;
             setTimeout(this.focusFirstTextInput.bind(this), 150);  // Small timeout for IE11
+            if (window.rfidControl) {
+                window.rfidControl(this.activeTab);
+            }
         },
         abort() {
             this.confirmed = false;
