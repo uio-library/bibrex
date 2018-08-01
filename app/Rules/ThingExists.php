@@ -2,8 +2,6 @@
 
 namespace App\Rules;
 
-use App\Item;
-use App\Thing;
 use Illuminate\Contracts\Validation\Rule;
 
 class ThingExists implements Rule
@@ -13,9 +11,9 @@ class ThingExists implements Rule
     /**
      * Create a new rule instance.
      *
-     * @param Item $item
+     * @param $item
      */
-    public function __construct(Item $item = null)
+    public function __construct($item = null)
     {
         $this->item = $item;
     }

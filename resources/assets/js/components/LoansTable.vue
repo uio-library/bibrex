@@ -22,8 +22,16 @@
                   <tr v-for="loan in loans" :class="{ 'highlight': highlight.indexOf(loan.id) !== -1 }">
 
                       <td>
-                          <a :href="loan.url">{{ loan.item.thing.name }}
+                          <a :href="loan.url">
+                            <span v-if="loan.item.thing.id == 1">
+                              <em class="far fa-book"></em>
+                              {{ loan.item.note }}
+                            </span>
+                            <span v-else>
+                              <em class="far fa-hexagon"></em>
+                              {{ loan.item.thing.name }}
                               <span v-if="loan.item.note">({{ loan.item.note }})</span>
+                            </span>
                           </a>
                       </td>
 

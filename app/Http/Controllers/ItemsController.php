@@ -41,7 +41,7 @@ class ItemsController extends Controller
                     'thing' => $item->thing->name,
                     'barcode' => $item->barcode,
                     'note' => $item->note,
-                    'loan' => $item->loans()->first(),
+                    'loan' => $item->loans[0] ?? null,
                 ];
             }),
         ]);

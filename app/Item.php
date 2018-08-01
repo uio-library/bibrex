@@ -23,7 +23,7 @@ class Item extends Model
      *
      * @var array
      */
-    protected $fillable = ['barcode', 'library_id'];
+    protected $fillable = ['barcode', 'library_id', 'note', 'thing_id'];
 
     /**
      * The attributes that should be cast to native types.

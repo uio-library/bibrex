@@ -19,6 +19,13 @@ class Loan extends Model
     public $errors;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['user_id', 'item_id', 'due_at', 'as_guest'];
+
+    /**
      * The attributes that should be mutated to dates.
      *
      * @var array
@@ -206,5 +213,13 @@ class Loan extends Model
     public function checkIn()
     {
         $this->delete();
+
+        if ($this->item->thing_id == 1) {
+            $this->item->delete();
+            \Log::info(sprintf(
+                'Slettet midlertidig eksemplar for Alma-utlån (<a href="%s">Detaljer</a>)',
+                action('ItemsController@show', $this->item_id)
+            ), ['library' => $this->library->name]);
+        }
     }
 }

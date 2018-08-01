@@ -15,6 +15,7 @@ use App\Rules\UserExists;
 use App\Thing;
 use App\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Scriptotek\Alma\Bibs\Item as AlmaItem;
 use Scriptotek\Alma\Client as AlmaClient;
 
 class CheckoutRequest extends FormRequest
@@ -40,7 +41,7 @@ class CheckoutRequest extends FormRequest
      */
     public function rules()
     {
-        $lib = \Auth::user();
+        $library = \Auth::user();
 
         $input = $this->all();
 
@@ -61,6 +62,12 @@ class CheckoutRequest extends FormRequest
             if (is_null($item)) {
                 // Next, check if it matches a thing name.
                 $thing = Thing::where('name', '=', array_get($input, 'thing.name'))->first();
+            }
+
+            if (is_null($item) && !empty($library->library_code)) {
+                // Next, check if it can be found in Alma.
+                // If the library doesn't have a library code set, it means we should not check Alma.
+                $item = $alma->items->fromBarcode(array_get($input, 'thing.name'));
             }
         } elseif (array_get($input, 'thing.type') == 'item') {
             $item = Item::withTrashed()->where('id', '=', array_get($input, 'thing.id'))->first();
@@ -83,6 +90,11 @@ class CheckoutRequest extends FormRequest
                 $item->thing_id = $thing->id;
                 $item->save();
             }
+        }
+
+        if (!is_null($item) && $item->thing_id == 1) {
+            // Local copy of an Alma item
+            $item = $alma->items->fromBarcode($item->barcode);
         }
 
         // ======================== Lookup or import user ========================
@@ -167,7 +179,7 @@ class CheckoutRequest extends FormRequest
         return [
             'confirmed' => [new ConfirmationNeeded($user)],
             'user' => [new UserExists($user)],
-            'thing' => [new ThingExists($item), new NotTrashed($item), new NotOnLoan($item)],
+            'thing' => [new ThingExists($item), new NotTrashed($item), new NotOnLoan($alma, $item)],
         ];
     }
 

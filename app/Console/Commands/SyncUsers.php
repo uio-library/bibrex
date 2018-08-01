@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 
 use PDOException;
 use Scriptotek\Alma\Client as AlmaClient;
+use Scriptotek\Alma\Exception\RequestFailed;
 
 class SyncUsers extends Command
 {
@@ -22,7 +23,10 @@ class SyncUsers extends Command
      *
      * @var string
      */
-    protected $description = 'Sync all users';
+    protected $description = 'Fetch changes to Alma users and try to link unlinked users.';
+
+    /** @var AlmaClient */
+    protected $alma;
 
     /**
      * Create a new command instance.
@@ -75,6 +79,7 @@ class SyncUsers extends Command
                 ));
 
                 $this->info('lenket til Alma-bruker');
+                $this->transferLoans($user);
             } else {
                 $this->line('ikke i Alma');
             }
@@ -89,6 +94,19 @@ class SyncUsers extends Command
                 action('UsersController@getShow', $user->id),
                 $user->name
             ));
+            return;
+        }
+
+        if ($user->in_alma) {
+            // Check if user have loans of thing_id 1 and transfer them if so.
+            // In case the user was manually synced during the day.
+            $tempLoans = $user->loans()->whereHas('item', function ($query) {
+                $query->where('thing_id', 1);
+            })->count();
+
+            if ($tempLoans) {
+                $this->transferLoans($user);
+            }
         }
     }
 
@@ -102,5 +120,79 @@ class SyncUsers extends Command
         foreach (User::get() as $user) {
             $this->processUser($user);
         }
+    }
+
+    protected function transferLoans(User $localUser)
+    {
+        $almaUser = $this->alma->users[$localUser->alma_primary_id];
+
+        if (is_null($almaUser)) {
+            \Log::error("Kunne ikke overføre lån fordi Alma-brukeren ikke ble funnet. Meget uventet.");
+            return;
+        }
+
+        $n = 0;
+
+        foreach ($localUser->loans as $loan) {
+            if ($loan->item->thing_id == 1) {
+                // Loan should be transferred from the temporary card to the user
+
+                $barcode = $loan->item->barcode;
+                $library = $loan->library;
+
+                $errBecause = "Kunne ikke overføre lån av $barcode i Alma fordi";
+
+                if (is_null($library->temporary_barcode)) {
+                    \Log::error("$errBecause biblioteket ikke lenger har et midlertidig lånekort.");
+                    continue;
+                }
+
+                $tempUser = $this->alma->users[$library->temporary_barcode];
+
+                if (is_null($tempUser)) {
+                    \Log::error("$errBecause brukeren '{$library->temporary_barcode}' ikke ble funnet i Alma.");
+                    continue;
+                }
+
+                $almaItem = $this->alma->items->fromBarcode($barcode);
+                $almaLoan = $almaItem->loan;
+
+                if (is_null($almaLoan)) {
+                    \Log::warning("$errBecause dokumentet i mellomtiden har blitt returnert i Alma.");
+                    continue;
+                }
+
+                if ($almaLoan->user_id != $library->temporary_barcode) {
+                    \Log::warning("$errBecause dokumentet ikke lenger er utlånt til {$library->temporary_barcode}.");
+                    continue;
+                }
+
+                if (count($almaItem->requests)) {
+                    \Log::warning("$errBecause dokumentet har reserveringer.");
+                    continue;
+                }
+
+                // Cross fingers
+                try {
+                    $almaLoan->scanIn($library);
+                    $almaItem->checkOut($almaUser, $library);
+                } catch (RequestFailed $e) {
+                    \Log::warning($errBecause . ' ' . $e->getMessage());
+                    continue;
+                }
+
+                \Log::info(sprintf(
+                    'Overførte lån av <a href="%s">%s</a> til Alma-brukeren.',
+                    action('ItemsController@show', $loan->item->id),
+                    $barcode
+                ));
+
+                // Checkin local loan and delete temporary item
+                $loan->checkIn();
+
+                $n++;
+            }
+        }
+        $this->info(" > Overførte $n lån");
     }
 }

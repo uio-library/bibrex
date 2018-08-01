@@ -53,8 +53,8 @@ if (!window.sessionStorage.getItem('bibrexWindowId')) {
 
 window.axios.defaults.headers.post['X-Bibrex-Window'] = window.sessionStorage.getItem('bibrexWindowId');
 
-// Set a default timeout of 20s.
-window.axios.defaults.timeout = 20000;
+// Set a default timeout of 30s.
+window.axios.defaults.timeout = 30000;
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

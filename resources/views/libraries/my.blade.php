@@ -52,6 +52,24 @@
                 <div class="col-sm-10">
                     @component('components.text', ['name' => 'library_code', 'value' => $library->library_code])
                     @endcomponent
+                    <div>
+                        Brukes for å utføre utlån i Alma.
+                        Hvis det ikke er ønskelig at Bibrex skal brukes til å kunne utføre utlån i Alma kan feltet tømmes.
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li class="list-group-item">
+            <div class="form-group row">
+                <label for="temporary_barcode" class="col-sm-2 col-form-label">Midlertidig lånekort (låne-ID):</label>
+                <div class="col-sm-10">
+                    @component('components.text', ['name' => 'temporary_barcode', 'value' => $library->temporary_barcode])
+                    @endcomponent
+                    <div>
+                        Kort som brukes for brukere som ikke har blitt importert i Alma enda.
+                        Kan stå tomt.
+                    </div>
                 </div>
             </div>
         </li>

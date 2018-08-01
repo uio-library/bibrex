@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Library;
 use App\LibraryIp;
+use App\Rules\TemporaryBarcodeExists;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
+use Scriptotek\Alma\Client as AlmaClient;
 
 class LibrariesController extends Controller
 {
@@ -82,15 +84,19 @@ class LibrariesController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
+     * @param AlmaClient $alma
      * @return Response
      */
-    public function postStore(Request $request)
+    public function postStore(Request $request, AlmaClient $alma)
     {
+        $temporaryBarcode = new TemporaryBarcodeExists($alma);
+
         $rules = array(
             'name' => 'required|unique:libraries,name',
             'name_eng' => 'required|unique:libraries,name_eng',
             'email' => 'required|email|unique:libraries,email',
             'library_code' => 'required|unique:libraries,library_code',
+            'temporary_barcode' => [$temporaryBarcode],
         );
         \Validator::make($request->all(), $rules, $this->messages)->validate();
 
@@ -100,6 +106,7 @@ class LibrariesController extends Controller
         $lib->name_eng = $request->input('name_eng');
         $lib->email = $request->input('email');
         $lib->library_code = $request->input('library_code');
+        $lib->temporary_barcode = $temporaryBarcode->getNormalizedValue();
 
         if (!$lib->save()) {
             return redirect()->back()
@@ -175,14 +182,27 @@ class LibrariesController extends Controller
         ));
     }
 
-    public function postStoreMyAccount(Request $request)
+    public function postStoreMyAccount(Request $request, AlmaClient $alma)
     {
         $library = Auth::user();
+
+        $temporaryBarcode = new TemporaryBarcodeExists($alma);
+
+        $rules = array(
+            'name' => 'required|unique:libraries,name,' . $library->id,
+            'name_eng' => 'required|unique:libraries,name_eng,' . $library->id,
+            'email' => 'required|email|unique:libraries,email,' . $library->id,
+            'library_code' => 'unique:libraries,library_code,' . $library->id,
+            'temporary_barcode' => [$temporaryBarcode],
+        );
+        \Validator::make($request->all(), $rules, $this->messages)->validate();
+
         $library->name = $request->input('name');
         $library->email = $request->input('email');
         $library->guest_ltid = $request->input('guest_ltid');
         $library->email = $request->input('email');
         $library->library_code = $request->input('library_code');
+        $library->temporary_barcode = $temporaryBarcode->getNormalizedValue();
 
         if (!$library->save()) {
             return redirect()->back()

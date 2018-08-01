@@ -15,6 +15,7 @@ class AddLibraryCode extends Migration
     {
         Schema::table('libraries', function (Blueprint $table) {
             $table->text('library_code')->nullable();
+            $table->text('temporary_barcode')->nullable();
         });
     }
 
@@ -27,6 +28,7 @@ class AddLibraryCode extends Migration
     {
         Schema::table('libraries', function (Blueprint $table) {
             $table->dropColumn('library_code');
+            $table->dropColumn('temporary_barcode');
         });
     }
 }

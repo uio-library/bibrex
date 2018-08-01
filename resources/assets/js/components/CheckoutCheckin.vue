@@ -267,7 +267,7 @@ export default {
                 this.errorMessage = `Siden har vært inaktiv for lenge. Last siden på nytt og prøv igjen.`;
             } else if (error.response.status === 422) {
                 // Validation error
-                this.errorMessage = `${what} kunne ikke gjennomføres. Se detaljer over.`;
+                this.errorMessage = get(error, 'response.data.error', `${what} kunne ikke gjennomføres. Se detaljer over.`);
                 this.errors = {
                     thing: get(error, 'response.data.errors.thing.0'),
                     user: get(error, 'response.data.errors.user.0'),

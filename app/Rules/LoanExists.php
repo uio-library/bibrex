@@ -2,21 +2,17 @@
 
 namespace App\Rules;
 
-use App\Item;
 use Illuminate\Contracts\Validation\Rule;
 
-class NotTrashed implements Rule
+class LoanExists implements Rule
 {
-    protected $item;
-
     /**
      * Create a new rule instance.
      *
-     * @param $item
+     * @return void
      */
-    public function __construct($item = null)
+    public function __construct()
     {
-        $this->item = $item;
     }
 
     /**
@@ -28,7 +24,7 @@ class NotTrashed implements Rule
      */
     public function passes($attribute, $value)
     {
-        return !is_a($this->item, Item::class) || !$this->item->trashed();
+        return false;
     }
 
     /**
@@ -38,9 +34,6 @@ class NotTrashed implements Rule
      */
     public function message()
     {
-        return sprintf(
-            'Eksemplaret er slettet. Du kan gjenopprette det på <a href="%s">eksemplarsiden</a> hvis du ønsker det.',
-            action('ItemsController@show', $this->item->id)
-        );
+        return 'Lånet ble ikke funnet.';
     }
 }

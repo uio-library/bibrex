@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Events\LoanTableUpdated;
+use App\Http\Requests\CheckinRequest;
 use App\Http\Requests\CheckoutRequest;
 use App\Item;
 use App\Loan;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Scriptotek\Alma\Client as AlmaClient;
+use Scriptotek\Alma\Bibs\Item as AlmaItem;
+use Scriptotek\Alma\Exception\RequestFailed;
 use function Stringy\create as s;
 
 class LoansController extends Controller
@@ -111,51 +116,46 @@ class LoansController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * @param AlmaClient $alma
      * @param CheckoutRequest $request
      * @return Response
      */
-    public function checkout(CheckoutRequest $request)
+    public function checkout(AlmaClient $alma, CheckoutRequest $request)
     {
+        if (is_a($request->item, AlmaItem::class)) {
+            return $this->checkoutAlmaItem($alma, $request->item, $request->user, $request);
+        }
+
         // Create new loan
-        $loan = new Loan();
-        $loan->user_id = $request->user->id;
-        $loan->item_id = $request->item->id;
-        $loan->due_at = Carbon::now()
-            ->addDays($request->item->thing->properties->loan_time)
-            ->setTime(0, 0, 0);
-        $loan->as_guest = false;
-        if (!$loan->save()) {
+        return $this->checkoutLocalItem($request->item, $request->user, $request);
+    }
+
+    public function checkoutLocalItem(Item $item, User $user, Request $request)
+    {
+        $loan = Loan::create([
+            'user_id' => $user->id,
+            'item_id' => $item->id,
+            'due_at' => Carbon::now()
+                ->addDays($item->thing->properties->loan_time)
+                ->setTime(0, 0, 0),
+            'as_guest' => false,
+        ]);
+        if (!$loan) {
             return response()->json(['errors' => $loan->errors], 409);
         }
 
-        $request->user->loan_count += 1;
-        $request->user->last_loan_at = Carbon::now();
-        $request->user->save();
+        $user->loan_count += 1;
+        $user->last_loan_at = Carbon::now();
+        $user->save();
 
         event(new LoanTableUpdated('checkout', $request, $loan));
 
         $loan->load('user', 'item', 'item.thing');
 
-        // getSuccessMsg(loan) {
-        //     let msg = `Utlån av ${loan.item.thing.properties.name_indefinite.nob} til ${loan.user.name} registrert`;
-
-        //     switch (Math.floor(Math.random() * 20)) {
-        //         case 0:
-        //             msg += ' (og verden har forøvrig ikke gått under)';
-        //             break;
-        //         case 1:
-        //             msg += ' (faktisk helt sant)';
-        //             break;
-        //     }
-
-        //     msg += `. Lånetid: ${loan.days_left} ${loan.days_left == 1 ? 'dag' : 'dager'}.`;
-        //     return msg;
-        // },
-
         return $this->loggedResponse([
             'status' => sprintf(
                 'Lånte ut %s (<a href="%s">Detaljer</a>).',
-                $request->item->thing->properties->get('name_indefinite.nob'),
+                $item->thing->properties->get('name_indefinite.nob'),
                 action('LoansController@getShow', $loan->id)
             ),
             'loan' => $loan,
@@ -230,97 +230,23 @@ class LoansController extends Controller
     /**
      * Checkin the specified loan.
      *
-     * @param Request $request
+     * @param AlmaClient $alma
+     * @param CheckinRequest $request
      * @return Response
      */
-    public function checkin(Request $request)
+    public function checkin(AlmaClient $alma, CheckinRequest $request)
     {
-        // Validate the request
-
-        if ($request->input('loan')) {
-            // Check-in by loan id
-
-            $loan = Loan::with(['item', 'item.thing', 'user'])
-                ->find($request->input('loan'));
-
-            if (is_null($loan)) {
-                return $this->loggedResponse(['error' => sprintf(
-                    'Lånet ble ikke funnet: %s',
-                    $request->input('loan')
-                )]);
-            }
-        } elseif ($request->input('barcode')) {
-            // Check-in by barcode
-
-            $loan = Loan::with(['item', 'item.thing', 'user'])
-                ->whereHas('item', function ($query) use ($request) {
-                    $query->where('barcode', '=', $request->input('barcode'));
-                })
-                ->first();
-
-            if (is_null($loan)) {
-                // There's no active loan, but let's check if the barcode exists at all
-                // and if the item is perhaps lost.
-
-                $item = Item::withTrashed()->where('barcode', '=', $request->input('barcode'))->first();
-                if (is_null($item)) {
-                    return $this->loggedResponse(['error' => sprintf(
-                        'Bibrex kan ikke huske å ha sett strekkoden «%s» før. Er den registrert?',
-                        $request->input('barcode')
-                    )]);
-                }
-
-                // Get the last loan
-                $loan = $item->loans()->withTrashed()->orderBy('updated_at', 'desc')->first();
-
-                if (is_null($loan)) {
-                    // It has never been loaned out
-                    return $this->loggedResponse(['status' => sprintf(
-                        '%s har egentlig aldri vært utlånt, så vidt Bibrex kan se.',
-                        s($item->thing->properties->get('name_definite.nob'))->upperCaseFirst()
-                    )]);
-                }
-
-                // At this point we have a non-active $loan object, which might or might not be lost.
-            }
-        } else {
-            return response()->json([
-                'status' => 'Ingenting har blitt returnert. Det kan argumenteres for at dette var en ' .
-                    'unødvendig operasjon, men hvem vet.'
-            ]);
+        if ($request->loan) {
+            return $this->checkinLocalLoan($request->loan, $request, $alma);
         }
 
-        if ($loan->is_lost) {
-            $loan->found();
-
-            return $this->loggedResponse(['status' => sprintf(
-                '%s var registrert som tapt, men er nå tilbake!',
-                $loan->item->formattedLink(true)
-            )]);
-        } elseif ($loan->trashed()) {
-            return $this->loggedResponse(['status' => sprintf(
-                '%s var allerede levert (men det går greit).',
-                $loan->item->formattedLink(true)
-            )]);
+        if ($request->almaItem) {
+            return $this->checkinAlmaItem($alma, $request->almaItem);
         }
 
-        // At last, the normal checkin
-
-        $loan->checkIn();
-
-        $user = $loan->user;
-        $user->last_loan_at = Carbon::now();
-        $user->save();
-
-        event(new LoanTableUpdated('checkin', $request, $loan));
-
-        return $this->loggedResponse([
-            'status' => sprintf(
-                'Returnerte %s (<a href="%s">Detaljer</a>).',
-                $loan->item->thing->properties->get('name_indefinite.nob'),
-                action('LoansController@getShow', $loan->id)
-            ),
-            'undoLink' => action('LoansController@restore', $loan->id),
+        return response()->json([
+            'status' => 'Ingenting har blitt returnert. Det kan argumenteres for at dette var en ' .
+                'unødvendig operasjon, men hvem vet.'
         ]);
     }
 
@@ -347,6 +273,172 @@ class LoansController extends Controller
                 s($loan->item->thing->properties->get('name_definite.nob'))->upperCaseFirst(),
                 action('LoansController@getShow', $loan->id)
             )
+        ]);
+    }
+
+    /**
+     * Checkout Alma item without creating a local copy.
+     *
+     * @param AlmaClient $client
+     * @param AlmaItem $item
+     * @param User $localUser
+     * @param Request $request
+     * @return Response
+     */
+    protected function checkoutAlmaItem(AlmaClient $client, AlmaItem $almaItem, User $localUser, Request $request)
+    {
+        $library = \Auth::user();
+
+        if (empty($library->library_code)) {
+            return $this->loggedResponse([
+                'error' => 'Alma-utlån krever at bibliotekskode er registrert'
+                    . ' i kontoinnstillingene.',
+            ]);
+        }
+
+        if ($localUser->in_alma) {
+            $almaUser = $client->users->get($localUser->alma_primary_id);
+        } else {
+            if (empty($library->temporary_barcode)) {
+                return $this->loggedResponse([
+                    'error' => 'Brukeren finnes ikke i Alma. Hvis du vil låne ut på midlertidig lånekort'
+                        . ' må det registreres i kontoinnstillingene.',
+                ]);
+            }
+
+            $almaUser = $client->users->get($library->temporary_barcode);
+        }
+
+        $almaLibrary = $client->libraries[$library->library_code];
+
+        try {
+            $response = $almaItem->checkOut($almaUser, $almaLibrary);
+        } catch (RequestFailed $e) {
+            return $this->loggedResponse([
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        if ($response->loan_status != 'ACTIVE') {
+            return $this->loggedResponse([
+                'error' => 'Utlån av Alma-dokument i Bibrex feilet, prøv i Alma i stedet.',
+            ]);
+        }
+
+        # The Alma checkout was successful. If the user is not in Alma, we create a
+        # temporary local item to keep track of the loan.
+        if (!$localUser->in_alma) {
+            $localItem = Item::withTrashed()->firstOrNew([
+                'thing_id' => 1,
+                'barcode' => $response->item_barcode,
+            ]);
+            $localItem->library_id = $library->id;
+            $localItem->note = $response->title;
+            $localItem->save();
+
+            \Log::info(sprintf(
+                'Opprettet midlertidig Bibrex-eksemplar for Alma-utlån (<a href="%s">Detaljer</a>)',
+                action('ItemsController@show', $localItem->id)
+            ), ['library' => \Auth::user()->name]);
+
+            return $this->checkoutLocalItem($localItem, $localUser, $request);
+        }
+
+        # If the user exists in Alma, we don't create a local item.
+        return $this->loggedResponse([
+            'status' => sprintf(
+                '%s (%s) ble lånt ut til %s i Alma. Forfaller: %s',
+                $response->item_barcode,
+                $response->title,
+                $response->user_id,
+                $response->due_date
+            ),
+        ]);
+    }
+
+    /**
+     * Checkin Alma item.
+     *
+     * @param AlmaClient $client
+     * @param AlmaItem $item
+     * @return Response
+     */
+    protected function checkinAlmaItem(AlmaClient $client, AlmaItem $item)
+    {
+        $library = \Auth::user();
+
+        if (empty($library->library_code)) {
+            return $this->loggedResponse([
+                'error' => 'Alma-innleveringer krever at bibliotekskode er registrert'
+                    . ' i kontoinnstillingene.',
+            ]);
+        }
+
+        $almaLibrary = $client->libraries[$library->library_code];
+
+        $response = $item->scanIn($almaLibrary, 'DEFAULT_CIRC_DESK', [
+            'place_on_hold_shelf' => 'true',
+            'auto_print_slip' => 'true',
+        ]);
+
+        return $this->loggedResponse([
+            'status' => sprintf(
+                '<small>%s ble skanna inn i Alma, og Alma svarte:</small><br>%s',
+                $item->item_data->barcode,
+                $response->getMessage()
+            ),
+        ]);
+    }
+
+    /**
+     * @param Loan $loan
+     * @param Request $request
+     * @param AlmaClient $alma
+     * @return Response
+     */
+    protected function checkinLocalLoan(Loan $loan, Request $request, AlmaClient $alma)
+    {
+        if ($loan->is_lost) {
+            $loan->found();
+            return $this->loggedResponse(['status' => sprintf(
+                '%s var registrert som tapt, men er nå tilbake!',
+                $loan->item->formattedLink(true)
+            )]);
+        }
+
+        if ($loan->trashed()) {
+            if ($loan->item->thing_id == 1) {
+                // Could still be on loan in Alma
+                $almaItem = $alma->items->fromBarcode($loan->item->barcode);
+                return $this->checkinAlmaItem($alma, $almaItem);
+            }
+
+            return $this->loggedResponse(['status' => sprintf(
+                '%s var allerede levert (men det går greit).',
+                $loan->item->formattedLink(true)
+            )]);
+        }
+
+        $loan->checkIn();
+
+        $user = $loan->user;
+        $user->last_loan_at = Carbon::now();
+        $user->save();
+
+        event(new LoanTableUpdated('checkin', $request, $loan));
+
+        if ($loan->item->thing_id == 1) {
+            $almaItem = $alma->items->fromBarcode($loan->item->barcode);
+            return $this->checkinAlmaItem($alma, $almaItem);
+        }
+
+        return $this->loggedResponse([
+            'status' => sprintf(
+                'Returnerte %s (<a href="%s">Detaljer</a>).',
+                $loan->item->thing->properties->get('name_indefinite.nob'),
+                action('LoansController@getShow', $loan->id)
+            ),
+            'undoLink' => action('LoansController@restore', $loan->id),
         ]);
     }
 }

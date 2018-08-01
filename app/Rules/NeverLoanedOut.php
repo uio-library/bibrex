@@ -4,17 +4,18 @@ namespace App\Rules;
 
 use App\Item;
 use Illuminate\Contracts\Validation\Rule;
+use function Stringy\create as s;
 
-class NotTrashed implements Rule
+class NeverLoanedOut implements Rule
 {
     protected $item;
 
     /**
      * Create a new rule instance.
      *
-     * @param $item
+     * @param Item $item
      */
-    public function __construct($item = null)
+    public function __construct(Item $item)
     {
         $this->item = $item;
     }
@@ -28,7 +29,7 @@ class NotTrashed implements Rule
      */
     public function passes($attribute, $value)
     {
-        return !is_a($this->item, Item::class) || !$this->item->trashed();
+        return false;
     }
 
     /**
@@ -39,8 +40,8 @@ class NotTrashed implements Rule
     public function message()
     {
         return sprintf(
-            'Eksemplaret er slettet. Du kan gjenopprette det på <a href="%s">eksemplarsiden</a> hvis du ønsker det.',
-            action('ItemsController@show', $this->item->id)
+            '%s har egentlig aldri vært utlånt så vidt Bibrex kan se.',
+            s($this->item->thing->properties->get('name_definite.nob'))->upperCaseFirst()
         );
     }
 }
