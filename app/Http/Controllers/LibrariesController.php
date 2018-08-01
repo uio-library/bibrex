@@ -95,7 +95,7 @@ class LibrariesController extends Controller
             'name' => 'required|unique:libraries,name',
             'name_eng' => 'required|unique:libraries,name_eng',
             'email' => 'required|email|unique:libraries,email',
-            'library_code' => 'required|unique:libraries,library_code',
+            'library_code' => 'sometimes|nullable|unique:libraries,library_code',
             'temporary_barcode' => [$temporaryBarcode],
         );
         \Validator::make($request->all(), $rules, $this->messages)->validate();

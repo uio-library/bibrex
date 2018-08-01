@@ -398,6 +398,8 @@ class LoansController extends Controller
      */
     protected function checkinLocalLoan(Loan $loan, Request $request, AlmaClient $alma)
     {
+        $library = \Auth::user();
+
         if ($loan->is_lost) {
             $loan->found();
             return $this->loggedResponse(['status' => sprintf(
@@ -407,7 +409,7 @@ class LoansController extends Controller
         }
 
         if ($loan->trashed()) {
-            if ($loan->item->thing_id == 1) {
+            if ($loan->item->thing_id == 1 && !empty($library->library_code)) {
                 // Could still be on loan in Alma
                 $almaItem = $alma->items->fromBarcode($loan->item->barcode);
                 return $this->checkinAlmaItem($alma, $almaItem);
@@ -427,7 +429,7 @@ class LoansController extends Controller
 
         event(new LoanTableUpdated('checkin', $request, $loan));
 
-        if ($loan->item->thing_id == 1) {
+        if ($loan->item->thing_id == 1 && !empty($library->library_code)) {
             $almaItem = $alma->items->fromBarcode($loan->item->barcode);
             return $this->checkinAlmaItem($alma, $almaItem);
         }

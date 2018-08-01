@@ -23,7 +23,7 @@ class LibrariesTest extends DuskTestCase
             $browser->visit(new LibrariesPage)
                 ->waitForText('Bibliotek (1)')
                 ->clickLink('Nytt bibliotek')
-                ->waitForText('Opprett nytt bibliotek')
+                ->waitForText('Nytt bibliotek')
                 ->type('name', $name)
                 ->pause(300)
                 ->type('name_eng', $faker->company)
@@ -34,7 +34,7 @@ class LibrariesTest extends DuskTestCase
                 ->pause(300)
                 ->type('password2', $pw)
                 ->pause(300)
-                ->press('Lagre')
+                ->press('Opprett')
                 ->waitForText('Biblioteket ble opprettet')
                 ->assertSee('Bibliotek (2)');
         });

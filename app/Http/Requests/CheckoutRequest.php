@@ -92,7 +92,7 @@ class CheckoutRequest extends FormRequest
             }
         }
 
-        if (!is_null($item) && $item->thing_id == 1) {
+        if (!is_null($item) && $item->thing_id == 1 && !empty($library->library_code)) {
             // Local copy of an Alma item
             $item = $alma->items->fromBarcode($item->barcode);
         }
