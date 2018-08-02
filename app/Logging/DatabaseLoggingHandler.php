@@ -16,10 +16,16 @@ class DatabaseLoggingHandler extends AbstractProcessingHandler
         parent::__construct();
     }
 
-    public function read()
+    public function read($level = 200, $limit = 500)
     {
+        $query = $this->connection->table('log')
+            ->where('level', '>=', $level)
+            ->orderBy('id', 'desc')
+            ->select()
+            ->limit($limit);
+
         $rows = [];
-        foreach ($this->connection->table('log')->orderBy('id', 'desc')->select()->limit(500)->get() as $row) {
+        foreach ($query->get() as $row) {
             $row->context = json_decode($row->context, true);
             $rows[] = $row;
         }
