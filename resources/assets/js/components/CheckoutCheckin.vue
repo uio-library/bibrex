@@ -357,6 +357,11 @@ export default {
         this.currentThing = this.thing || {name:""};
     },
     mounted() {
+
+        if (window.rfidControl) {
+            window.rfidControl(this.activeTab);
+        }
+
         window.addEventListener('keypress', (evt) => {
             if (evt.altKey || evt.ctrlKey || evt.metaKey) return;
             if (evt.target === document.body && evt.key) {
