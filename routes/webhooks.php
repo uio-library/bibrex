@@ -8,10 +8,6 @@ use Illuminate\Http\Request;
 |--------------------------------------------------------------------------
 */
 
-Route::get('alma', function (Request $request) {
-    return response()->json([
-        'challenge' => $request->query('challenge'),
-    ]);
-});
+Route::get('alma', 'WebhooksController@challenge');
 
 Route::post('alma', 'WebhooksController@handle');

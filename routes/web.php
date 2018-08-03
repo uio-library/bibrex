@@ -11,16 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return redirect()->action('LoansController@getIndex');
-});
-Route::get('/loans/index', function () {
-    return redirect()->action('LoansController@getIndex');
-});
+Route::redirect('/', '/loans');
+Route::redirect('/loans/index', '/loans');
 
-Route::get('/about', function () {
-    return Response::view('hello');
-});
+Route::view('/about', 'about');
 
 Route::resource('logs', 'LogsController')->only(['index']);  // 'destroy';
 

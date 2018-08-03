@@ -10,6 +10,19 @@ use Scriptotek\Alma\Client;
 class WebhooksController extends Controller
 {
     /**
+     * Alma webhooks challenge handler.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function challenge(Request $request)
+    {
+        return response()->json([
+            'challenge' => $request->query('challenge'),
+        ]);
+    }
+
+    /**
      * Alma webhooks router.
      *
      * @param Client $almaClient
