@@ -11,6 +11,10 @@
   <!--
   <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
   -->
+
+  <link rel="shortcut icon" href="/images/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" href="/images/apple-touch-icon.png">
+
   <style type="text/css">
   html,body {
     height: 100%;

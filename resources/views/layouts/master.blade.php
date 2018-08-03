@@ -11,6 +11,9 @@
   <link rel="stylesheet" type="text/css" href="{{ mix('/css/app.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ mix('/css/dataTables.bootstrap4.min.css') }}">
 
+  <link rel="shortcut icon" href="/images/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" href="/images/apple-touch-icon.png">
+
 </head>
 <body>
   @section('sidebar')
