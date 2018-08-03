@@ -14,7 +14,7 @@
 
       Navn: {{$library->name}} / {{$library->name_eng}}<br>
       Epost: {{$library->email}}<br>
-      Bibliotekskode: {{$library->library_code}}<br>
+      Bibliotekskode: {{ $library->library_code ?: '(har ikke)' }}<br>
       Midlertidig lånekort: {{ $library->temporary_barcode ?: '(ikke aktivert)' }}<br>
     </div>
   </div>
