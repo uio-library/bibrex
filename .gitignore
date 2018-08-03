@@ -27,3 +27,4 @@ app/config/packages/aws
 current_domain
 *.jar
 .circleci/*.sh
+public/storage
