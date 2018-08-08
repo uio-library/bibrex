@@ -41,21 +41,40 @@
     </div>
 
     <!-- List group -->
-    <ul class="list-group">
-      @foreach ($library->ips as $ip)
-        <li class="list-group-item">
 
-          <form action="{{ URL::action('LibrariesController@removeIp', $ip->id) }}" method="post">
-            {{ csrf_field() }}
+    <table style="width:100%" class="table">
+      <thead>
+        <tr>
+          <th>IP-adresse</th>
+          <th>Lagt til</th>
+          <th>Sist i bruk</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($library->ips as $ip)
+        <tr>
+          <td>
             {{ $ip->ip }}
-            <button type="submit" class="btn btn-xs btn-danger">
-              Fjern
-            </button>
-          </form>
-
-        </li>
-      @endforeach
-    </ul>
+          </td>
+          <td>
+            {{ $ip->created_at }}
+          </td>
+          <td>
+            {{ $ip->last_used }}
+          </td>
+          <td>
+            <form action="{{ URL::action('LibrariesController@removeIp', $ip->id) }}" method="post">
+              {{ csrf_field() }}
+              <button type="submit" class="btn btn-xs btn-danger">
+                Fjern
+              </button>
+            </form>
+          </td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
 
   </div>
 

@@ -51,6 +51,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', end
   margin-right: -0.25em; /* Adjusts for spacing */
 }
 
+.hidden {
+  display: none;
+}
 input {
     margin: 1em 0;
 }
@@ -61,7 +64,11 @@ input {
 
     <div class="block">
 
-        <div class="card card-body bg-light">
+        <div id="error" class="card card-body bg-danger text-white hidden">
+          Beklager, Bibrex daua.
+        </div>
+
+        <div id="loginBox" class="card card-body bg-light hidden">
             <i class="halflings-icon lock"></i>
             <p>
               Logg inn for å bruke BIBREX.
@@ -86,6 +93,33 @@ input {
         </div>
 
     </div>
+
+<script type="text/javascript">
+
+  if (window.location.search == '?logged_in=1') {
+    // The last attempt of logging in returned a success response,
+    // so we reloaded the page, but got back here. That's weird,
+    // but do not attempt again to avoid an infinite loop.
+  } else {
+
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('readystatechange', function (response) {
+      if (this.readyState == 4) {
+        if (this.status == 204) {
+          window.location.replace('/libraries/login?logged_in=1')
+        } else if (this.status == 401) {
+          document.getElementById('loginBox').classList.remove('hidden');
+        } else {
+          document.getElementById('error').classList.remove('hidden');
+        }
+      }
+    });
+    xhr.open('POST', '/libraries/ip-login');
+    xhr.setRequestHeader('X-Csrf-Token', '{{ csrf_token() }}');
+    xhr.send();
+  }
+
+</script>
 
 </body>
 </html>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Library;
 use App\LibraryIp;
 use App\Rules\TemporaryBarcodeExists;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -136,18 +137,27 @@ class LibrariesController extends Controller
 
     public function getLogin()
     {
-        if (isset($_SERVER)) {
-            $library_ip = LibraryIp::whereRaw('? LIKE ip', array(array_get($_SERVER, 'REMOTE_ADDR', '')))->first();
-            if ($library_ip) {
-                $lib = $library_ip->library;
-                $s = Auth::login($lib);
-                Session::put('iplogin', true);
-                // Session::flash('logged_in_from_ip', true);
-                return redirect()->intended('/');
-            }
+        return response()->view('login');
+    }
+
+    public function ipBasedLogin()
+    {
+        if (empty($_SERVER['REMOTE_ADDR'])) {
+            return response('', 401)->header('Content-Type', 'text/plain');
         }
 
-        return response()->view('login');
+        $libraryIp = LibraryIp::where('ip', '=', $_SERVER['REMOTE_ADDR'])->first();
+        if ($libraryIp) {
+            Auth::login($libraryIp->library);
+            Session::put('iplogin', true);
+
+            $libraryIp->last_used = Carbon::now();
+            $libraryIp->save();
+
+            return response('', 204)->header('Content-Type', 'text/plain');
+        }
+
+        return response('', 401)->header('Content-Type', 'text/plain');
     }
 
     /**

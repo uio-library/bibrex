@@ -16,13 +16,16 @@ Route::redirect('/loans/index', '/loans');
 
 Route::view('/about', 'about');
 
-Route::resource('logs', 'LogsController')->only(['index']);  // 'destroy';
-
-Route::get('/libraries/login', 'LibrariesController@getLogin')->name('login');
-Route::post('/libraries/login', 'LibrariesController@postLogin');
-Route::get('/logout', 'LibrariesController@getLogout');
+Route::middleware(['guest'])->group(function () {
+    Route::get('/libraries/login', 'LibrariesController@getLogin')->name('login');
+    Route::post('/libraries/login', 'LibrariesController@postLogin');
+    Route::post('/libraries/ip-login', 'LibrariesController@ipBasedLogin');
+});
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/logout', 'LibrariesController@getLogout');
+    Route::resource('logs', 'LogsController')->only(['index']);  // 'destroy';
+
     // --[[ LIBRARY ]]--
     Route::get('/libraries', 'LibrariesController@getIndex');
     Route::get('/libraries/create', 'LibrariesController@getCreate');
