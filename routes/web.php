@@ -35,7 +35,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/my/account', 'LibrariesController@postStoreMyAccount');
     Route::get('/my/ips', 'LibrariesController@getMyIps');
     Route::post('/my/ips/store', 'LibrariesController@storeIp');
-    Route::get('/my/ips/remove/{id}', 'LibrariesController@removeIp');
+    Route::post('/my/ips/remove/{ip}', 'LibrariesController@removeIp');
 
     // --[[ USER ]]--
     Route::get('/users', 'UsersController@getIndex');

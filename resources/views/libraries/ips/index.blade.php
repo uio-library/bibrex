@@ -44,11 +44,14 @@
     <ul class="list-group">
       @foreach ($library->ips as $ip)
         <li class="list-group-item">
-        	{{ $ip->ip }}
 
-        	<a href="{{ URL::action('LibrariesController@removeIp', $ip->id) }}" type="submit" class="btn btn-xs btn-danger">
-	          Fjern
-	        </a>
+          <form action="{{ URL::action('LibrariesController@removeIp', $ip->id) }}" method="post">
+            {{ csrf_field() }}
+            {{ $ip->ip }}
+            <button type="submit" class="btn btn-xs btn-danger">
+              Fjern
+            </button>
+          </form>
 
         </li>
       @endforeach

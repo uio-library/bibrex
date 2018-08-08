@@ -20,7 +20,7 @@ class LibrariesController extends Controller
      *
      * @static array
      */
-    protected $messages = array(
+    protected $messages = [
         'name.required' => 'Norsk navn må fylles ut',
         'name.unique' => 'Norsk navn må være unikt',
         'name_eng.required' => 'Engelsk navn må fylles ut',
@@ -29,7 +29,10 @@ class LibrariesController extends Controller
         'email.unique' => 'E-post må være unik',
         'email.email' => 'E-post må være en gyldig epostadresse',
         'guest_ltid.regex' => 'LTID må være et gyldig LTID',
-    );
+        'ip.required' => 'Adressen er tom',
+        'ip.unique' => 'Adressen må være unik',
+        'ip.ip' => 'Ugyldig ip-adresse',
+    ];
 
     protected $lib;
 
@@ -259,21 +262,19 @@ class LibrariesController extends Controller
      */
     public function storeIp(Request $request)
     {
-        $library = Auth::user();
+        \Validator::make($request->all(), [
+            'ip' => ['required', 'ip', 'unique:library_ips,ip'],
+        ])->validate();
 
-        $ip = new LibraryIp(array(
-            'library_id' => $library->id,
-            'ip' => $request->input('ip')
-        ));
+        $newIp = $request->input('ip');
 
-        if (!$ip->save()) {
-            return redirect()->back()
-                ->withErrors($ip->errors)
-                ->withInput();
-        }
+        LibraryIp::create([
+            'library_id' => Auth::user()->id,
+            'ip' => $newIp,
+        ]);
 
         return redirect()->action('LibrariesController@getMyIps')
-            ->with('status', 'IP-adressen ble lagt til');
+            ->with('status', "IP-adressen $newIp ble lagt til");
     }
 
     /**
@@ -284,9 +285,7 @@ class LibrariesController extends Controller
      */
     public function removeIp(LibraryIp $ip)
     {
-        $library = Auth::user();
-
-        if ($ip->library_id != $library->id) {
+        if ($ip->library_id !== Auth::user()->id) {
             return redirect()->action('LibrariesController@getMyIps')
                 ->with('status', 'IP-adressen hører ikke til ditt bibliotek.');
         }
