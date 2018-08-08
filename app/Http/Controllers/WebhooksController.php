@@ -76,8 +76,12 @@ class WebhooksController extends Controller
             $almaUser = new \App\Alma\User($almaClientUser);
 
             $localUser = User::where('alma_primary_id', '=', $primaryId)
-                ->orWhere('university_id', '=', $almaUser->getUniversityId())
                 ->first();
+
+            if (is_null($localUser) && !empty($almaUser->getUniversityId())) {
+                $localUser = User::where('university_id', '=', $almaUser->getUniversityId())
+                    ->first();
+            }
 
             if (is_null($localUser)) {
                 \Log::debug('Ignorerer Alma-brukeroppdateringsvarsel for bruker som ikke er i Bibrex.');
