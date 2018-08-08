@@ -36,7 +36,6 @@ class RouteServiceProvider extends ServiceProvider
         Route::pattern('user2', '[0-9]+');
         Route::pattern('loan', '[0-9]+');
         Route::pattern('reminder', '[0-9]+');
-        Route::pattern('notification', '[0-9]+');
         Route::pattern('ip', '[0-9]+');
 
         parent::boot();
