@@ -18,7 +18,7 @@ return [
 
     'user_storage_time' => [
         'local' => env('BIBREX_LOCAL_USER_STORAGE_TIME', 365 * 3),
-        'imported' => env('BIBREX_IMPORTED_USER_STORAGE_TIME', 180),
+        'imported' => env('BIBREX_IMPORTED_USER_STORAGE_TIME', 120),
     ],
 
 ];
