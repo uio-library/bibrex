@@ -10,7 +10,7 @@
     <div class="card-body">
         <ul>
             <li>
-                Bibrex inneholder ei samling av <em>ting</em>. Kvar ting kan ha <em>eksemplar</em>.
+                Bibrex inneheld ei samling av <em>ting</em>. Kvar ting kan ha <em>eksemplar</em>.
             </li>
             <li>
                 Ein <em>ting</em> i Bibrex er definert som noko som fyllar ei viss <em>funksjon</em> for brukaren.
@@ -18,8 +18,8 @@
             </li>
             <li>
                 Eit <em>eksemplar</em> høyrer til eit bestemt bibliotek. Eksemplar treng ikkje vara av samme modell
-                eller samme produsent så lenge dei fyllar den samme <em>funksjonen</em>.
-                Modellinformasjon kan likevel registreres i feltet «Eksemplarinfo» om en ønsker det.
+                eller samme produsent så lenge dei fyllar den same <em>funksjonen</em>.
+                Modellinformasjon kan like fullt registrerast i feltet «Eksemplarinfo» om ein ynsker det.
             </li>
         </ul>
     </div>
