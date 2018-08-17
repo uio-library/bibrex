@@ -92,6 +92,11 @@
 
             },
 
+            reinit () {
+              $(this.$refs.textinput).typeahead('destroy');
+              this.init();
+            },
+
             init () {
 
               let options = {
@@ -181,12 +186,6 @@
                       name: ev.currentTarget.value,
                   });
               })
-              .on('change', (ev) => {
-                  this.selectedId = '';
-                  this.setValue({
-                      name: ev.currentTarget.value,
-                  });
-              })
               .on('typeahead:select', (ev, datum) => {
                   this.selectedId = datum.id ? datum.id : datum.primaryId;
                   this.setValue({
@@ -217,6 +216,14 @@
 
             // Initialize Typeahead in next tick
             Vue.nextTick(this.init.bind(this));
+        },
+        watch: {
+          value: function (val) {
+            this.$refs.textinput.value = val.name;
+            if (val.name == '') {
+              this.reinit();
+            }
+          },
         }
     }
 </script>

@@ -225,7 +225,7 @@ export default {
     methods: {
         focusFirstTextInput() {
             let inp = document.querySelector('.active input[tabindex="1"]');
-            inp.focus();
+            if (inp) inp.focus();
             return inp;
         },
         resetStatus() {
@@ -259,6 +259,7 @@ export default {
         handleError(what, error) {
             this.busy = false;
             this.confirmed = false;
+
             if (!error.response) {
                 // Some kind of network error. No response at all from server.
                 Raven.captureException(error);
@@ -321,6 +322,11 @@ export default {
                     editLink: get(response, 'data.editLink'),
                     variant: get(response, 'data.warn') ? 'warning' : 'success' ,
                 });
+
+                this.currentThing = {name:""};
+                setTimeout(() => {
+                    document.querySelector('.active input[tabindex="2"]').focus();
+                }, 300)
             })
             .catch(error => this.handleError('Utlånet', error));
         },
@@ -339,17 +345,29 @@ export default {
                     undoLink: get(response, 'data.undoLink'),
                 });
                 this.$root.$emit('updateLoansTable', {loan: response.data.loan});
+                this.currentBarcode = '';
+                setTimeout(() => {
+                    this.focusFirstTextInput();
+                }, 300)
             })
             .catch(error => this.handleError('Innleveringen', error));
         },
         checkIdleTime() {
-            let oneHour = 3600000;
-            let idleHours = ((new Date()).getTime() - this.idleSince) / oneHour;
-            if (idleHours > 12) {
-                window.location.reload();
-            } else {
-                setTimeout(() => this.checkIdleTime(), oneHour);
+            let idleSecs = ((new Date()).getTime() - this.idleSince) / 1000;
+
+            if (idleSecs > 30 && this.currentUser.name != '') {
+                this.currentUser = {name: ''};
             }
+
+            if (idleSecs > 30 && this.currentThing.name != '') {
+                this.currentThing = {name: ''};
+            }
+
+            if (idleSecs > 43200) {
+                window.location.reload();
+            }
+
+            setTimeout(() => this.checkIdleTime(), idleSecs * 30);
         }
     },
     created() {
