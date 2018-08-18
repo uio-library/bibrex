@@ -15,6 +15,7 @@ class HomepageTest extends DuskTestCase
         $this->browse(
             function (Browser $browser) {
                 $browser->visit('/')
+                    ->waitForText('Logg inn for å bruke BIBREX')
                     ->assertSee('Logg inn');
             }
         );
