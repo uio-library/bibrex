@@ -323,9 +323,10 @@ export default {
                     variant: get(response, 'data.warn') ? 'warning' : 'success' ,
                 });
 
-                this.currentThing = {name:""};
+                this.currentUser = {name: ''};
+                this.currentThing = {name: ''};
                 setTimeout(() => {
-                    document.querySelector('.active input[tabindex="2"]').focus();
+                    document.querySelector('.active input[tabindex="1"]').focus();
                 }, 300)
             })
             .catch(error => this.handleError('Utlånet', error));
@@ -354,14 +355,6 @@ export default {
         },
         checkIdleTime() {
             let idleSecs = ((new Date()).getTime() - this.idleSince) / 1000;
-
-            if (idleSecs > 30 && this.currentUser.name != '') {
-                this.currentUser = {name: ''};
-            }
-
-            if (idleSecs > 30 && this.currentThing.name != '') {
-                this.currentThing = {name: ''};
-            }
 
             if (idleSecs > 43200) {
                 window.location.reload();
