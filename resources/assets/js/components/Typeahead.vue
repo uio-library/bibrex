@@ -94,6 +94,8 @@
 
             reinit () {
               $(this.$refs.textinput).typeahead('destroy');
+              $(this.$refs.textinput).removeClass('busy');
+              clearTimeout(this.waitingTimer);
               this.init();
             },
 
