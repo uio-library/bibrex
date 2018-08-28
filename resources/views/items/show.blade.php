@@ -10,7 +10,7 @@
             @if ($item->trashed())
 
               <h5 class="col mb-0 text-danger">
-                <i class="far fa-trash-alt"></i> <s>Eksempler #{{ $item->id }}</s> ( Dette eksemplaret er slettet)
+                <i class="far fa-trash-alt"></i> <s>Eksemplar #{{ $item->id }}</s> ( Dette eksemplaret er slettet)
               </h5>
 
               <a class="btn btn-warning col col-auto mx-1" href="{{ URL::action('ItemsController@restore', $item->id) }}">
@@ -20,7 +20,7 @@
 
             @else
 
-              <h5 class="col mb-0">Eksempler #{{ $item->id }}</h5>
+              <h5 class="col mb-0">Eksemplar #{{ $item->id }}</h5>
 
               <a href="{{ URL::action('ItemsController@editForm', $item->id) }}" class="col col-auto mx-2 btn btn-primary">
                   <i class="far fa-pencil-alt"></i>
