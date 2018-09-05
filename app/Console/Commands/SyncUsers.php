@@ -147,7 +147,13 @@ class SyncUsers extends Command
                     continue;
                 }
 
+                if (is_null($library->library_code)) {
+                    \Log::error("$errBecause biblioteket ikke lenger har en bibliotekskode.");
+                    continue;
+                }
+
                 $tempUser = $this->alma->users[$library->temporary_barcode];
+                $almaLibrary = $this->alma->libraries[$library->library_code];
 
                 if (is_null($tempUser)) {
                     \Log::error("$errBecause brukeren '{$library->temporary_barcode}' ikke ble funnet i Alma.");
@@ -174,8 +180,11 @@ class SyncUsers extends Command
 
                 // Cross fingers
                 try {
-                    $almaLoan->scanIn($library);
-                    $almaItem->checkOut($almaUser, $library);
+                    $almaItem->scanIn($almaLibrary, 'DEFAULT_CIRC_DESK', [
+                        'place_on_hold_shelf' => 'false',
+                        'auto_print_slip' => 'false',
+                    ]);
+                    $almaItem->checkOut($almaUser, $almaLibrary);
                 } catch (RequestFailed $e) {
                     \Log::warning($errBecause . ' ' . $e->getMessage());
                     continue;
