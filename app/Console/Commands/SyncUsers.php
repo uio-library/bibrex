@@ -165,11 +165,19 @@ class SyncUsers extends Command
 
                 if (is_null($almaLoan)) {
                     \Log::warning("$errBecause dokumentet i mellomtiden har blitt returnert i Alma.");
+
+                    // Checkin local loan and delete temporary item
+                    $loan->checkIn();
+
                     continue;
                 }
 
                 if ($almaLoan->user_id != $library->temporary_barcode) {
                     \Log::warning("$errBecause dokumentet ikke lenger er utlånt til {$library->temporary_barcode}.");
+
+                    // Checkin local loan and delete temporary item
+                    $loan->checkIn();
+
                     continue;
                 }
 
