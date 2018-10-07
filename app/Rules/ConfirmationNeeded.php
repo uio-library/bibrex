@@ -26,7 +26,7 @@ class ConfirmationNeeded implements Rule
         if (count($user->blocks)) {
             $msgs = array_values(array_map(
                 function ($b) {
-                    return $b->block_description->desc;
+                    return array_get($b, 'block_description.desc');
                 },
                 $user->blocks
             ));
