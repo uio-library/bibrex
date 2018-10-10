@@ -3,6 +3,7 @@
 @section('content')
 
   <form method="POST" action="{{ action('LibrariesController@postPassword') }}" class="card card-primary">
+    {{ csrf_field() }}
 
     <input type="hidden" name="password1" value="{{ old('password1', $password) }}">
 
