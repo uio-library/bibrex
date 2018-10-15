@@ -111,13 +111,17 @@
                 Brukare importert frå Alma blir sletta {{ config('bibrex.user_storage_time.imported') }} dagar etter dei sist lånte noko.
             </li>
             <li>
-                Manuelt oppretta brukare blir sletta {{ config('bibrex.user_storage_time.local') }} dagar etter dei sist lånte noko.
+                Brukare som manuelt vart oppretta i Bibrex blir sletta {{ config('bibrex.user_storage_time.local') }} dagar etter dei sist lånte noko.
+                Om ein manuelt oppretta brukar vart kopla til Alma, blir lagringstida redusert.
             </li>
             <li>
                 Lån anonymiserast fyrste natt etter tingen har blitt levert.
             </li>
             <li>
-                For statistikkføremål lagrar vi kor mange lån kvar brukar har gjort (men ikkje kva eller når).
+                Systemlogger trengst for å kunne identifisera og retta opp eventuelle feil i systemet.
+                Desse lagrast lokalt i 7 dagar.
+                Reine feilmeldingar lagrast i tillegg i tenesta <a href="https://sentry.io/">Sentry</a>
+                inntil den aktuelle feilen har vorte retta opp og maks 90 dagar.
             </li>
         </ul>
     </div>
