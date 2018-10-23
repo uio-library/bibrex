@@ -11,8 +11,8 @@
 |
 */
 
-Route::redirect('/', '/loans');
-Route::redirect('/loans/index', '/loans');
+Route::permanentRedirect('/', '/loans');
+Route::permanentRedirect('/loans/index', '/loans');
 
 Route::view('/about', 'about');
 

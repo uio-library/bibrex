@@ -13,12 +13,12 @@
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "~6.0",
         "jenssegers/agent": "^2.6",
-        "laravel/framework": "5.6.*",
-        "laravelcollective/html": "^5.6",
+        "laravel/framework": "5.7.*",
+        "laravelcollective/html": "^5.7",
         "php-http/guzzle6-adapter": "^1.1",
         "pusher/pusher-php-server": "~3.0",
         "scriptotek/alma-client": "dev-master",
-        "sentry/sentry-laravel": "^0.9.0"
+        "sentry/sentry-laravel": "^0.10.0"
     },
     "require-dev": {
         "balping/artisan-bash-completion": "^1.0",
