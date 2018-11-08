@@ -14,8 +14,8 @@ class AddAlmaId extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('alma_primary_id')->nullable();
-            $table->string('alma_user_group')->nullable();
+            $table->passthru('citext', 'alma_primary_id')->nullable();
+            $table->passthru('citext', 'alma_user_group')->nullable();
         });
     }
 

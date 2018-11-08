@@ -150,6 +150,7 @@ return [
         /*
          * Package Service Providers...
          */
+        ShiftOneLabs\LaravelNomad\LaravelNomadServiceProvider::class,
 
         /*
          * Application Service Providers...

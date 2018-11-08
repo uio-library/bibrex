@@ -18,7 +18,8 @@
         "php-http/guzzle6-adapter": "^1.1",
         "pusher/pusher-php-server": "~3.0",
         "scriptotek/alma-client": "dev-master",
-        "sentry/sentry-laravel": "^0.10.0"
+        "sentry/sentry-laravel": "^0.10.0",
+        "shiftonelabs/laravel-nomad": "^1.0"
     },
     "require-dev": {
         "balping/artisan-bash-completion": "^1.0",
