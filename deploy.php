@@ -3,6 +3,7 @@ namespace Deployer;
 
 # https://github.com/deployphp/deployer/blob/master/recipe/laravel.php
 require 'recipe/laravel.php';
+require 'recipe/sentry.php';
 require 'vendor/deployer/recipes/recipe/slack.php';
 
 task('npm:install', 'npm install');
@@ -25,6 +26,13 @@ set('ssh_multiplexing', true);
 set('repository', 'https://github.com/scriptotek/bibrex.git');
 
 set('slack_webhook', 'https://hooks.slack.com/services/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');
+
+set('sentry', [
+    'organization' => 'uio-realfagsbiblioteket',
+    'project' => 'bibrex',
+    'token' => 'd859c14274e811e897004201c0a8d047',
+    // 'version' => '1.0.0'
+]);
 
 // [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', true);
@@ -49,5 +57,7 @@ after('deploy:symlink', 'self-diagnosis');
 after('deploy:failed', 'slack:notify:failure');
 after('success', 'slack:notify:success');
 after('success', 'bibrex:version-notify');
+
+// after('deploy', 'deploy:sentry');
 
 // Note to self: We don't make any attempt of clearing opcache since we assume that opcache.revalidate_path=1 is set.
