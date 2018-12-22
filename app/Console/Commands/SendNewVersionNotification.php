@@ -38,6 +38,8 @@ class SendNewVersionNotification extends Command
      */
     public function handle()
     {
+        $version = trim(shell_exec('git rev-parse HEAD'));
+        \Log::info("Oppdaterte Bibrex til {$version}");
         event(new NewVersionDeployed());
     }
 }
