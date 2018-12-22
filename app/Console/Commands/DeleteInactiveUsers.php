@@ -72,7 +72,11 @@ class DeleteInactiveUsers extends Command
             ->get();
 
         foreach ($users as $user) {
-            $this->logInfo("Purging imported user {$user->id}, last active at {$user->last_loan_at->toDateString()}.");
+            $this->logInfo(
+                "Sletting av inaktive brukere: Slettet {$user->name} ({$user->id})," .
+                " sist aktiv {$user->last_loan_at->toDateString()}."
+            );
+            $user->delete();
             $n++;
         }
 
@@ -83,10 +87,14 @@ class DeleteInactiveUsers extends Command
             ->get();
 
         foreach ($users as $user) {
-            $this->logInfo("Purging imported user {$user->id}, last active at {$user->last_loan_at->toDateString()}.");
+            $this->logInfo(
+                "Sletting av inaktive brukere: Slettet {$user->name} ({$user->id})," .
+                " sist aktiv {$user->last_loan_at->toDateString()}."
+            );
+            $user->delete();
             $n++;
         }
 
-        $this->info("Purged $n inactive users");
+        $this->info("Slettet $n brukere.");
     }
 }
