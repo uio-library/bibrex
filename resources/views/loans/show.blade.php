@@ -99,31 +99,12 @@
         <li class="list-group-item">
             <div class="row">
                 <div class="col-sm-2">
-                    Forfaller:
+                    Forfall:
                 </div>
                 <div class="col">
                     {{ $loan->due_at->toDateString() }}
                     @if (!$loan->trashed())
                         <a href="{{ action('LoansController@edit', $loan->id) }}">[Rediger]</a>
-                    @endif
-                </div>
-            </div>
-        </li>
-
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col-sm-2">
-                    Returnert:
-                </div>
-                <div class="col">
-                    @if ($loan->is_lost)
-                        <span class="text-danger">
-                            <i class="far fa-exclamation-triangle"></i>
-                            Markert som tapt
-                            {{ $loan->deleted_at }}
-                        </span>
-                    @else
-                        {{ $loan->deleted_at ?: 'ikke returnert enda' }}
                     @endif
                 </div>
             </div>
@@ -152,6 +133,25 @@
                             Send manuell påminnelse
                           </a>
                         </div>
+                    @endif
+                </div>
+            </div>
+        </li>
+
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-sm-2">
+                    Returnert:
+                </div>
+                <div class="col">
+                    @if ($loan->is_lost)
+                        <span class="text-danger">
+                            <i class="far fa-exclamation-triangle"></i>
+                            Markert som tapt
+                            {{ $loan->deleted_at }}
+                        </span>
+                    @else
+                        {{ $loan->deleted_at ?: 'ikke returnert enda' }}
                     @endif
                 </div>
             </div>
