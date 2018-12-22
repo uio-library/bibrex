@@ -140,14 +140,12 @@ class UsersController extends Controller
         if (empty($barcode)) {
             return back()->with('error', 'Du må registrere låne-ID.');
         }
-        $almaUsers = collect($alma->users->search('identifiers~' . $barcode, ['limit' => 1]))->map(function ($u) {
-            return new AlmaUser($u);
-        });
-        if (!count($almaUsers)) {
-            return back()->with('error', 'Fant ikke låne-ID-en ' . $user->barcode . ' i Alma 😭 ');
-        }
 
-        $almaUser = $almaUsers[0];
+        $almaUser = AlmaUser::lookup($alma, $barcode);
+
+        if (!$almaUser) {
+            return back()->with('error', 'Fant ikke låne-ID-en ' . $barcode . ' i Alma 😭 ');
+        }
 
         $barcode = $almaUser->getBarcode();
         $other = User::where('barcode', '=', $barcode)->first();
@@ -350,7 +348,7 @@ class UsersController extends Controller
         $name = $user->name;
 
         $user->delete();
-        \Log::info(sprintf('Slettet brukeren med ID %d', $user_id));
+        \Log::info(sprintf('Slettet brukeren %s (ID %d)', $name, $user_id));
 
         return redirect()->action('UsersController@getIndex')
             ->with('status', "Brukeren $name ble slettet (men slapp av, du har ikke drept noen).");
