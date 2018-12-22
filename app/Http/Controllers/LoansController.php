@@ -415,10 +415,10 @@ class LoansController extends Controller
                 return $this->checkinAlmaItem($alma, $almaItem);
             }
 
-            return $this->loggedResponse(['status' => sprintf(
+            return response()->json(['status' => sprintf(
                 '%s var allerede levert (men det går greit).',
                 $loan->item->formattedLink(true)
-            )]);
+            )], 200);
         }
 
         $loan->checkIn();

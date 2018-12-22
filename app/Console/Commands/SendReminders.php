@@ -87,7 +87,7 @@ class SendReminders extends Command
             $n++;
         }
         if ($n > 0) {
-            \Log::info("Sendte $n påminnelse(r).");
+            \Log::info("$n påminnelse(r) ble sendt ut.");
         }
 
         $this->info(sprintf(

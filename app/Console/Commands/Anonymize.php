@@ -58,7 +58,7 @@ class Anonymize extends Command
         }
         $this->info("$c lån ble anonymisert");
         if ($c > 0) {
-            \Log::info("Anonymiserte $c lån");
+            \Log::info("$c lån ble anonymisert");
         }
     }
 }

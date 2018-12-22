@@ -52,7 +52,7 @@ class SyncUsers extends Command
             if ($user->updateFromAlma($this->alma)) {
                 if ($user->isDirty()) {
                     \Log::info(sprintf(
-                        'Oppdaterte brukeren <a href="%s">%s</a> fra Alma.',
+                        'Brukeren <a href="%s">%s</a> ble oppdatert fra Alma.',
                         action('UsersController@getShow', $user->id),
                         $user->name
                     ));
@@ -73,7 +73,7 @@ class SyncUsers extends Command
         } else {
             if ($user->updateFromAlma($this->alma)) {
                 \Log::info(sprintf(
-                    'Lenket brukeren <a href="%s">%s</a> til en Alma-bruker.',
+                    'Brukeren <a href="%s">%s</a> ble lenket til en Alma-bruker.',
                     action('UsersController@getShow', $user->id),
                     $user->name
                 ));
