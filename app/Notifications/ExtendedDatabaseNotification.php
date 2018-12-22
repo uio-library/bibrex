@@ -9,7 +9,8 @@ class ExtendedDatabaseNotification extends DatabaseNotification
 {
     public function loan()
     {
-        return $this->belongsTo(Loan::class);
+        return $this->belongsTo(Loan::class)
+            ->withTrashed();
     }
 
     /**

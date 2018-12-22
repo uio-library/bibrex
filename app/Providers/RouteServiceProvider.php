@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Item;
 use App\Loan;
+use App\Notifications\ExtendedDatabaseNotification;
 use App\Thing;
 use App\User;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +64,11 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::bind('loan', function ($value) {
             return Loan::withTrashed()->find($value) ?? abort(404);
+        });
+
+        Route::bind('notification', function ($value) {
+            return ExtendedDatabaseNotification::with('loan')
+                    ->find($value) ?? abort(404);
         });
     }
 

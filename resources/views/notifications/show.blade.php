@@ -6,7 +6,8 @@
     <div class="card-header">
       <div class="row align-items-center">
         <h5 class="col mb-0">
-          {{ $type }} sendt {{ $sent }} for
+          {{ $type }} sendt {{ $sent }}
+          for
           <a href="{{ action('LoansController@getShow', $loan->id) }}">lån #{{ $loan->id }}</a>
         </h5>
       </div>
