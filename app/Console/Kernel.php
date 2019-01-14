@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\Anonymize;
 use App\Console\Commands\PurgeUsers;
 use App\Console\Commands\PurgeLogs;
+use App\Console\Commands\PurgeNotifications;
 use App\Console\Commands\SendReminders;
 use App\Console\Commands\SyncUsers;
 use Illuminate\Console\Scheduling\Schedule;
@@ -38,7 +39,11 @@ class Kernel extends ConsoleKernel
                 $this->call(PurgeLogs::class);
                 $this->call(SyncUsers::class);
             });
+
         $schedule->command(PurgeUsers::class)
+            ->monthly();
+
+        $schedule->command(PurgeNotifications::class)
             ->monthly();
     }
 
