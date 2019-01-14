@@ -17,6 +17,10 @@
                 Aktive eksemplarer
             </h5>
             @if (!$thing->trashed())
+                <a href="https://www.uio.no/for-ansatte/enhetssider/ub/publikumsarbeid/bibrex.html" target="_blank" class="btn btn-link col col-auto mx-1">
+                    <i class="far fa-question-circle"></i>
+                    Hjelp
+                </a>
                 <a href="{{ action('ItemsController@editForm', ['id' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
                     <i class="far fa-plus-hexagon"></i>
                     Nytt eksemplar
