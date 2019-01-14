@@ -36,6 +36,12 @@ test_base: &test_base
         background: true
 
     - run:
+        name: Install PostgreSQL client
+        command: |
+          sudo mkdir -p /usr/share/man/man7
+          sudo apt install postgresql-client
+
+    - run:
         name: Install PHP extensions
         command: |
           sudo apt-get update -y
@@ -61,6 +67,7 @@ test_base: &test_base
         name: Migrate DB
         command: |
           dockerize -wait tcp://localhost:5432 -timeout 1m
+          psql -h localhost -p 5432 -U bibrex_test -c 'CREATE EXTENSION citext;'
           php artisan migrate --env=testing --force
 
     - run:
@@ -101,6 +108,12 @@ jobs:
       - checkout
 
       # System
+
+      - run:
+          name: Install PostgreSQL client
+          command: |
+            sudo mkdir -p /usr/share/man/man7
+            sudo apt install postgresql-client
 
       - run:
           name: Install PHP extensions
@@ -172,6 +185,7 @@ jobs:
           name: Migrate DB
           command: |
             dockerize -wait tcp://localhost:5432 -timeout 1m
+            psql -h localhost -p 5432 -U bibrex_test -c 'CREATE EXTENSION citext;'
             php artisan migrate --env=testing --force
 
       - run:
