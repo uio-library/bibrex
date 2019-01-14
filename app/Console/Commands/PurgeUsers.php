@@ -4,9 +4,8 @@ namespace App\Console\Commands;
 
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Console\Command;
 
-class DeleteInactiveUsers extends Command
+class PurgeUsers extends Command
 {
     /**
      * The name and signature of the console command.
@@ -23,43 +22,21 @@ class DeleteInactiveUsers extends Command
     protected $description = 'Purge inactive users.';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    protected function logInfo($msg)
-    {
-        $this->info($msg);
-        \Log::info($msg);
-    }
-
-    protected function logError($msg)
-    {
-        $this->error($msg);
-        \Log::error($msg);
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
     public function handle()
     {
-        $daysLocal = (int) config('bibrex.user_storage_time.local');
+        $daysLocal = (int) config('bibrex.storage_time.local_users');
         if ($daysLocal <= 0) {
-            $this->logError('The `bibrex.user_storage_time.local` config value is invalid.');
+            $this->logError('The `bibrex.storage_time.local_users` config value is invalid.');
             return;
         }
 
-        $daysImported = (int) config('bibrex.user_storage_time.imported');
+        $daysImported = (int) config('bibrex.storage_time.imported_users');
         if ($daysImported <= 0) {
-            $this->logError('The `bibrex.user_storage_time.imported` config value is invalid.');
+            $this->logError('The `bibrex.storage_time.imported_users` config value is invalid.');
             return;
         }
 

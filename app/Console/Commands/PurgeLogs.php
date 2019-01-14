@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-
 class PurgeLogs extends Command
 {
     /**
@@ -19,16 +17,6 @@ class PurgeLogs extends Command
      * @var string
      */
     protected $description = 'Purge old log entries.';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * Execute the console command.
@@ -47,10 +35,11 @@ class PurgeLogs extends Command
             return;
         }
 
-        $deleted = \DB::delete("DELETE FROM log WHERE time < now() - interval '7 day'");
-        $this->info("Purged $deleted log entries");
+        $deleted = \DB::delete("DELETE FROM log WHERE time < now() - interval '$days day'");
         if ($deleted > 0) {
-            \Log::info("$deleted loggmeldinger ble slettet");
+            $this->logInfo("$deleted loggmeldinger ble slettet");
+        } else {
+            $this->info("Ingen loggmeldinger ble slettet");
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\Anonymize;
-use App\Console\Commands\DeleteInactiveUsers;
+use App\Console\Commands\PurgeUsers;
 use App\Console\Commands\PurgeLogs;
 use App\Console\Commands\SendReminders;
 use App\Console\Commands\SyncUsers;
@@ -29,8 +29,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(SendReminders::class)->dailyAt('08:00');
-        $schedule->command(DeleteInactiveUsers::class)->monthly();
+        $schedule->command(SendReminders::class)
+            ->dailyAt('08:00');
 
         $schedule->command(Anonymize::class)
             ->dailyAt('04:00')
@@ -38,6 +38,8 @@ class Kernel extends ConsoleKernel
                 $this->call(PurgeLogs::class);
                 $this->call(SyncUsers::class);
             });
+        $schedule->command(PurgeUsers::class)
+            ->monthly();
     }
 
     /**
