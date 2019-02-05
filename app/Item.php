@@ -30,7 +30,7 @@ class Item extends Model
      *
      * @var array
      */
-    protected $appends = ['last_loan'];
+    protected $appends = ['last_loan', 'available'];
 
     /**
      * The attributes that should be cast to native types.
@@ -76,6 +76,16 @@ class Item extends Model
                 ->withTrashed()
                 ->orderBy('created_at', 'desc')
                 ->first();
+    }
+
+    /**
+     * Whether item is available or not.
+     *
+     * @return bool
+     */
+    public function getAvailableAttribute()
+    {
+        return is_null($this->attributes['available'] = $this->loans()->first());
     }
 
     public function allLoans()

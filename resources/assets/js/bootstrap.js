@@ -39,7 +39,7 @@ let token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
     window.axios.defaults.headers.post['X-CSRF-TOKEN'] = token.content;
 } else {
-    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+    console.log('Laravel CSRF token not found');
 }
 
 if (!window.sessionStorage.getItem('bibrexWindowId')) {

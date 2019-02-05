@@ -115,43 +115,6 @@ class ThingsController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @param Library $library
-     * @return Response
-     */
-    public function getAvailableJson(Library $library)
-    {
-        $things = Thing::with('items.loans')
-            ->where('library_id', null)
-            ->orWhere('library_id', $library->id)
-            ->get();
-
-        $out = [];
-        foreach ($things as $t) {
-            $out[] = [
-                'name' => $t->name,
-                'available_items' => $t->availableItems(),
-            ];
-        }
-
-        return response()->json($out);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @param Library $library
-     * @return Response
-     */
-    public function getAvailable(Library $library)
-    {
-        return response()->view('things.available', [
-            'library_id' => $library->id,
-        ]);
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param Thing $thing

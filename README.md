@@ -29,6 +29,10 @@ NodeJS:
 
     npm run watch
 
+#### Update OpenAPI documentation for Swagger UI:
+
+    ./vendor/bin/openapi app -o public/openapi.json
+
 #### Refreshing the database
 
 Disable logging to database when refreshing the database:

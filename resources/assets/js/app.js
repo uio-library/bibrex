@@ -17,6 +17,8 @@ window.Vue = Vue;
 
 // Register our Vue components
 
+Vue.component('public-status', require('./components/PublicStatus.vue'));
+
 Vue.component('alert', require('./components/Alert.vue'));
 Vue.component('checkout-checkin', require('./components/CheckoutCheckin.vue'));
 Vue.component('checkout-checkin-status', require('./components/CheckoutCheckinStatus.vue'));

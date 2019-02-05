@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,4 +11,8 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/things.json', 'PublicApiController@things');
+Route::get('/', 'PublicApiController@doc');
+
+Route::get('/libraries', 'PublicApiController@libraries');
+Route::get('/things', 'PublicApiController@things');
+Route::get('/items', 'PublicApiController@items');

@@ -64,6 +64,7 @@ class Thing extends Model
     public function getLibrarySettingsAttribute(Library $library = null)
     {
         $library = $library ?? \Auth::user();
+
         return $this->settings()
             ->where('library_id', $library->id)
             ->first() ?? ThingSettings::make([

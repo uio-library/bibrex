@@ -1,0 +1,98 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Bibrex",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/api/libraries": {
+            "get": {
+                "tags": [
+                    "Libraries"
+                ],
+                "summary": "List libraries",
+                "description": "Get a list of libraries.",
+                "operationId": "App\\Http\\Controllers\\PublicApiController::libraries",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/api/things": {
+            "get": {
+                "tags": [
+                    "Things"
+                ],
+                "summary": "List things",
+                "description": "Get a list of things.",
+                "operationId": "App\\Http\\Controllers\\PublicApiController::things",
+                "parameters": [
+                    {
+                        "name": "library",
+                        "in": "query",
+                        "description": "Filter by library ID.  The item counts will also reflect the selected library.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "items",
+                        "in": "query",
+                        "description": "Include list of items for each thing.",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filter by name, case-insensitive, truncate with '*'",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/api/items": {
+            "get": {
+                "tags": [
+                    "Items"
+                ],
+                "summary": "List items",
+                "description": "Get a list of items. Only non-deleted items are returned.",
+                "operationId": "App\\Http\\Controllers\\PublicApiController::items",
+                "parameters": [
+                    {
+                        "name": "library",
+                        "in": "query",
+                        "description": "Filter by library ID.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "thing",
+                        "in": "query",
+                        "description": "Filter by thing ID.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    }
+}
