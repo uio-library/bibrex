@@ -133,7 +133,7 @@
 
                     <div class="form-group form-check" style="margin-left:6px">
                         <input type="checkbox" class="form-check-input" id="keepUserCheckbox" v-model="keepUser">
-                        <label class="form-check-label" for="keepUserCheckbox">Behold låner (maks 60 sekunder, for å låne ut mer til samme person)</label>
+                        <label class="form-check-label" for="keepUserCheckbox">Behold låner for å låne ut mer til samme person (tømmes etter 60 sekunder)</label>
                     </div>
 
                 </form>
@@ -222,8 +222,8 @@ export default {
 
             },
             keepUser: false,
-            currentUser: {},
-            currentThing: {},
+            currentUser: {name: ''},
+            currentThing: {name: ''},
             currentBarcode: '',
             busy: false,
             confirmed: false,
@@ -372,11 +372,15 @@ export default {
         checkIdleTime() {
             let idleSecs = ((new Date()).getTime() - this.idleSince) / 1000;
 
+            if (idleSecs > 60) {
+                this.currentUser = {name: ''};
+            }
+
             if (idleSecs > 43200) {
                 window.location.reload();
             }
 
-            setTimeout(() => this.checkIdleTime(), idleSecs * 30);
+            setTimeout(() => this.checkIdleTime(), 10000);
         }
     },
     created() {
