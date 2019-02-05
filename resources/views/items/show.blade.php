@@ -115,7 +115,7 @@
           <li class="list-group-item">
               <div class="row">
                   <div class="col-sm-2">
-                      Antall utlån:
+                      Antall utlån totalt:
                   </div>
                   <div class="col">
                       {{ $item->loans()->withTrashed()->count() }}
@@ -129,31 +129,34 @@
   <div class="card mb-3">
 
     <div class="card-header">
-      <h5>Sist utlånt</h5>
+      <h5>Siste utlån</h5>
     </div>
 
     <ul class="list-group list-group-flush">
-      @if (is_null($lastLoan))
+      @if (!count($item->allLoans))
         <li class="list-group-item">
             <em>Aldri</em>
         </li>
       @else
-        <li class="list-group-item">
-          <a href="{{ action('LoansController@getShow', $lastLoan->id) }}">{{ $lastLoan->created_at->toDateString() }}</a>
-          @if ($lastLoan->trashed())
-            @if ($lastLoan->is_lost)
-              <span class="text-danger">
-                <i class="far fa-exclamation-triangle"></i>
-                Markert som tapt
-                {{ $lastLoan->deleted_at }}
-              </span>
-            @else
-                returnert {{ $lastLoan->deleted_at }}
-            @endif
-          @else
-            (ikke returnert enda)
-          @endif
-        </li>
+          @foreach ($item->allLoans()->take(10)->get() as $lastLoan)
+            <li class="list-group-item">
+                <a href="{{ action('LoansController@getShow', $lastLoan->id) }}">Lån #{{ $lastLoan->id }}</a>:
+                Lånt ut {{ $lastLoan->created_at->toDateTimeString() }}</a>
+                @if ($lastLoan->trashed())
+                    @if ($lastLoan->is_lost)
+                      <span class="text-danger">
+                        <i class="far fa-exclamation-triangle"></i>
+                        Markert som tapt
+                        {{ $lastLoan->deleted_at }}
+                      </span>
+                    @else
+                        og returnert {{ $lastLoan->deleted_at }}
+                    @endif
+                  @else
+                    (aktivt utlån)
+                  @endif
+            </li>
+            @endforeach
       @endif
     </ul>
   </div>
