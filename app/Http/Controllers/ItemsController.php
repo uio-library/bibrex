@@ -32,18 +32,11 @@ class ItemsController extends Controller
     {
         $items = Item::with('loans', 'thing')
             ->whereNotNull('barcode')
-            ->where('library_id', '=', \Auth::user()->id);
+            ->where('library_id', '=', \Auth::user()->id)
+            ->get();
 
         return response()->view('items.index', [
-            'items' => $items->get()->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'thing' => $item->thing->name,
-                    'barcode' => $item->barcode,
-                    'note' => $item->note,
-                    'loan' => $item->loans[0] ?? null,
-                ];
-            }),
+            'items' => $items,
         ]);
     }
 
@@ -82,7 +75,6 @@ class ItemsController extends Controller
     {
         return response()->view('items.show', array(
             'item' => $item,
-            'lastLoan' => $item->loans()->withTrashed()->orderBy('id', 'desc')->first(),
         ));
     }
 

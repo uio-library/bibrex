@@ -159,8 +159,16 @@ class ThingsController extends Controller
      */
     public function show(Thing $thing)
     {
+        $items = Item::with('thing', 'library')
+            ->whereNotNull('barcode')
+            ->where('thing_id', '=', $thing->id)
+            ->orderBy('library_id')
+            ->orderBy('barcode')
+            ->get();
+
         return response()->view('things.show', array(
             'thing' => $thing,
+            'items' => $items,
         ));
     }
 

@@ -17,7 +17,7 @@
     </div>
 
     <!-- List group -->
-    <items-table :data="{{ json_encode($items) }}"></items-table>
+    <items-table :data="{{ json_encode($items) }}" :show-thing="true"></items-table>
 
   </div>
 @stop

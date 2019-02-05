@@ -3,25 +3,41 @@
     <datatable>
       <thead>
         <tr>
-          <th>Ting</th>
           <th>Strekkode</th>
           <th>Eksemplarinfo</th>
-          <th>Utlån</th>
+          <th v-if="showLibrary">Bibliotek</th>
+          <th v-if="showThing">Ting</th>
+          <th>Registrert</th>
+          <th>Sist utlånt</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="item in data">
-          <td>
-            {{ item.thing }}
-          </td>
           <td>
             <a :href="'/items/' + item.id">{{ item.barcode }}</a>
           </td>
           <td>
             {{ item.note }}
           </td>
+          <td v-if="showLibrary">
+            {{ item.library.name }}
+          </td>
+          <td v-if="showThing">
+            {{ item.thing.name }}
+          </td>
           <td>
-            <span v-if="item.loan" class="badge badge-success">Utlånt</span>
+            {{ item.created_at.split(' ')[0] }}
+          </td>
+          <td>
+            <span v-if="item.last_loan && !item.last_loan.deleted_at">
+              Utlånt nå
+            </span>
+            <span v-else-if="item.last_loan">
+              {{ item.last_loan.created_at.split(' ')[0] }}
+            </span>
+            <span v-else>
+              Aldri
+            </span>
           </td>
         </tr>
       </tbody>
@@ -33,6 +49,8 @@
   export default {
       props: {
         data: Array,
+        showLibrary: Boolean,
+        showThing: Boolean,
       }
   }
 </script>

@@ -26,6 +26,13 @@ class Item extends Model
     protected $fillable = ['barcode', 'library_id', 'note', 'thing_id'];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['last_loan'];
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
@@ -56,6 +63,19 @@ class Item extends Model
         return $this->hasMany(Loan::class)
             ->with('user')
             ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get the last loan, active or not.
+     *
+     * @return bool
+     */
+    public function getLastLoanAttribute()
+    {
+        return $this->attributes['last_loan'] = $this->loans()
+                ->withTrashed()
+                ->orderBy('created_at', 'desc')
+                ->first();
     }
 
     public function allLoans()

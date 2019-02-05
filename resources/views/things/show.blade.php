@@ -29,25 +29,7 @@
         </div>
     </div>
 
-    <ul class="list-group list-group-flush">
-      @if ($thing->items()->whereNotNull('barcode')->count() == 0)
-        <li class="list-group-item">
-            <em>Ingen</em>
-        </li>
-      @endif
-      @foreach ($thing->items()->whereNotNull('barcode')->with('loans')->orderBy('library_id')->orderBy('barcode')->get() as $item)
-        <li class="list-group-item d-flex justify-content-between">
-          <div>
-            <a href="{{ action('ItemsController@show', $item->id) }}"><samp>{{ $item->barcode }}</samp></a>
-              @if ($item->activeLoan)
-                <a href="{{ action('LoansController@getShow', $item->activeLoan->id) }}"><span class="badge badge-success">Utlånt</span></a>
-              @endif
-          </div>
-          <div>{{ $item->note }}</div>
-          <div>{{ $item->library->name }}</div>
-        </li>
-      @endforeach
-    </ul>
+    <items-table :data="{{ json_encode($items) }}" :show-library="true"></items-table>
   </div>
 
 
