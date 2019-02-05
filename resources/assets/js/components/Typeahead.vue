@@ -94,10 +94,13 @@
             },
 
             reinit () {
+              let el = document.activeElement;
               $(this.$refs.textinput).typeahead('destroy');
               $(this.$refs.textinput).removeClass('busy');
               clearTimeout(this.waitingTimer);
               this.init();
+              // Make sure the text input retains focus
+              Vue.nextTick(() => el.focus());
             },
 
             init () {
@@ -224,6 +227,7 @@
           value: function (val) {
             this.$refs.textinput.value = val.name;
             if (val.name == '') {
+              // Re-init to prevent old suggestions
               this.reinit();
             }
           },
