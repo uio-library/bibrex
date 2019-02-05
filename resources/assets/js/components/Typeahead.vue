@@ -3,6 +3,7 @@
         <input type="hidden" :name="name + '_id'" :value="selectedId">
         <input type="text"
                ref="textinput"
+               @focus="$event.target.setSelectionRange(0, $event.target.value.length)"
                autocomplete="off"
                :name="name"
                :placeholder="placeholder"
