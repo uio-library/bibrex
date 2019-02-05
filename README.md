@@ -4,30 +4,49 @@
 
 ## BIBREX
 
-A simple lending system for things that integrates with Alma.
+Simple lending system for things that integrates with Alma.
 
-### Install
+### Setup
 
-1. `composer install` to update server-side deps.
-2. Update config files in `app/config`
+1. `composer install` to fetch PhP dependencies.
+2. Add database setup etc. to the `.env` file.
 3. `php artisan migrate` to create the database tables
-4. `php artisan db:seed` to seed initial database data
+4. Optional:
+   `php artisan db:seed` to seed the database with an admin user
+    ("post@eksempelbiblioteket.no", password "admin") and a few demo things.
 5. Make sure `app/storage` is writable by the www user.
+6. `npm install` to fetch NodeJS dependencies.
 
 ### Development
 
-Refresh database:
+#### Running a development server
+
+PHP:
+
+    php artisan serve
+
+NodeJS:
+
+    npm run watch
+
+#### Refreshing the database
 
 Disable logging to database when refreshing the database:
 
     LOG_CHANNEL=single php artisan migrate:refresh
 
+### Production
+
+A `deploy.php` file is included for deploying the app with
+[Deployer](https://deployer.org/).
+This contains all the information needed to deploy the app.
+
 ### Tests
 
 To run browser tests, download and start Selenium, then run `artisan dusk`
 
-	wget https://selenium-release.storage.googleapis.com/3.8/selenium-server-standalone-3.13.0.jar
-	java -jar selenium-server-standalone-3.13.0.jar &
+	wget https://selenium-release.storage.googleapis.com/3.141/selenium-server-standalone-3.141.59.jar
+	java -jar selenium-server-standalone-3.141.59.jar &
 	TEST_BROWSER=chrome artisan dusk
 
 Unfortunately, testing with Firefox doesn't work at the moment due to an incompability between Selenium and php-webdriver.
