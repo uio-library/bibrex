@@ -19,15 +19,16 @@
       @foreach ($libraries as $lib)
         <li class="list-group-item">
         	<h5>
-                {{ $lib->name }} ({{ $lib->library_code }})
-            </h5>
-        	Totalt {{ $lib->getLoansCount() }} utlån, {{ $lib->getActiveLoansCount() }} aktive.
-        	<br>
-        	<small>IP-adresser:
-		      @foreach ($lib->ips as $ip)
-		          {{$ip->ip}}
-		      @endforeach
-            </small>
+            {{ $lib->name }} {{ $lib->library_code ? "({$lib->library_code})" : "" }}
+          </h5>
+          {{$lib->email}}
+          <br>
+          Totalt {{ $lib->getLoansCount() }} utlån, {{ $lib->getActiveLoansCount() }} aktive.
+          <br>
+          IP-adresser:
+          @foreach ($lib->ips as $ip)
+            {{$ip->ip}}
+          @endforeach
         </li>
       @endforeach
     </ul>
