@@ -129,6 +129,13 @@
                             Lån ut
                         </spin-button>
                     </div>
+
+
+                    <div class="form-group form-check" style="margin-left:6px">
+                        <input type="checkbox" class="form-check-input" id="keepUserCheckbox" v-model="keepUser">
+                        <label class="form-check-label" for="keepUserCheckbox">Behold låner (maks 60 sekunder, for å låne ut mer til samme person)</label>
+                    </div>
+
                 </form>
             </div>
 
@@ -214,6 +221,7 @@ export default {
                 barcode: null,
 
             },
+            keepUser: false,
             currentUser: {},
             currentThing: {},
             currentBarcode: '',
@@ -323,11 +331,19 @@ export default {
                     variant: get(response, 'data.warn') ? 'warning' : 'success' ,
                 });
 
-                this.currentUser = {name: ''};
+
                 this.currentThing = {name: ''};
-                setTimeout(() => {
-                    document.querySelector('.active input[tabindex="1"]').focus();
-                }, 300)
+
+                if (!this.keepUser) {
+                    this.currentUser = {name: ''};
+                    Vue.nextTick(() => {
+                        document.querySelector('.active input[tabindex="1"]').focus();
+                    });
+                } else {
+                    Vue.nextTick(() => {
+                        document.querySelector('.active input[tabindex="2"]').focus();
+                    });
+                }
             })
             .catch(error => this.handleError('Utlånet', error));
         },
@@ -347,9 +363,9 @@ export default {
                 });
                 this.$root.$emit('updateLoansTable', {loan: response.data.loan});
                 this.currentBarcode = '';
-                setTimeout(() => {
+                Vue.nextTick(() => {
                     this.focusFirstTextInput();
-                }, 300)
+                });
             })
             .catch(error => this.handleError('Innleveringen', error));
         },
