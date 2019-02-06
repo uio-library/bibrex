@@ -58,6 +58,7 @@
         },
         data: () => {
             return {
+                hound: null,
                 selectedId: '',
                 waitingTimer: null,
                 waitingSince: null,
@@ -105,24 +106,27 @@
 
             init () {
 
-              let options = {
-                // prefetch: this.prefetch,
-                sufficient: 5,
-                indexRemote: false,
-                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('primaryId', 'name', 'barcode'),
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                identify: datum => datum.primaryId ? datum.primaryId : datum.id,
-                prefetch: (this.prefetch ? {
-                    url: this.prefetch,
-                    cache: false
-                  } : null),
-                remote: (this.remote ? {
-                    url: this.remote + '?query=%QUERY',
-                    wildcard: '%QUERY',
-                  } : null),
-              };
+              if (!this.hound) {
+                // Initialize Bloodhound only once to avoid having to refetch the prefetch data
+                let options = {
+                  // prefetch: this.prefetch,
+                  sufficient: 5,
+                  indexRemote: false,
+                  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('primaryId', 'name', 'barcode'),
+                  queryTokenizer: Bloodhound.tokenizers.whitespace,
+                  identify: datum => datum.primaryId ? datum.primaryId : datum.id,
+                  prefetch: (this.prefetch ? {
+                      url: this.prefetch,
+                      cache: false
+                    } : null),
+                  remote: (this.remote ? {
+                      url: this.remote + '?query=%QUERY',
+                      wildcard: '%QUERY',
+                    } : null),
+                };
 
-              let hound = new Bloodhound(options);
+                this.hound = new Bloodhound(options);
+              }
 
               $(this.$refs.textinput).typeahead({
                 minLength: this.minLength,
@@ -131,10 +135,10 @@
                 name: this.name,
                 source: (query, sync, async) => {
                   if (query === '') {
-                    sync(hound.all());
+                    sync(this.hound.all());
                     async([]);
                   } else {
-                    hound.search(query, sync, async);
+                    this.hound.search(query, sync, async);
                   }
                 },
                 limit: this.limit,
