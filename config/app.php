@@ -108,6 +108,31 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hiding Environment Variables From Debug Pages
+    |--------------------------------------------------------------------------
+    */
+
+    'debug_blacklist' => [
+        '_ENV' => [
+            'APP_KEY',
+            'DB_PASSWORD',
+            'MAIL_PASSWORD',
+            'PUSHER_APP_KEY',
+            'PUSHER_APP_SECRET',
+        ],
+
+        '_SERVER' => [
+            'APP_KEY',
+            'DB_PASSWORD',
+            'MAIL_PASSWORD',
+            'PUSHER_APP_KEY',
+            'PUSHER_APP_SECRET',
+        ],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
