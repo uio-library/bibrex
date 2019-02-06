@@ -372,7 +372,7 @@ export default {
         checkIdleTime() {
             let idleSecs = ((new Date()).getTime() - this.idleSince) / 1000;
 
-            if (idleSecs > 60) {
+            if (idleSecs > 60 && this.currentUser && this.currentUser.name) {
                 this.currentUser = {name: ''};
             }
 
