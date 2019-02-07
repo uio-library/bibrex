@@ -12,8 +12,8 @@ class LibrariesTableSeeder extends Seeder
     public function run()
     {
         DB::table('libraries')->insert([
-            'name' => 'UiO Eksempelbiblioteket',
-            'name_eng' => 'UiO Example Library',
+            'name' => 'Eksempelbiblioteket',
+            'name_eng' => 'Example Library',
             'email' => 'post@eksempelbiblioteket.no',
             'password' => bcrypt('admin'),
             'password_changed' => new DateTime,

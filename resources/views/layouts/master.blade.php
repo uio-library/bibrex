@@ -62,7 +62,7 @@
 
           <li class="nav-item {{ strpos($_SERVER['REQUEST_URI'], '/about') === 0 ? ' active':'' }}">
            <a class="nav-link" href="/about">
-            <em class="far fa-question-circle"></em> Hjælp
+            <em class="far fa-question-circle"></em> Hjelp
           </a>
          </li>
 
