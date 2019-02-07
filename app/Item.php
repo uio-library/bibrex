@@ -51,18 +51,16 @@ class Item extends Model
         return $this->belongsTo(Library::class, 'library_id');
     }
 
-    public function activeLoan()
-    {
-        return $this->hasOne(Loan::class)
-            ->with('user')
-            ->whereNull('deleted_at');
-    }
-
+    /**
+     * Get the loans for this items. By default, only active loans are returned,
+     * so the result should be zero or one loan. But all active and former loans can
+     * be returned by adding `withTrashed()`.
+     */
     public function loans()
     {
         return $this->hasMany(Loan::class)
             ->with('user')
-            ->orderBy('created_at', 'desc');
+            ->latest();
     }
 
     /**

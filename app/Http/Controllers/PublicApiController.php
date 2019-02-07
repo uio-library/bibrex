@@ -97,10 +97,7 @@ class PublicApiController extends Controller
                         $query->where('library_id', '=', $request->library);
                     }
                 },
-                // Check if item is available or not.
-                'items.loans' => function ($query) use ($request) {
-                    $query->orderBy('created_at')->limit(1);
-                },
+                'items.loans',
             ]);
             $query->with('items.library');
         }

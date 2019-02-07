@@ -6,21 +6,18 @@
         </div>
         <div v-else>
             <h3>{{ things.length }} ting</h3>
-            <div class="d-flex flex-row flex-wrap">
+            <div class="card-columns">
+                <div class="card p-3" v-for="thing in things">
+                    <div class="card-block">
+                        <h4 class="card-title">{{ thing.name }}</h4>
 
-                <div class="p-2" v-for="thing in things">
+                        <div class="media text-muted" v-for="(items, library) in thing.items">
 
-                    <div class="my-3 p-3 bg-white rounded shadow-sm"">
-
-                        <h6 class="border-bottom border-gray pb-2 mb-0">{{ thing.name }}</h6>
-
-                        <div class="media text-muted pt-3" v-for="(items, library) in thing.items">
-
-                            <span v-if="items.filter(item => item.available).length == 0" class="mr-2 rounded bg-danger" style="width: 32px; height: 32px;"></span>
+                            <span v-if="!items.filter(item => item.available).length" class="mr-2 rounded bg-danger" style="width: 32px; height: 32px;"></span>
 
                             <span v-else class="mr-2 rounded bg-success" style="width: 32px; height: 32px;"></span>
 
-                            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                            <p class="small">
                                 <strong class="d-block text-gray-dark">{{ library }}</strong>
                                 {{ items.filter(item => item.available).length }} av {{ items.length }} tilgjengelig.
                             </p>
@@ -31,6 +28,9 @@
         </div>
     </div>
 </template>
+<style>
+
+</style>
 <script>
     import axios from 'axios';
     import { groupBy } from 'lodash/collection';
@@ -50,10 +50,8 @@
                 .then(response => {
                     this.loading = false;
                     this.things = response.data.data.map(thing => {
-                        thing.items = groupBy(
-                            (get(thing, 'items') || []).filter(item => item.library),
-                            item => item.library.name
-                        );
+                        thing.items = thing.items.filter(item => item.library);
+                        thing.items = groupBy(thing.items, item => item.library.name);
                         return thing;
                     }).filter(thing => Object.keys(thing.items).length);
                     console.log(`Found ${this.things.length} things`);
