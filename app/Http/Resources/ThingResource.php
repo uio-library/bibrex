@@ -21,6 +21,7 @@ class ThingResource extends JsonResource
                 'created_at' => $this->created_at->toDateTimeString(),
                 'updated_at' => $this->updated_at->toDateTimeString(),
                 'items' => ItemResource::collection($this->whenLoaded('items')),
+                'image' => $this->image,
             ],
             $this->properties->toArray()
         );

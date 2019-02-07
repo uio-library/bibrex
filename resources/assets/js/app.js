@@ -3,6 +3,7 @@ import Vue from 'vue'
 import VueShortkey from 'vue-shortkey'
 import ToggleButton from 'vue-js-toggle-button';
 import { Tooltip } from 'bootstrap-vue/es/directives';
+
 import VueI18n from 'vue-i18n';
 import AlertComponent from './components/Alert.vue';
 import CheckoutCheckinComponent from './components/CheckoutCheckin.vue';
@@ -10,6 +11,7 @@ import CheckoutCheckinStatusComponent from './components/CheckoutCheckinStatus.v
 import LoanActionsComponent from './components/LoanActions.vue';
 import ThingEditorComponent from './components/ThingEditor.vue';
 import ThingSettingsEditorComponent from './components/ThingSettingsEditor.vue';
+import ThingImageEditorComponent from './components/ThingImageEditor.vue';
 import DatatableComponent from './components/Datatable.vue';
 import LoansTableComponent from './components/LoansTable.vue';
 import ThingsTableComponent from './components/ThingsTable.vue';
@@ -28,6 +30,7 @@ Vue.component('checkout-checkin-status', CheckoutCheckinStatusComponent);
 Vue.component('loan-actions', LoanActionsComponent);
 Vue.component('thing-editor', ThingEditorComponent);
 Vue.component('thing-settings-editor', ThingSettingsEditorComponent);
+Vue.component('thing-image-editor', ThingImageEditorComponent);
 Vue.component('datatable', DatatableComponent);
 Vue.component('loans-table', LoansTableComponent);
 Vue.component('things-table', ThingsTableComponent);

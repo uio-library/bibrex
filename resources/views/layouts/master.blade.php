@@ -72,9 +72,10 @@
             {{ Auth::user()->name }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="{{ URL::action('LibrariesController@getMyAccount') }}">Kontoinnstillinger</a>
-            <a class="dropdown-item" href="{{ URL::action('LibrariesController@getMyIps') }}">Autopålogging</a>
-            <a class="dropdown-item" href="{{ URL::action('LibrariesController@getIndex') }}">Biblioteksoversikt</a>
+            <a class="dropdown-item" href="{{ route('status', ['library' => Auth::user()->id]) }}">Dashbord</a>
+            <a class="dropdown-item" href="{{ action('LibrariesController@getMyAccount') }}">Kontoinnstillinger</a>
+            <a class="dropdown-item" href="{{ action('LibrariesController@getMyIps') }}">Autopålogging</a>
+            <a class="dropdown-item" href="{{ action('LibrariesController@getIndex') }}">Biblioteksoversikt</a>
             @if (Session::get('iplogin') != true)
             <a class="dropdown-item" href="/logout">Logg ut</a>
             @endif

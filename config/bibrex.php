@@ -2,6 +2,11 @@
 
 return [
 
+    'thumbnail_dimensions' => [
+        'width' => env('MIX_THUMBNAIL_WIDTH', 300),
+        'height' => env('MIX_THUMBNAIL_HEIGHT', 300),
+    ],
+
     'storage_time' => [
 
         /*

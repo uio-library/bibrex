@@ -8,11 +8,11 @@
       <thead>
         <tr>
           <th>Ting</th>
-          <th>Lånetid</th>
-          <th>Påminnelser</th>
-          <th>Utlån uten strekkode</th>
-          <th>Mitt bibliotek<br><small>Tilgjengelig / totalt</small></th>
-          <th>Alle bibliotek<br><small>Tilgjengelig / totalt</small></th>
+          <th class="text-center">Lånetid</th>
+          <th class="text-center">Påminnelser</th>
+          <th class="text-center">Utlån uten strekkode</th>
+          <th class="text-center">Mitt bibliotek<br><small>Tilgjengelig / totalt</small></th>
+          <th class="text-center">Alle bibliotek<br><small>Tilgjengelig / totalt</small></th>
         </tr>
       </thead>
       <tbody>
@@ -20,34 +20,40 @@
         <tr v-for="thing in things">
 
           <td>
-            <a :href="'/things/' + thing.id" v-b-tooltip.hover :title="thing.tooltip">{{ thing.name }}</a>
+            <a :href="'/things/' + thing.id" style="vertical-align: middle;" v-b-tooltip.hover :title="thing.tooltip">
+              <div :style="`display:inline-block; width: ${thumbwidth}px;`" class="mr-2">
+                <img v-if="thing.image.thumb" style="display:inline-block; max-width:100%;" :src="'/storage/' + thing.image.thumb.name" alt="Sånn ser den ut">
+                <img v-else style="display:inline-block; max-width:100%;" :src="'/images/placeholder.png'" alt="Sånn ser den ikke ut">
+              </div>
+              {{ thing.name }}
+            </a>
           </td>
 
-          <td>
+          <td class="text-center">
             {{ thing.properties.loan_time }}
           </td>
 
-          <td>
+          <td class="text-center">
             <span v-if="thing.library_settings.reminders" class="text-success">
               <i class="far fa-check-circle"></i>
               Aktivert
             </span>
           </td>
 
-          <td>
+          <td class="text-center">
             <span v-if="thing.library_settings.loans_without_barcode" class="text-success">
               <i class="far fa-check-circle"></i>
               Aktivert
             </span>
           </td>
 
-          <td>
+          <td class="text-center">
             {{ thing.avail_mine}}
             /
             {{ thing.items_mine}}
           </td>
 
-          <td>
+          <td class="text-center">
             {{ thing.avail_total}}
             /
             {{ thing.items_total}}
@@ -70,6 +76,8 @@
       },
       data: () => {
           return {
+              thumbwidth: process.env.MIX_THUMBNAIL_WIDTH/4,
+              thumbheight: process.env.MIX_THUMBNAIL_HEIGHT/4,
               error: '',
               things: [],
           };

@@ -5,7 +5,11 @@
   <thing-editor :data="{{ json_encode($thing) }}"></thing-editor>
 
   @if ($thing->id)
-  <thing-settings-editor :thing-id="{{ $thing->id }}" :data="{{ json_encode($thing->library_settings) }}"></thing-settings-editor>
+      <thing-image-editor :thing-id="{{ $thing->id }}" :data="{{ json_encode($thing->image) }}"></thing-image-editor>
+  @endif
+
+  @if ($thing->id)
+  <thing-settings-editor :thing-id="{{ $thing->id }}" :data="{{ json_encode($thing->image) }}"></thing-settings-editor>
   @endif
 
  @if($thing->id)

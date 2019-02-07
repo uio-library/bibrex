@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Item;
-use App\Library;
 use App\Thing;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Imagine\Imagick\Imagine;
 
 class ThingsController extends Controller
 {
@@ -62,6 +62,7 @@ class ThingsController extends Controller
                 'name' => $thing->name(),
                 'library_settings' => $thing->library_settings,
                 'properties' => $thing->properties,
+                'image' => $thing->image,
                 'loan_time' => $thing->loan_time,
 
                 'items_total' => $all->count(),
@@ -160,13 +161,29 @@ class ThingsController extends Controller
             'properties.loan_time' => 'required|numeric|min:1',
         ], $this->messages)->validate();
 
-        if (!$thing->exists) {
+        $isNew = !$thing->exists;
+
+        if ($isNew) {
             // The frontend will redirect to update the url, so flash a status message to the new page.
             \Session::flash('status', 'Tingen ble lagret.');
         }
 
         $thing->properties = $request->input('properties');
         $thing->save();
+
+        if ($isNew) {
+            \Log::info(sprintf(
+                'Opprettet tingen <a href="%s">%s</a>.',
+                action('ThingsController@show', $thing->id),
+                $thing->name()
+            ));
+        } else {
+            \Log::info(sprintf(
+                'Oppdaterte tingen <a href="%s">%s</a>.',
+                action('ThingsController@show', $thing->id),
+                $thing->name()
+            ));
+        }
 
         return response()->json([
             'status' => 'Tingen «' . $thing->name() . '» ble lagret.',
@@ -192,9 +209,79 @@ class ThingsController extends Controller
         $settings->reminders = (boolean) $request->input('reminders');
         $settings->save();
 
+        \Log::info(sprintf(
+            'Oppdaterte innstillinger for tingen <a href="%s">%s</a>.',
+            action('ThingsController@show', $thing->id),
+            $thing->name()
+        ));
+
         return response()->json([
             'status' => 'ok',
             'library_settings' => $settings,
+        ]);
+    }
+
+    /**
+     * Update image
+     *
+     * @param Thing $thing
+     * @param Request $request
+     * @param Imagine $imagine
+     * @return Response
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function updateImage(Thing $thing, Request $request, Imagine $imagine)
+    {
+        $this->validate($request, [
+            'thingimage' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:10000',
+        ]);
+
+        $file = $request->file('thingimage');
+        $filename = $file->storePublicly('public');
+        $filename = substr($filename, strpos($filename, '/') + 1);
+        $filename_t = $filename . '.thumb.jpg';
+
+        $fullpath  = storage_path("app/public/$filename");
+        $fullpath_t = storage_path("app/public/$filename_t");
+
+        $imagine->open($fullpath)
+            ->thumbnail(
+                new \Imagine\Image\Box(
+                    config('bibrex.thumbnail_dimensions.width'),
+                    config('bibrex.thumbnail_dimensions.height')
+                ),
+                \Imagine\Image\ImageInterface::THUMBNAIL_INSET
+            )
+            ->save($fullpath_t);
+
+        list($width, $height) = getimagesize($fullpath);
+        list($width_t, $height_t) = getimagesize($fullpath_t);
+
+        $thing->image = [
+            'full' => [
+                'name' => $filename,
+                'size' => filesize($fullpath),
+                'width' => $width,
+                'height' => $height,
+            ],
+            'thumb' => [
+                'name' => $filename_t,
+                'size' => filesize($fullpath_t),
+                'width' => $width_t,
+                'height' => $height_t,
+            ],
+        ];
+        $thing->save();
+
+        \Log::info(sprintf(
+            'Oppdaterte bilde for tingen <a href="%s">%s</a>.',
+            action('ThingsController@show', $thing->id),
+            $thing->name()
+        ));
+
+        return response()->json([
+            'status' => 'Bildet ble lagret.',
+            'thing' => $thing,
         ]);
     }
 

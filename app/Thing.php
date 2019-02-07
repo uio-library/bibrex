@@ -12,12 +12,19 @@ class Thing extends Model
 
     protected $guarded = array();
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'image' => 'object',
+    ];
+
     public function items()
     {
         return $this->hasMany(Item::class);
     }
-
-
 
     public function settings()
     {
@@ -29,7 +36,7 @@ class Thing extends Model
      *
      * @var array
      */
-    protected $fillable = ['properties', 'note'];
+    protected $fillable = ['properties', 'note', 'image'];
 
     /**
      * The attributes that should be mutated to dates.

@@ -30,7 +30,7 @@
             {{$ip->ip}}
           @endforeach
           <br>
-            <a href="{{ route('status', ['library' => $lib->id]) }}">Dashboard</a>
+            <a href="{{ route('status', ['library' => $lib->id]) }}">Dashbord</a>
         </li>
       @endforeach
     </ul>

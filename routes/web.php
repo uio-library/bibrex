@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/things/{thing}', 'ThingsController@show');
     Route::post('/things/{thing}', 'ThingsController@upsert');
     Route::post('/things/{thing}/settings', 'ThingsController@updateSettings');
+    Route::post('/things/{thing}/image', 'ThingsController@updateImage');
     Route::post('/things/{thing}/delete', 'ThingsController@delete');
     Route::post('/things/{thing}/restore', 'ThingsController@restore');
 

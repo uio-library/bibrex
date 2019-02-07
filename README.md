@@ -24,6 +24,10 @@ switch to another database without too much effort.
 5. Make sure `app/storage` is writable by the www user.
 6. `npm install` to fetch NodeJS dependencies.
 
+PHP settings: You might want to increase `upload_max_filesize` to `10M` or to taste
+to allow users to upload larger images.
+Bibrex will make thumbnails for you, so larger files pose no problem really.
+
 ### Development
 
 #### Running a development server
