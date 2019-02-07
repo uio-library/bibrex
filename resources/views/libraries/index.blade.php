@@ -29,6 +29,8 @@
           @foreach ($lib->ips as $ip)
             {{$ip->ip}}
           @endforeach
+          <br>
+            <a href="{{ route('status', ['library' => $lib->id]) }}">Dashboard</a>
         </li>
       @endforeach
     </ul>

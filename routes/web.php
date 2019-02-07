@@ -15,7 +15,7 @@ Route::permanentRedirect('/', '/loans');
 Route::permanentRedirect('/loans/index', '/loans');
 
 Route::view('/about', 'about');
-Route::view('/status', 'status');
+Route::view('/status', 'status')->name('status');
 
 Route::middleware(['guest'])->group(function () {
     Route::get('/libraries/login', 'LibrariesController@getLogin')->name('login');
