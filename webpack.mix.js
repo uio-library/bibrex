@@ -12,7 +12,22 @@ require('laravel-mix-purgecss');
  |
  */
 
-mix.js('resources/assets/js/app.js', 'public/js')
+// Extend Mix with the "i18n" method, that loads the vue-i18n-loader
+mix.extend( 'i18n', new class {
+        webpackRules() {
+            return [
+                {
+                    resourceQuery: /blockType=i18n/,
+                    type:          'javascript/auto',
+                    loader:        '@kazupon/vue-i18n-loader',
+                },
+            ];
+        }
+    }(),
+);
+
+mix.i18n()
+   .js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
    .copy('node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css', 'public/css/')
    .purgeCss({
@@ -25,5 +40,4 @@ mix.js('resources/assets/js/app.js', 'public/js')
             /^badge-/,                           // logs.index
             /col-/,                              // Bootstrap column layout used by datatables
         ],
-   })
-   .version();
+   });

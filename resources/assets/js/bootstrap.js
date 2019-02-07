@@ -1,5 +1,5 @@
 // For IE11 support
-import 'babel-polyfill';
+import '@babel/polyfill';
 
 // Error logging to Sentry
 import Raven from 'raven-js';
