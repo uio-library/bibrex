@@ -29,7 +29,7 @@
                             </span>
                             <span v-else>
                               <em class="far fa-hexagon"></em>
-                              {{ loan.item.thing.name }}
+                              {{ loan.item.thing.properties.name.nob }}
                               <span v-if="loan.item.note">({{ loan.item.note }})</span>
                             </span>
                           </a>

@@ -29,7 +29,7 @@ class Thing extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'properties', 'note'];
+    protected $fillable = ['properties', 'note'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -87,6 +87,11 @@ class Thing extends Model
             }
         }
         return $loans;
+    }
+
+    public function name($lang = 'nob')
+    {
+        return $this->properties->get("name.$lang");
     }
 
     public function getPropertiesAttribute()

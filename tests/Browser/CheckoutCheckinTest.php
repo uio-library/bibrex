@@ -189,7 +189,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $browser->visit(new LoansPage)
                     ->waitForText('Til hvem?')
                     ->type('user', $this->users[0]->barcode)
-                    ->type('thing', $this->things[0]->name)
+                    ->type('thing', $this->things[0]->name())
                     ->clickLink('Lån ut', 'button')
                     ->waitForText('Utlån av denne tingen må gjøres med strekkode');
 
@@ -197,7 +197,7 @@ class CheckoutCheckinTest extends DuskTestCase
                 $browser->visit(new LoansPage)
                     ->waitForText('Til hvem?')
                     ->type('user', $this->users[0]->barcode)
-                    ->type('thing', $this->things[1]->name)
+                    ->type('thing', $this->things[1]->name())
                     ->clickLink('Lån ut', 'button')
                     ->waitForText('Lånte ut')
                     ->waitForText('nå nettopp');

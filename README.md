@@ -8,7 +8,14 @@ Simple lending system for things that integrates with Alma.
 
 ### Setup
 
-1. `composer install` to fetch PhP dependencies.
+Requirements: PHP (see `composer.json` for required version),
+NodeJS and PostgresSQL.
+We do make use of some PostgresSQL-specific functionality (like the
+[ILIKE operator](https://www.postgresql.org/docs/8.3/functions-matching.html),
+but the coupling is quite weak, so it should be possible to
+switch to another database without too much effort.
+
+1. `composer install` to fetch PHP dependencies.
 2. Add database setup etc. to the `.env` file.
 3. `php artisan migrate` to create the database tables
 4. Optional:

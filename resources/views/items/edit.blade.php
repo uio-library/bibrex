@@ -25,7 +25,7 @@
                     <div class="col-sm-9">
                         <select name="thing" class="form-control">
                             @foreach ($things as $thing)
-                                <option value="{{ $thing->id }}"{{ $item->thing && $item->thing->id == $thing->id ? ' selected="selected"' : ''}}> {{ $thing->name }}</option>
+                                <option value="{{ $thing->id }}"{{ $item->thing && $item->thing->id == $thing->id ? ' selected="selected"' : ''}}> {{ $thing->name() }}</option>
                             @endforeach
                         </select>
                     </div>

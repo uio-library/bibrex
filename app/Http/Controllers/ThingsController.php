@@ -45,7 +45,7 @@ class ThingsController extends Controller
         $libraryId = \Auth::user()->id;
 
         $things = Thing::with('items', 'settings', 'items.loans')
-            ->orderBy('name')
+            ->orderBy('properties->name->nob')
             ->get();
 
         $things = $things->map(function ($thing) use ($libraryId) {
@@ -59,7 +59,7 @@ class ThingsController extends Controller
             return [
                 'type' => 'thing',
                 'id' => $thing->id,
-                'name' => $thing->name,
+                'name' => $thing->name(),
                 'library_settings' => $thing->library_settings,
                 'properties' => $thing->properties,
                 'loan_time' => $thing->loan_time,
@@ -93,7 +93,7 @@ class ThingsController extends Controller
             $things->with('items.loans');
         }
 
-        $things = $things->orderBy('name')->get();
+        $things = $things->orderBy('properties->name->nob')->get();
 
         if ($request->input('withoutBarcode')) {
             $things = $things->filter(function ($thing) {
@@ -105,7 +105,7 @@ class ThingsController extends Controller
             return [
                 'id' => $thing->id,
                 'type' => 'thing',
-                'name' => $thing->name,
+                'name' => $thing->name(),
                 'properties' => $thing->properties,
                 'library_settings' => $thing->library_settings,
             ];
@@ -145,7 +145,12 @@ class ThingsController extends Controller
     public function upsert(Thing $thing, Request $request)
     {
         \Validator::make($request->all(), [
-            'name' => 'required|unique:things,name' . ($thing->id ? ',' . $thing->id : ''),
+            //'name' => 'required|unique:things,name' . ($thing->id ? ',' . $thing->id : ''),
+
+            'properties.name.nob' => 'required',
+            'properties.name.nno' => 'required',
+            'properties.name.eng' => 'required',
+
             'properties.name_indefinite.nob' => 'required',
             'properties.name_indefinite.nno' => 'required',
             'properties.name_indefinite.eng' => 'required',
@@ -160,12 +165,11 @@ class ThingsController extends Controller
             \Session::flash('status', 'Tingen ble lagret.');
         }
 
-        $thing->name = $request->input('name');
         $thing->properties = $request->input('properties');
         $thing->save();
 
         return response()->json([
-            'status' => 'Tingen «' . $thing->name . '» ble lagret.',
+            'status' => 'Tingen «' . $thing->name() . '» ble lagret.',
             'thing' => $thing,
         ]);
     }
@@ -220,12 +224,12 @@ class ThingsController extends Controller
         \Log::info(sprintf(
             'Slettet tingen <a href="%s">%s</a>.',
             action('ThingsController@show', $thing->id),
-            $thing->name
+            $thing->name()
         ));
         $thing->delete();
 
         return response()->json([
-            'status' => 'Tingen «' . $thing->name . '» ble sletta.',
+            'status' => 'Tingen «' . $thing->name() . '» ble sletta.',
             'thing' => $thing,
         ]);
     }
@@ -242,11 +246,11 @@ class ThingsController extends Controller
         \Log::info(sprintf(
             'Gjenopprettet tingen <a href="%s">%s</a>.',
             action('ThingsController@show', $thing->id),
-            $thing->name
+            $thing->name()
         ));
 
         return response()->json([
-            'status' => 'Tingen «' . $thing->name . '» ble gjenopprettet.',
+            'status' => 'Tingen «' . $thing->name() . '» ble gjenopprettet.',
             'thing' => $thing,
         ]);
     }

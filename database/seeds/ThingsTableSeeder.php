@@ -13,11 +13,15 @@ class ThingsTableSeeder extends Seeder
     {
         DB::table('things')->insert([
             [
-                'name' => 'Alma-dokument',
                 'created_at' => new DateTime,
                 'updated_at' => new DateTime,
                 'properties' => json_encode([
                     'loan_time' => 30,
+                    'name' => [
+                        'nob' => 'Alma-dokument',
+                        'nno' => 'Alma document',
+                        'eng' => 'Alma document',
+                    ],
                     'name_indefinite' => [
                         'nob' => 'et alma-dokument',
                         'nno' => 'eit alma-dokument',
@@ -31,11 +35,15 @@ class ThingsTableSeeder extends Seeder
                 ]),
             ],
             [
-                'name' => 'Skjøteledning',
                 'created_at' => new DateTime,
                 'updated_at' => new DateTime,
                 'properties' => json_encode([
                     'loan_time' => 1,
+                    'name' => [
+                        'nob' => 'Skjøteledning',
+                        'nno' => 'Skøyteleidning',
+                        'eng' => 'Extension coord',
+                    ],
                     'name_indefinite' => [
                         'nob' => 'en skjøteledning',
                         'nno' => 'ein skøyteleidning',

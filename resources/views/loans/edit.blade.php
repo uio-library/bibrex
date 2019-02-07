@@ -19,7 +19,7 @@
                 <div class="row">
                     {{ Form::label('thing', 'Ting: ', ['class' => 'col-sm-3 col-form-label']) }}
                     <div class="col-sm-9">
-                        <input type="text" readonly class="form-control-plaintext" id="staticType" value="{{  $loan->item->thing->name }}">
+                        <input type="text" readonly class="form-control-plaintext" id="staticType" value="{{  $loan->item->thing->name() }}">
                     </div>
                 </div>
             </li>

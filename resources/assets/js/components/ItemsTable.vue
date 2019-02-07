@@ -23,7 +23,7 @@
             {{ item.library.name }}
           </td>
           <td v-if="showThing">
-            {{ item.thing.name }}
+            {{ item.thing.properties.name.nob }}
           </td>
           <td>
             {{ item.created_at.split(' ')[0] }}

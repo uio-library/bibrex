@@ -9,7 +9,7 @@
             <div class="card-columns">
                 <div class="card p-3" v-for="thing in things">
                     <div class="card-block">
-                        <h4 class="card-title">{{ thing.name }}</h4>
+                        <h4 class="card-title">{{ thing.name[lang] }}</h4>
 
                         <div class="media text-muted" v-for="(items, library) in thing.items">
 
@@ -39,6 +39,7 @@
     export default {
         data: function() {
             return {
+                lang: 'nob',
                 loading: true,
                 things: [],
             };

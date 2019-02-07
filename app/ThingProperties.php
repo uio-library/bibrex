@@ -14,6 +14,9 @@ class ThingProperties implements JsonSerializable, Arrayable
             'type' => 'integer',
             'default' => 1,
         ],
+        'name' => [
+            'type' => 'multilingual'
+        ],
         'name_indefinite' => [
             'type' => 'multilingual'
         ],

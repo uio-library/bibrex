@@ -74,9 +74,9 @@ class Loan extends Model
     public function representation($plaintext = false)
     {
         if ($this->item->barcode) {
-            return "{$this->item->thing->name} <samp>(#{$this->item->barcode})</samp>";
+            return "{$this->item->thing->name()} <samp>(#{$this->item->barcode})</samp>";
         } else {
-            return $this->item->thing->name;
+            return $this->item->thing->name();
         }
     }
 

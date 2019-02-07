@@ -58,7 +58,7 @@ class ItemsController extends Controller
                     'id' => $item->id,
                     'type' => 'item',
                     'name' => $item->barcode,
-                    'group' => $item->thing->name,
+                    'group' => $item->thing->name(),
                 ];
             });
 

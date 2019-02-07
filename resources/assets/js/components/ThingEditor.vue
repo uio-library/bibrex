@@ -52,40 +52,35 @@
 
             <ul class="list-group list-group-flush">
 
-                <!-- NAVN -->
-
-                <li class="list-group-item">
-                    <div class="row">
-                        <label for="name" class="col-sm-3 col-form-label">Internt navn:</label>
-                        <div class="col-sm-8">
-                            <input id="name" name="name" type="text" :readonly="!editMode" v-model="current.name"
-                                :class="{
-                                    'is-invalid': errors.name,
-                                    'form-control': editMode,
-                                    'form-control-plaintext': !editMode
-                                }">
-                            <p class="invalid-feedback" v-if="editMode && errors.name">
-                                {{ errors.name[0] }}
-                            </p>
-                            <p class="small form-text" v-if="editMode">
-                              Dette navnet vises kun i Bibrex.
-                            </p>
-                        </div>
-                    </div>
-                </li>
-
                 <!-- ETIKETTER -->
 
                 <li class="list-group-item">
 
                     <div class="row mb-3" v-for="lang in languages">
 
-                        <div class="col col-sm-3 col-form-label">
+                        <div class="col col-sm-1 col-form-label">
                           {{ languageLabels[lang] }}:
                         </div>
 
+                        <div class="col col-sm-3">
+                            <input placeholder="Navn" type="text" :readonly="!editMode"
+                                   :name="'name.' + lang"
+                                   v-model="current.properties.name[lang]"
+                                   :class="{
+                                    'is-invalid': errors['properties.name.' + lang],
+                                    'form-control': editMode,
+                                    'form-control-plaintext': !editMode
+                                }">
+                            <p class="invalid-feedback" v-if="editMode && errors['properties.name.' + lang]">
+                                {{ errors['properties.name.' + lang][0] }}
+                            </p>
+                            <p class="small form-text" v-if="editMode">
+                                {{ help[lang] }}
+                            </p>
+                        </div>
+
                         <div class="col col-sm-4">
-                            <input placeholder="Ubestemt form" type="text" :readonly="!editMode"
+                            <input placeholder="Ubestemt form med artikkel" type="text" :readonly="!editMode"
                                 :name="'name_indefinite.' + lang"
                                 v-model="current.properties.name_indefinite[lang]"
                                 :class="{
@@ -102,7 +97,7 @@
                         </div>
 
                         <div class="col col-sm-4">
-                            <input placeholder="Bestemt form" type="text" :readonly="!editMode"
+                            <input placeholder="Bestemt form med artikkel" type="text" :readonly="!editMode"
                                 v-model="current.properties.name_definite[lang]"
                                 :name="'name_definite.' + lang"
                                 :class="{
@@ -175,6 +170,11 @@ export default {
         return {
             languages: ['nob', 'nno', 'eng'],
             languageLabels: {'nob': 'Bokmål', 'nno': 'Nynorsk', 'eng': 'Engelsk'},
+            help: {
+                nob: 'Navn på tingen. Begynner vanligvis med stor bokstav. Eksempler: «Hørselvern», «Skjøteledning», «Nøkkel til hvilerommet».',
+                nno: 'Eksempel: «Høyrselsvern», «Skøyteleidning», «Nykel til kvilerommet».',
+                eng: 'Examples: «Earmuffs», «Extension cord», «Resting room key».',
+            },
             helpDefinite: {
 
                 'nob': 'Form som passer inn i setningen «____ må leveres».' +

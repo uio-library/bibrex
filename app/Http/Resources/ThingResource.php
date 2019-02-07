@@ -14,14 +14,15 @@ class ThingResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'type' => 'thing',
-            'id' => $this->id,
-            'name' => $this->name,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
-            'properties' => $this->properties,
-            'items' => ItemResource::collection($this->whenLoaded('items')),
-        ];
+        return array_merge(
+            [
+                'type' => 'thing',
+                'id' => $this->id,
+                'created_at' => $this->created_at->toDateTimeString(),
+                'updated_at' => $this->updated_at->toDateTimeString(),
+                'items' => ItemResource::collection($this->whenLoaded('items')),
+            ],
+            $this->properties->toArray()
+        );
     }
 }

@@ -61,7 +61,7 @@ class CheckoutRequest extends FormRequest
 
             if (is_null($item)) {
                 // Next, check if it matches a thing name.
-                $thing = Thing::where('name', '=', array_get($input, 'thing.name'))->first();
+                $thing = Thing::where('properties->name->nob', '=', array_get($input, 'thing.name'))->first();
             }
 
             if (is_null($item) && !empty($library->library_code)) {

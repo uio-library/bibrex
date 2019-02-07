@@ -56,7 +56,7 @@ class SendReminders extends Command
             $settings = $loan->getLibrarySettings();
 
             if (!$settings->reminders) {
-                $this->comment("[{$loan->id}] Not sending reminders for {$loan->item->thing->name}" .
+                $this->comment("[{$loan->id}] Not sending reminders for {$loan->item->thing->name()}" .
                     " from {$loan->library->name}.");
                 continue;
             }

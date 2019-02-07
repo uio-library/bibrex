@@ -108,12 +108,12 @@ class PublicApiController extends Controller
             });
         }
 
-        if (isset($request->name)) {
-            $query->where('name', 'ilike', str_replace('*', '%', $request->name));
-        }
+//        if (isset($request->name)) {
+//            $query->where('name', 'ilike', str_replace('*', '%', $request->name));
+//        }
 
         $resources = $query
-            ->orderBy('name')
+            ->orderBy('properties->name->nob')
             ->get();
 
         return new ThingCollection($resources);
