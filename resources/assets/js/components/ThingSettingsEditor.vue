@@ -4,7 +4,7 @@
             <div class="card-header">
                 <div class="row align-items-center">
                     <h5 class="col mb-0">
-                        Biblioteksspesifikke innstillinger for tingen
+                        <a name="library_settings">Biblioteksspesifikke innstillinger for tingen</a>
                     </h5>
                     <div v-if="editMode">
                         <button type="button" class="btn btn-warning col-auto mx-1" @click="cancel()">

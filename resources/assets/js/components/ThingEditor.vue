@@ -20,7 +20,7 @@
                 <div class="row align-items-center">
                     <h5 class="col mb-0">
                         <span v-if="isNew">Ny ting</span>
-                        <span v-else>Generelle innstillinger for tingen</span>
+                        <span v-else>Ting #{{ current.id }}</span>
                     </h5>
                     <div v-if="editMode">
                         <button type="button" class="btn btn-warning col-auto mx-1" @click="reset()" v-if="!isNew">

@@ -4,7 +4,7 @@
             <div class="card-header">
                 <div class="row align-items-center">
                     <h5 class="col mb-0">
-                        Bilde
+                        <a name="image">Bilde</a>
                     </h5>
                     <div v-if="editMode">
                         <button type="button" class="btn btn-warning col-auto mx-1" @click="reset()">

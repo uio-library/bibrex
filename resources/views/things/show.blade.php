@@ -18,7 +18,7 @@
     <div class="card-header">
         <div class="row align-items-center">
             <h5 class="col mb-0">
-                Aktive eksemplarer
+                <a name="items">Aktive eksemplarer</a>
             </h5>
             @if (!$thing->trashed())
                 <a href="https://www.uio.no/for-ansatte/enhetssider/ub/publikumsarbeid/bibrex.html" target="_blank" class="btn btn-link col col-auto mx-1">
@@ -40,7 +40,9 @@
   <div class="card mb-3">
 
     <div class="card-header">
-      <h5>Slettede og tapte eksemplarer</h5>
+      <h5>
+          <a name="deleted">Slettede og tapte eksemplarer</a>
+      </h5>
     </div>
 
     <ul class="list-group list-group-flush">
