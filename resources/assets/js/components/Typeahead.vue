@@ -14,7 +14,7 @@
 </template>
 
 <script>
-
+    import Vue from 'vue'
     import Bloodhound from 'corejs-typeahead'
     //import typeahead from 'corejs-typeahead/dist/typeahead.jquery'
 
