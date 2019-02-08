@@ -60,7 +60,57 @@
       @endforeach
     </ul>
   </div>
-@endif
+
+
+  <div class="card mb-3">
+      <div class="card-header">
+          <div class="row align-items-center">
+              <h5 class="col mb-0">
+                  <a name="meta">Meta</a>
+              </h5>
+          </div>
+      </div>
+      <ul class="list-group list-group-flush">
+
+          <li class="list-group-item">
+              <div class="row">
+                  <div class="col-sm-2">
+                      Opprettet:
+                  </div>
+                  <div class="col">
+                      {{ $thing->created_at }}
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-2">
+                      Antall utlån totalt:
+                  </div>
+                  <div class="col">
+                      {{ array_get($stats, 'loans.total') }}
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-2">
+                      Antall utlån i år:
+                  </div>
+                  <div class="col">
+                      {{ array_get($stats, 'loans.this_year') }}
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-2">
+                      Antall utlån i fjor:
+                  </div>
+                  <div class="col">
+                      {{ array_get($stats, 'loans.last_year') }}
+                  </div>
+              </div>
+          </li>
+
+      </ul>
+  </div>
+
+ @endif
   {{--
 
 

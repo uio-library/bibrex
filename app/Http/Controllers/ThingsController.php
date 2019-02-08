@@ -130,9 +130,32 @@ class ThingsController extends Controller
             ->orderBy('barcode')
             ->get();
 
+        $stats = [
+            'loans' => [
+                'total' => \DB::select(
+                    "select count(*) as val from loans
+                      where loans.item_id IN (select id from items where thing_id=:thing_id)",
+                    ['thing_id' => $thing->id]
+                )[0]->val,
+                'this_year' => \DB::select(
+                    "select count(*) as val from loans
+                      where loans.item_id in (select id from items where thing_id=:thing_id)
+                      and date_part('year', loans.created_at) = :year",
+                    ['thing_id' => $thing->id, 'year' => date('Y')]
+                )[0]->val,
+                'last_year' => \DB::select(
+                    "select count(*) as val from loans
+                      where loans.item_id in (select id from items where thing_id=:thing_id)
+                      and date_part('year', loans.created_at) = :year",
+                    ['thing_id' => $thing->id, 'year' => date('Y') - 1]
+                )[0]->val,
+            ]
+        ];
+
         return response()->view('things.show', array(
             'thing' => $thing,
             'items' => $items,
+            'stats' => $stats,
         ));
     }
 
