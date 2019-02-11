@@ -29,6 +29,7 @@ mix.extend( 'i18n', new class {
 mix.i18n()
    .js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
+   .version()
    .copy('node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css', 'public/css/')
    .purgeCss({
         whitelistPatterns: [
