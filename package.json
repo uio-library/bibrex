@@ -40,6 +40,7 @@
     },
     "dependencies": {
         "laravel-mix": "^4.0.14",
-        "sass-loader": "^7.1.0"
+        "sass-loader": "^7.1.0",
+        "vuejs-datepicker": "^1.5.4"
     }
 }

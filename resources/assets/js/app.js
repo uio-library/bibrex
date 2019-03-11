@@ -4,6 +4,9 @@ import VueShortkey from 'vue-shortkey'
 import ToggleButton from 'vue-js-toggle-button';
 import { Tooltip } from 'bootstrap-vue/es/directives';
 
+import Datepicker from 'vuejs-datepicker';
+import { nbNO } from 'vuejs-datepicker/dist/locale'
+
 import VueI18n from 'vue-i18n';
 import AlertComponent from './components/Alert.vue';
 import CheckoutCheckinComponent from './components/CheckoutCheckin.vue';
@@ -37,9 +40,13 @@ Vue.component('things-table', ThingsTableComponent);
 Vue.component('items-table', ItemsTableComponent);
 Vue.component('users-table', UsersTableComponent);
 Vue.component('public-status', PublicStatusComponent);
+Vue.component('datepicker', Datepicker);
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    data: {
+        nbNO: nbNO,
+    }
 });
 
 window.Vue = Vue;

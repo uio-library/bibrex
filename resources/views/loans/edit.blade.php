@@ -37,12 +37,13 @@
                 <div class="row">
                     {{ Form::label('due_at', 'Forfallsdato: ', ['class' => 'col-sm-3 col-form-label']) }}
                     <div class="col-sm-9">
-                        @component('components.text', [
-                            'name' => 'due_at',
-                            'value' => $loan->due_at->toDateString(),
-                            'type' => 'date',
-                        ])
-                        @endcomponent
+                        <datepicker
+                            value="{{ $loan->due_at->toDateString() }}"
+                            format="yyyy-MM-dd"
+                            name="due_at"
+                            :language="nbNO"
+                        ></datepicker>
+
                         <p class="text-muted">
                             Påminnelse sendes samme morgen hvis påminnelser er aktivert for tingen.
                         </p>
