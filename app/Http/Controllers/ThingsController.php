@@ -149,6 +149,13 @@ class ThingsController extends Controller
                       and date_part('year', loans.created_at) = :year",
                     ['thing_id' => $thing->id, 'year' => date('Y') - 1]
                 )[0]->val,
+            ],
+            'items' => [
+                'lost' => \DB::select(
+                    "select count(*) as val from items
+                      where items.is_lost = :is_lost and thing_id=:thing_id",
+                    ['thing_id' => $thing->id, 'is_lost' => true]
+                )[0]->val,
             ]
         ];
 

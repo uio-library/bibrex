@@ -88,7 +88,7 @@
                       Antall utlån totalt:
                   </div>
                   <div class="col">
-                      {{ array_get($stats, 'loans.total') }}
+                      {{ $stats['loans']['total'] }}
                   </div>
               </div>
               <div class="row">
@@ -96,7 +96,7 @@
                       Antall utlån i år:
                   </div>
                   <div class="col">
-                      {{ array_get($stats, 'loans.this_year') }}
+                      {{ $stats['loans']['this_year'] }}
                   </div>
               </div>
               <div class="row">
@@ -104,7 +104,15 @@
                       Antall utlån i fjor:
                   </div>
                   <div class="col">
-                      {{ array_get($stats, 'loans.last_year') }}
+                      {{ $stats['loans']['last_year'] }}
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-sm-2">
+                      Antall eksemplarer tapt:
+                  </div>
+                  <div class="col">
+                      {{ $stats['items']['lost'] }}
                   </div>
               </div>
           </li>
