@@ -1,6 +1,8 @@
 <?php
 namespace Deployer;
 
+with(new \Dotenv\Dotenv(__DIR__))->load();
+
 # https://github.com/deployphp/deployer/blob/master/recipe/laravel.php
 require 'recipe/laravel.php';
 require 'recipe/sentry.php';
@@ -25,12 +27,12 @@ set('ssh_multiplexing', true);
 // Project repository
 set('repository', 'https://github.com/scriptotek/bibrex.git');
 
-set('slack_webhook', 'https://hooks.slack.com/services/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');
+set('slack_webhook', $_ENV['SLACK_HOOK']);
 
 set('sentry', [
     'organization' => 'uio-realfagsbiblioteket',
     'project' => 'bibrex',
-    'token' => 'd859c14274e811e897004201c0a8d047',
+    'token' => $_ENV['SENTRY_TOKEN'],
     // 'version' => '1.0.0'
 ]);
 
