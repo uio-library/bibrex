@@ -31,7 +31,7 @@ class WebhooksController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function handle(Client $almaClient, Request $request)
+    public function handle(Client $almaClient, AlmaUsers $almaUsers, Request $request)
     {
         $secret = config('services.alma.webhook_secret');
         $eventType = $request->input('action');
@@ -52,7 +52,7 @@ class WebhooksController extends Controller
 
         switch ($eventType) {
             case 'USER':
-                return $this->handleUserUpdate($almaClient, $request);
+                return $this->handleUserUpdate($almaClient, $almaUsers, $request);
 
             default:
                 return response('No handler for this webhook event type.', 202);

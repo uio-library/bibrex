@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Alma\AlmaUsers;
 use App\Alma\User as AlmaUser;
 use App\User;
+use App\UserIdentifier;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use LimitIterator;
 use Scriptotek\Alma\Client as AlmaClient;
 
@@ -15,10 +17,6 @@ class UsersController extends Controller
 {
 
     private $messages = [
-        'barcode.regex' => 'Låne-ID er ikke på riktig format.',
-        'university_id.regex' => 'Feide-ID er ikke på riktig format (brukernavn@institusjon.no).',
-        'barcode.unique' => 'Det finnes allerede en annen bruker med denne strekkoden.',
-        'university_id.unique' => 'Det finnes allerede en annen bruker med denne Feide-IDen.',
         'lastname.required' => 'Etternavn må fylles inn.',
         'firstname.required' => 'Fornavn må fylles inn.',
         'email.required_without' => 'Enten e-post eller telefonnummer må fylles inn.',
@@ -33,7 +31,7 @@ class UsersController extends Controller
      */
     public function getIndex(Request $request)
     {
-        $users = User::with('loans')
+        $users = User::with('loans', 'identifiers')
             ->where('lastname', '!=', '(anonymisert)')
             ->orderBy('lastname')
             ->get()
@@ -43,7 +41,7 @@ class UsersController extends Controller
                     'primaryId' => $user->alma_primary_id,
                     'group' => $user->alma_user_group,
                     'name' => $user->lastname . ', ' . $user->firstname,
-                    'barcode' => $user->barcode,
+                    'identifiers' => $user->getAllIdentifierValues(),
                     'in_alma' => $user->in_alma,
                     'created_at' => $user->created_at->toDateTimestring(),
                     'note' => $user->note,
@@ -66,13 +64,13 @@ class UsersController extends Controller
     public function json(Request $request)
     {
         $users = [];
-        foreach (User::get() as $user) {
+        foreach (User::with('identifiers')->get() as $user) {
             $users[] = [
-                'id' => $user->id,
-                'primaryId' => $user->alma_primary_id,
+                'id' => $user->alma_primary_id ?? $user->id,
+                // 'primaryId' => $user->alma_primary_id,
                 'group' => $user->alma_user_group,
                 'name' => $user->lastname . ', ' . $user->firstname,
-                'barcode' => $user->barcode,
+                'identifiers' => $user->identifiers,
                 'type' => 'local',
             ];
         }
@@ -94,8 +92,11 @@ class UsersController extends Controller
             return response()->json([]);
         }
         $query = 'ALL~' . $request->input('query');
-        $users = collect($alma->users->search($query, ['limit' => 5]))->map(function ($u) {
-            return new AlmaUser($u);
+        $users = collect($alma->users->search($query, ['limit' => 5]))->map(function ($result) {
+            return [
+                'id' => $result->primary_id,
+                'name' => "{$result->last_name}, {$result->first_name}",
+            ];
         });
 
         return response()->json($users);
@@ -122,8 +123,10 @@ class UsersController extends Controller
      */
     public function connectForm(User $user)
     {
+        $ident = $user->identifiers()->first();
         return response()->view('users.connect', [
             'user' => $user,
+            'user_identifier' => is_null($ident) ? null : $ident->value,
         ]);
     }
 
@@ -137,25 +140,28 @@ class UsersController extends Controller
      */
     public function connect(AlmaUsers $almaUsers, Request $request, User $user)
     {
-        $barcode = $request->barcode;
-        if (empty($barcode)) {
+        $identifier = $request->identifier;
+        if (empty($identifier)) {
             return back()->with('error', 'Du må registrere låne-ID.');
         }
 
-        $almaUser = $almaUsers->findById($barcode);
-
-        if (!$almaUser) {
-            return back()->with('error', 'Fant ikke låne-ID-en ' . $barcode . ' i Alma 😭 ');
-        }
-
-        $barcode = $almaUser->getBarcode();
-        $other = User::where('barcode', '=', $barcode)->first();
+        $other = User::fromIdentifier($identifier);
         if (!is_null($other) && $other->id != $user->id) {
             return back()->with('error', 'Låne-ID-en er allerede koblet til en annen Bibrex-bruker ' .
                 '(' . $other->name . '). Du kan slå dem sammen fra brukeroversikten.');
         }
 
-        $almaUsers->updateLocalUserFromAlmaUser($user, $almaUser);
+        $almaUser = $almaUsers->findById($identifier);
+
+        if (!$almaUser) {
+            return back()->with('error', 'Fant ikke noen bruker med identifikator ' . $identifier . ' i Alma 😭 ');
+        }
+
+        try {
+            $almaUsers->updateLocalUserFromAlmaUser($user, $almaUser);
+        } catch (\RuntimeException $ex) {
+            return back()->with('error', $ex->getMessage());
+        }
         $user->save();
 
         return redirect()->action('UsersController@getShow', $user->id)
@@ -171,8 +177,8 @@ class UsersController extends Controller
      */
     public function sync(AlmaUsers $almaUsers, User $user)
     {
-        if (!$user->barcode) {
-            return back()->with('error', 'Du må registrere låne-ID for brukeren før du kan importere.');
+        if (!$user->alma_primary_id && !$user->identifiers->count()) {
+            return back()->with('error', 'Du må registrere minst én identifikator for brukeren før du kan importere.');
         }
 
         if (!$almaUsers->updateLocalUserFromAlmaUser($user)) {
@@ -195,8 +201,20 @@ class UsersController extends Controller
     public function getEdit(User $user, Request $request)
     {
         if (!$user->id) {
-            $user->barcode = $request->barcode;
-            $user->university_id = $request->university_id;
+            $identifiers = [];
+            if ($request->barcode) {
+                $identifiers[] = UserIdentifier::make([
+                    'value' => $request->barcode,
+                    'type' => 'barcode',
+                ]);
+            }
+            if ($request->university_id) {
+                $identifiers[] = UserIdentifier::make([
+                    'value' => $request->university_id,
+                    'type' => 'university_id',
+                ]);
+            }
+            $user->identifiers = $identifiers;
             $user->lastname = $request->lastname;
             $user->firstname = $request->firstname;
             $user->phone = $request->phone;
@@ -218,17 +236,45 @@ class UsersController extends Controller
      */
     public function upsert(User $user, Request $request)
     {
-        \Validator::make($request->input(), [
-            'barcode' => 'nullable|regex:/^[0-9a-zA-Z]{10}$/|unique:users,barcode' . ($user->id ? ',' . $user->id : ''),
-            'university_id' => 'nullable|regex:/@/|unique:users,university_id' . ($user->id ? ',' . $user->id : ''),
+        //  TODO: Move to a new UserUpsertRequest --------------------------------------------------------------------
+
+        $validators = [
             'lastname' => 'required',
             'firstname' => 'required',
             'email' => 'requiredWithout:phone',
             'lang' => 'required',
-        ], $this->messages)->validate();
+        ];
 
-        $user->barcode = $request->input('barcode');
-        $user->university_id = $request->input('university_id');
+        $identifiers = [];
+        $messages = $this->messages;
+        foreach ($request->all() as $key => $val) {
+            if (preg_match('/identifier_type_(new|[0-9]+)/', $key, $matches)) {
+                $identifierId = $matches[1];
+
+                if (empty($request->{"identifier_value_{$identifierId}"})) {
+                    continue;
+                }
+
+                $identifiers[] = [
+                    'type' => $request->{"identifier_type_{$identifierId}"},
+                    'value' => $request->{"identifier_value_{$identifierId}"},
+                ];
+
+                if (!empty($request->{"identifier_value_{$identifierId}"})) {
+                    $validators["identifier_value_{$identifierId}"] =
+                        'unique:user_identifiers,value' . ($identifierId == 'new' ? '' : ",$identifierId");
+                    $validators["identifier_type_{$identifierId}"] = 'in:barcode,university_id';
+                    $messages["identifier_value_{$identifierId}.unique"] =
+                        'Det finnes allerede en annen bruker med denne identifikatoren.';
+                    $messages["identifier_type_{$identifierId}.in"] = 'Identifikatoren har ugyldig type.';
+                }
+            }
+        }
+
+        \Validator::make($request->input(), $validators, $messages)->validate();
+
+        // ------------------------------------------------------------------------------------------------
+
         $user->lastname = $request->input('lastname');
         $user->firstname = $request->input('firstname');
         $user->phone = $request->input('phone');
@@ -238,8 +284,12 @@ class UsersController extends Controller
         $user->last_loan_at = Carbon::now();
         $newUser = !$user->exists;
         if (!$user->save()) {
-            dd('Oi');
+            throw new \RuntimeException('Ukjent feil under lagring av bruker!');
         }
+
+        // Defer uniqueness check in case values are swapped
+
+        $user->setIdentifiers($identifiers);
 
         if ($newUser) {
             return redirect()->action('LoansController@getIndex')
@@ -286,6 +336,22 @@ class UsersController extends Controller
         $mergedAttributes = array();
         foreach (User::$editableAttributes as $attr) {
             $mergedAttributes[$attr] = $request->input($attr);
+        }
+
+        $mergedAttributes['identifiers'] = [];
+        foreach ($request->all() as $key => $val) {
+            if (preg_match('/identifier_type_([0-9]+)/', $key, $matches)) {
+                $identifierId = $matches[1];
+
+                if (empty($request->{"identifier_value_{$identifierId}"})) {
+                    continue;
+                }
+
+                $mergedAttributes['identifiers'][] = [
+                    'type' => $request->{"identifier_type_{$identifierId}"},
+                    'value' => $request->{"identifier_value_{$identifierId}"},
+                ];
+            }
         }
 
         $errors = $user1->merge($user2, $mergedAttributes);

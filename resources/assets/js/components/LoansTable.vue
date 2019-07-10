@@ -37,7 +37,7 @@
 
                       <td :data-order="loan.user.name">
                           <i v-if="loan.user.in_alma" class="far fa-user-check text-success" v-b-tooltip.hover title="Importert fra Alma"></i>
-                          <a v-else-if="loan.user.barcode"
+                          <a v-else-if="loan.user.identifiers.length"
                               :href="loan.user.url + '/sync'"
                               v-b-tooltip.hover
                               title="Lokal bruker med låne-ID. Prøv å importere brukeropplysninger fra Alma"
@@ -60,7 +60,7 @@
                       </td>
 
                       <td>
-                          <div v-if="!loan.user.barcode">
+                          <div v-if="!loan.user.in_alma && !loan.user.identifiers.length">
                               <a :href="loan.user.url + '/edit'" class="text-danger">
                                   <em class="far fa-exclamation-triangle"></em>
                                   Bruker mangler låne-ID!

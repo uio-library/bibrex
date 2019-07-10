@@ -21,9 +21,9 @@
         <li class="list-group-item">
 
             <div class="form-group row">
-                {{ Form::label('barcode', 'Låne-ID', ['class' => 'col-sm-2 col-form-label']) }}
-                <div class="col-sm-10">
-                    <input id="barcode" type="text" name="barcode" value="{{ old('barcode', $user->barcode) }}" class="form-control">
+                {{ Form::label('identifier', 'Låne-ID eller Feide-ID', ['class' => 'col-sm-4 col-form-label']) }}
+                <div class="col-sm-8">
+                    <input id="identifier" type="text" name="identifier" value="{{ old('barcode', $user_identifier) }}" class="form-control">
                 </div>
             </div>
 
@@ -46,7 +46,8 @@
 
 <script type='text/javascript'>
   $(document).ready(function() {
-    $('#barcode').focus();
+    $('#identifier' +
+        '').focus();
   });
 </script>
 

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\MessageBag;
@@ -16,7 +17,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $fillable = ['barcode', 'university_id', 'in_alma', 'firstname', 'lastname', 'phone', 'email', 'lang'];
+    protected $fillable = ['in_alma', 'firstname', 'lastname', 'phone', 'email', 'lang'];
 
     /**
      * The attributes that should be cast to native types.
@@ -48,8 +49,46 @@ class User extends Authenticatable
      * @static array
      */
     public static $editableAttributes = [
-        'barcode', 'university_id','lastname', 'firstname', 'phone', 'email', 'lang', 'note'
+        'lastname', 'firstname', 'phone', 'email', 'lang', 'note'
     ];
+
+    /**
+     * Find user from some identifier (Alma primary id, barcode or other).
+     *
+     * @param string $identifier
+     * @return User|null
+     */
+    public static function fromIdentifier($identifier)
+    {
+        if (empty($identifier)) {
+            return null;
+        }
+        $user = User::where('alma_primary_id', '=', $identifier)->first();
+        if (is_null($user)) {
+            $user = User::whereHas('identifiers', function (Builder $query) use ($identifier) {
+                $query->where('value', '=', $identifier);
+            })->first();
+        }
+
+        return $user;
+    }
+
+    public function identifiers()
+    {
+        return $this->hasMany(UserIdentifier::class);
+    }
+
+    public function getAllIdentifierValues()
+    {
+        $values = [];
+        if ($this->alma_primary_id) {
+            $values[] = $this->alma_primary_id;
+        }
+        foreach ($this->identifiers as $identifier) {
+            $values[] = $identifier['value'];
+        }
+        return $values;
+    }
 
     public function loans()
     {
@@ -75,21 +114,6 @@ class User extends Authenticatable
         return action('UsersController@getShow', $this->id);
     }
 
-    /**
-     * Mutuator for the barcode field
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setBarcodeAttribute($value)
-    {
-        if (is_null($value)) {
-            $this->attributes['barcode'] = null;
-        } else {
-            $this->attributes['barcode'] = strtolower($value);
-        }
-    }
-
     protected function mergeAttribute($key, User $user)
     {
         return strlen($user->$key) > strlen($this->$key) ? $user->$key : $this->$key;
@@ -108,6 +132,13 @@ class User extends Authenticatable
         $merged = array();
         foreach (static::$editableAttributes as $attr) {
             $merged[$attr] = $this->mergeAttribute($attr, $user);
+        }
+        $merged['identifiers'] = [];
+        foreach ($this->identifiers()->get(['type', 'value']) as $identifier) {
+            $merged['identifiers'][] = $identifier;
+        }
+        foreach ($user->identifiers()->get(['type', 'value']) as $identifier) {
+            $merged['identifiers'][] = $identifier;
         }
         return $merged;
     }
@@ -154,10 +185,14 @@ class User extends Authenticatable
 
         // Update properties of the current user with merge data
         foreach ($data as $key => $val) {
-            $this->$key = $val;
+            if ($key != 'identifiers') {
+                $this->$key = $val;
+            }
         }
 
         $this->save();
+
+        $this->setIdentifiers($data['identifiers']);
 
         return null;
     }
@@ -170,39 +205,121 @@ class User extends Authenticatable
     /**
      * Update unique value. If the value clashes with another user, delete the other user if it has no loans.
      *
-     * @param string $key
-     * @param string $val
+     * @param array $identifiers
+     * @param bool $deleteOnConflict
      */
-    public function setUniqueValue(string $key, string $val)
+    public function setIdentifiers(array $identifiers, bool $deleteOnConflict = false)
+    {
+        $currentValues = $this->identifiers->pluck('value')->toArray();
+
+        $newIdentifiers = [];
+        foreach ($identifiers as $identifier) {
+            $newIdentifiers[$identifier['value']] = $identifier['type'];
+        }
+
+        $newValues = array_keys($newIdentifiers);
+
+        $valuesToRemove = array_diff($currentValues, $newValues);
+        $valuesToAdd = array_diff($newValues, $currentValues);
+
+        $toAdd = array_map(function ($value) use ($newIdentifiers) {
+            return [
+                'user_id' => $this->id,
+                'value' => $value,
+                'type' => $newIdentifiers[$value],
+            ];
+        }, $valuesToAdd);
+
+        // Check uniqueness
+        foreach ($toAdd as $identifier) {
+            $model = UserIdentifier::where('value', '=', $identifier['value'])->first();
+            if (!is_null($model) && $model->user_id !== $this->id) {
+                if ($deleteOnConflict) {
+                    $this->deleteOtherUserIfPossible($model->user, $identifier['value']);
+                } else {
+                    throw new \RuntimeException(
+                        "ID-konflikt for verdien {$identifier['value']}, og kan ikke slette {$model->user->id}."
+                    );
+                }
+            }
+        }
+
+        if (count($valuesToRemove) || count($valuesToAdd)) {
+            $msg = sprintf(
+                'Oppdaterte identifikatorer for <a href="%s">%s</a>.',
+                action('UsersController@getShow', $this->id),
+                $this->name
+            );
+
+            // Delete
+            if (count($valuesToRemove)) {
+                $msg .= sprintf(
+                    ' Fjernet: %s.',
+                    implode(', ', $valuesToRemove)
+                );
+                UserIdentifier::where('user_id', '=', $this->id)->whereIn('value', $valuesToRemove)->delete();
+            }
+
+            // Add
+            if (count($valuesToAdd)) {
+                $msg .= sprintf(
+                    ' La til: %s.',
+                    implode(', ', $valuesToAdd)
+                );
+                UserIdentifier::insert($toAdd);
+            }
+
+            \Log::info($msg);
+        }
+    }
+
+    /**
+     * Set Alma Primary Id. If the value clashes with another user, delete the other user if it has no loans.
+     *
+     * @param string $value
+     * @param bool $deleteOnConflict
+     */
+    public function setAlmaPrimaryId(string $value, $deleteOnConflict = false)
     {
         // Check for uniqueness
         if (is_null($this->id)) {
             // Model not saved yet
-            $otherUser = User::where($key, '=', $val)->first();
+            $otherUser = User::where('alma_primary_id', '=', $value)->first();
         } else {
-            $otherUser = User::where($key, '=', $val)->where('id', '!=', $this->id)->first();
+            $otherUser = User::where('alma_primary_id', '=', $value)->where('id', '!=', $this->id)->first();
         }
 
         if (!is_null($otherUser)) {
-            if (!$otherUser->loans->count()) {
-                if (!is_null($this->id)) {
-                    $localRef = "brukeren med ID {$this->id}";
-                } else {
-                    $localRef = "(ny bruker)";
-                }
-                \Log::warning(
-                    "Verdien '{$val}' i bruk som {$key} for flere brukere. " .
-                    "Sletter brukeren med ID {$otherUser->id} (som ikke hadde noen lån), beholder $localRef."
-                );
-                $otherUser->delete();
+            if ($deleteOnConflict) {
+                $this->deleteOtherUserIfPossible($otherUser, $value);
             } else {
-                \Log::warning(
-                    "Verdien '{$val}' i bruk som {$key} for flere brukere, men ".
-                    "kan ikke slette brukeren {$otherUser->id}, fordi brukeren har lån."
+                throw new \RuntimeException(
+                    "ID-konflikt for verdien {$value}, og kan ikke slette {$otherUser->id}."
                 );
             }
         }
 
-        $this->{$key} = $val;
+        $this->alma_primary_id = $value;
+    }
+
+    protected function deleteOtherUserIfPossible(User $otherUser, string $value)
+    {
+        if (!$otherUser->loans->count()) {
+            if (!is_null($this->id)) {
+                $localRef = "brukeren med ID {$this->id}";
+            } else {
+                $localRef = "(ny bruker)";
+            }
+            \Log::warning(
+                "Verdien '{$value}' er i bruk som identifikator for flere brukere. " .
+                "Sletter brukeren med ID {$otherUser->id} (som ikke hadde noen lån), beholder $localRef."
+            );
+            $otherUser->delete();
+        } else {
+            throw new \RuntimeException(
+                "Verdien '{$value}' er i bruk som identifikator for flere brukere. ".
+                "Kan ikke slette brukeren {$otherUser->id} fordi brukeren har lån."
+            );
+        }
     }
 }

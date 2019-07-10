@@ -49,21 +49,33 @@
             </div>
 
             <div class="form-group row">
-                {{ Form::label('barcode', 'Låne-ID', ['class' => 'col-sm-2 col-form-label']) }}
+                <span class="col-sm-2 col-form-label">Identifikatorer</span>
                 <div class="col-sm-10">
-                    <input id="barcode" type="text" name="barcode" value="{{ old('barcode', $user->barcode) }}" class="form-control"{{ $user->in_alma ? ' disabled="disabled"' : '' }}>
-                    <small class="form-text text-muted">
-                        Strekkoden fra lånekortet. Kan stå blankt hvis personen f.eks. ikke fått studentkort enda.
-                    </small>
-                </div>
-            </div>
+                    @foreach ($user->identifiers as $idx => $identifier)
+                        <div class="row px-3">
+                            <select name="identifier_type_{{ $idx }}" class="form-control col-sm-4"{{ $user->in_alma ? ' disabled="disabled"' : '' }}>
+                                <option value="barcode"{{ old('identifier_type_' . $idx, $identifier->type) == 'barcode' ? ' selected="selected"' : '' }}>Låne-ID / barcode</option>
+                                <option value="university_id"{{ old('identifier_type_' . $idx, $identifier->type) == 'university_id' ? ' selected="selected"' : '' }}>Feide-ID / university ID</option>
+                            </select>
+                            <input type="text" name="identifier_value_{{ $idx }}"
+                                   value="{{ old('identifier_value_' . $idx, $identifier->value) }}"
+                                   class="col form-control"{{ $user->in_alma ? ' disabled="disabled"' : '' }}>
+                        </div>
+                    @endforeach
+                    @if (!$user->in_alma)
+                        <div class="row px-3">
+                            <select name="identifier_type_new" class="form-control col-sm-4"{{ $user->in_alma ? ' disabled="disabled"' : '' }}>
+                                <option value="barcode"{{ old('identifier_type_new') == 'barcode' ? ' selected="selected"' : '' }}>Låne-ID / barcode</option>
+                                <option value="university_id"{{ old('identifier_type_new') == 'university_id' ? ' selected="selected"' : '' }}>Feide-ID / university ID</option>
+                            </select>
+                            <input type="text" name="identifier_value_new"
+                               value="{{ old('identifier_value_new') }}"
+                               class="col form-control"{{ $user->in_alma ? ' disabled="disabled"' : '' }}>
+                        </div>
+                    @endif
 
-            <div class="form-group row">
-                {{ Form::label('university_id', 'Feide-ID', ['class' => 'col-sm-2 col-form-label']) }}
-                <div class="col-sm-10">
-                    <input type="text" name="university_id" value="{{ old('university_id', $user->university_id) }}" class="form-control"{{ $user->in_alma ? ' disabled="disabled"' : '' }}>
                     <small class="form-text text-muted">
-                        Feide-ID på formen brukernavn@institusjon.no. Kan stå blankt.
+                        Låne-ID (Strekkoden fra lånekortet) eller Feide-ID (brukernavn@uio.no). <em>Kan</em> stå blankt, men <em>helst</em> ikke.
                     </small>
                 </div>
             </div>

@@ -80,27 +80,24 @@
         </tr>
         <tr>
           <th>
-            Låne-ID:
+            Identifikatorer:
           </th>
           <td>
-            @if ($user->barcode)
-              <samp>{{ $user->barcode }}</samp>
-            @else
+              @if ($user->alma_primary_id)
+              <div>
+                  Alma-ID: <samp>{{$user->alma_primary_id }}</samp>
+              </div>
+              @endif
+              @foreach ($user->identifiers as $identifier)
+                  <div>
+                      {{ $identifier->type }}: <samp>{{ $identifier->value }}</samp>
+                  </div>
+              @endforeach
+            @if (!count($user->getAllIdentifierValues()))
               <span class="text-danger">
                 <em class="far fa-exclamation-triangle"></em>
-                Mangler låne-ID
+                Ingen identifikatorer registrert!
               </span>
-            @endif
-          </td>
-        </tr>
-        <tr>
-          <th>
-            Feide-ID:
-          </th>
-          <td>
-            @if ($user->university_id)
-              <samp>{{ $user->university_id }}</samp>
-            @else
             @endif
           </td>
         </tr>

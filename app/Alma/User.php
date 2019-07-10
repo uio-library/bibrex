@@ -2,7 +2,6 @@
 
 namespace App\Alma;
 
-use Scriptotek\Alma\Exception\RequestFailed;
 use Scriptotek\Alma\Client as AlmaClient;
 use Scriptotek\Alma\Exception\ResourceNotFound;
 use Scriptotek\Alma\Users\User as AlmaUser;
@@ -10,8 +9,8 @@ use Scriptotek\Alma\Users\User as AlmaUser;
 class User
 {
     public $primaryId;
-    public $barcode;
-    public $universityId;
+    public $barcodes;
+    public $universityIds;
     public $group;
     public $email;
     public $phone;
@@ -23,31 +22,6 @@ class User
     public $type = 'alma';
 
     protected $user;
-
-    /**
-     * Lookup user by primary or non-primary identifier.
-     *
-     * @param AlmaClient $alma
-     * @param $identifier
-     * @return User|null
-     */
-    public static function lookup(AlmaClient $alma, $identifier)
-    {
-        if (empty($identifier)) {
-            return null;
-        }
-        try {
-            return new self($alma->users->get($identifier)->init());
-        } catch (ResourceNotFound $e) {
-            return null;
-        }
-    }
-
-    public static function isUserBarcode($value)
-    {
-        // 2-5 letters followed by 5-8 digits, making up 10 characters in total.
-        return preg_match('/^[a-zA-Z]{2}[0-9a-zA-Z]{3}[0-9a-zA-Z]{5}$/', $value);
-    }
 
     public function __construct(AlmaUser $user)
     {
@@ -79,21 +53,51 @@ class User
         $this->blocks = $user->user_block ?: [];
     }
 
-    public function getBarcode()
+    /**
+     * Lookup user by primary or non-primary identifier.
+     *
+     * @param AlmaClient $alma
+     * @param $identifier
+     * @return User|null
+     */
+    public static function lookup(AlmaClient $alma, $identifier)
     {
-        if (self::isUserBarcode($this->primaryId)) {
-            return $this->primaryId;
+        if (empty($identifier)) {
+            return null;
         }
-        return $this->user->barcode;
+        try {
+            return new self($alma->users->get($identifier)->init());
+        } catch (ResourceNotFound $e) {
+            return null;
+        }
     }
 
-    public function getUniversityId()
+    public static function isUserBarcode($value)
     {
-        return $this->user->universityId;
+        // 2-5 letters followed by 5-8 digits, making up 10 characters in total.
+        return preg_match('/^[a-zA-Z]{2}[0-9a-zA-Z]{3}[0-9a-zA-Z]{5}$/', $value);
+    }
+
+    public function getBarcodes()
+    {
+//        if (self::isUserBarcode($this->primaryId)) {
+//            return $this->primaryId;
+//        }
+        return $this->user->barcodes;
+    }
+
+    public function getUniversityIds()
+    {
+        return $this->user->universityIds;
     }
 
     public function getFees()
     {
         return $this->user->fees->total_sum;
+    }
+
+    public function getIdentifiers()
+    {
+        return $this->user->identifiers;
     }
 }

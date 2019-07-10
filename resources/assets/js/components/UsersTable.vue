@@ -16,7 +16,7 @@
         <tr>
           <th class="select-checkbox"></th>
           <th>Navn</th>
-          <th>Låne-ID</th>
+          <th>Identifikatorer</th>
           <th>Merknader</th>
           <th>Opprettet</th>
         </tr>
@@ -30,10 +30,15 @@
             <a :href="'/users/' + user.id">{{ user.name }}</a>
           </td>
           <td>
-            <span v-if="user.barcode">{{ user.barcode }}</span>
+            <span v-if="user.identifiers.length">
+                <span v-for="(ident, index) in user.identifiers">
+                    <span v-if="index != 0">, </span>
+                    <span>{{ ident }}</span>
+                </span>
+            </span>
             <span v-else class="text-danger">
               <em class="far fa-exclamation-triangle"></em>
-              Mangler låne-ID
+              Mangler identifikatorer
             </span>
           </td>
           <td>

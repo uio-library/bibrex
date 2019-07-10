@@ -74,7 +74,7 @@ class LoansController extends Controller
     {
         $library = \Auth::user();
 
-        $loans = Loan::with('item.thing', 'user', 'notifications')
+        $loans = Loan::with('item.thing', 'user', 'user.identifiers', 'notifications')
             ->where('library_id', $library->id)
             ->orderBy('created_at', 'desc')->get();
 

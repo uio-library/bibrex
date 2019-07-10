@@ -112,9 +112,9 @@
                   // prefetch: this.prefetch,
                   sufficient: 5,
                   indexRemote: false,
-                  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('primaryId', 'name', 'barcode'),
+                  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id', 'name'),
                   queryTokenizer: Bloodhound.tokenizers.whitespace,
-                  identify: datum => datum.primaryId ? datum.primaryId : datum.id,
+                  identify: datum => datum.id,
                   prefetch: (this.prefetch ? {
                       url: this.prefetch,
                       cache: false
@@ -145,12 +145,12 @@
                 display: item => item.name,
                 templates: {
                   suggestion: d => {
-                      if (d.primaryId) {
+                      if (d.id) {
                           // Alma user
                           return `
                                 <div>
-                                    <span class="right">${d.primaryId}</span>
-                                    <span class="main">${d.name} - ${d.group}</span>
+                                    <span class="right">${d.id}</span>
+                                    <span class="main">${d.name}</span>
                                 </div>`;
                       }
                       if (d.group) {

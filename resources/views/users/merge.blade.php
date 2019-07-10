@@ -17,19 +17,7 @@
         Lån fra begge brukerne vil bli samlet.
       </p>
 
-      @if (!empty($user1->barcode) && !empty($user2->barcode) && ($user1->barcode != $user2->barcode))
-        <p class="mb-2 text-danger">
-          <i class="far far fa-exclamation-triangle"></i> OBS: Brukerne har ulike låne-ID!
-        </p>
-      @endif
-
-      @if (!empty($user1->university_id) && !empty($user2->university_id) && ($user1->university_id != $user2->university_id))
-        <p class="mb-2 text-danger">
-          <i class="far far fa-exclamation-triangle"></i> OBS: Brukerne har ulike Feide-ID!
-        </p>
-      @endif
-
-      <table class="table">
+      <table class="table table-sm">
 
         <tr>
           <th style="width:25%;">
@@ -47,51 +35,38 @@
 
         <tr>
           <th>
-            Låne-ID:
+            Identifikatorer:
           </th>
           <td>
-            {{ $user1->barcode }}
-            <?php
-            if (!empty($user1->barcode) && !empty($user2->barcode) && ($user1->barcode != $user2->barcode)) {
-                echo '<i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i>';
-            }
-            ?>
+            @foreach ($user1->identifiers as $identifier)
+               <div>
+                 {{ $identifier->value }}
+               </div>
+            @endforeach
           </td>
           <td>
-            {{ $user2->barcode }}
-            <?php
-            if (!empty($user1->barcode) && !empty($user2->barcode) && ($user1->barcode != $user2->barcode)) {
-                echo '<i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i>';
-            }
-            ?>
+            @foreach ($user2->identifiers as $identifier)
+              <div>
+                {{ $identifier->value }}
+              </div>
+            @endforeach
           </td>
           <td>
-            <input type="text" name="barcode" value="{{ $merged['barcode'] }}" />
-          </td>
-        </tr>
-
-        <tr>
-          <th>
-            Feide-ID:
-          </th>
-          <td>
-            {{ $user1->university_id }}
-            <?php
-            if (!empty($user1->university_id) && !empty($user2->university_id) && ($user1->university_id != $user2->university_id)) {
-                echo '<i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i>';
-            }
-            ?>
-          </td>
-          <td>
-            {{ $user2->university_id }}
-            <?php
-            if (!empty($user1->university_id) && !empty($user2->university_id) && ($user1->university_id != $user2->university_id)) {
-                echo '<i class="halflings-icon exclamation-sign" style="font-size:16px; color:red;"></i>';
-            }
-            ?>
-          </td>
-          <td>
-            <input type="text" name="university_id" value="{{ $merged['university_id'] }}" />
+            <table class="table table-sm table-borderless">
+              @foreach ($merged['identifiers'] as $idx => $identifier)
+              <tr>
+                <td>
+                  <select name="identifier_type_{{ $idx }}">
+                    <option value="barcode"{{ $identifier->type == 'barcode' ? ' selected="selected' : '' }}>Låne-ID</option>
+                    <option value="university_id"{{ $identifier->type == 'university_id' ? ' selected="selected' : '' }}>Feide-ID</option>
+                  </select>
+                </td>
+                <td>
+                  <input type="text" name="identifier_value_{{ $idx }}" value="{{ $identifier->value }}" />
+                </td>
+              </tr>
+              @endforeach
+            </table>
           </td>
         </tr>
 

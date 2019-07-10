@@ -3,6 +3,7 @@
 namespace App\Alma;
 
 use App\User as LocalUser;
+use App\UserIdentifier;
 use Scriptotek\Alma\Client as AlmaClient;
 
 class AlmaUsers
@@ -40,7 +41,19 @@ class AlmaUsers
      */
     public function findFromLocalUser(LocalUser $user)
     {
-        return $this->findById($user->university_id) ?? $this->findById($user->barcode);
+        if (!is_null($user->alma_primary_id)) {
+            $almaUser = $this->findById($user->alma_primary_id);
+            if (!is_null($almaUser)) {
+                return $almaUser;
+            }
+        }
+        foreach ($user->identifiers as $identifier) {
+            $almaUser = $this->findById($identifier['value']);
+            if (!is_null($almaUser)) {
+                return $almaUser;
+            }
+        }
+        return null;
     }
 
     /**
@@ -51,21 +64,20 @@ class AlmaUsers
      */
     public function findLocalUserFromAlmaUser(User $almaUser)
     {
-        $builder = LocalUser::query();
         if (!is_null($almaUser->primaryId)) {
-            $builder->orWhere('alma_primary_id', '=', $almaUser->primaryId);
+            $localUser = LocalUser::where('alma_primary_id', '=', $almaUser->primaryId)->first();
+            if (!is_null($localUser)) {
+                return $localUser;
+            }
         }
-        if (!is_null($almaUser->getBarcode())) {
-            $builder->orWhere('barcode', '=', $almaUser->getBarcode());
+        foreach ($almaUser->getIdentifiers() as $identifier) {
+            if ($identifier->status == 'ACTIVE') {
+                $userIdent = UserIdentifier::where('value', '=', $identifier->value)->first();
+                if (!is_null($userIdent)) {
+                    return $userIdent->user;
+                }
+            }
         }
-        if (!is_null($almaUser->getUniversityId())) {
-            $builder->orWhere('university_id', '=', $almaUser->getUniversityId());
-        }
-
-        if (count($builder->getQuery()->wheres)) {
-            return $builder->first();
-        }
-
         return null;
     }
 
@@ -88,12 +100,9 @@ class AlmaUsers
             return false;
         }
 
+        // Set user props
         $localUser->in_alma = true;
-
-        $localUser->setUniqueValue('alma_primary_id', $almaUser->primaryId);
-        $localUser->setUniqueValue('barcode', $almaUser->getBarcode());
-        $localUser->setUniqueValue('university_id', $almaUser->getUniversityId());
-
+        $localUser->setAlmaPrimaryId($almaUser->primaryId, true);
         $localUser->alma_user_group = $almaUser->group;
         $localUser->lastname = $almaUser->lastName;
         $localUser->firstname = $almaUser->firstName;
@@ -102,6 +111,17 @@ class AlmaUsers
         $localUser->lang = $almaUser->lang;
         $localUser->blocks = $almaUser->blocks;
         $localUser->fees = $almaUser->getFees();
+        $localUser->save();
+
+        // Set user identifiers
+        $identifiers = [];
+        foreach ($almaUser->getBarcodes() as $value) {
+            $identifiers[] = ['type' => 'barcode', 'value' => $value];
+        }
+        foreach ($almaUser->getUniversityIds() as $value) {
+            $identifiers[] = ['type' => 'university_id', 'value' => $value];
+        }
+        $localUser->setIdentifiers($identifiers, true);
 
         return true;
     }
@@ -117,8 +137,6 @@ class AlmaUsers
         $localUser = $this->findLocalUserFromAlmaUser($almaUser) ?? new LocalUser();
 
         $this->updateLocalUserFromAlmaUser($localUser, $almaUser);
-
-        $localUser->save();
 
         \Log::info(sprintf(
             'Importerte en bruker fra Alma (<a href="%s">Detaljer</a>)',

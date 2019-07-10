@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Alma\AlmaUsers;
 use App\Alma\User as AlmaUser;
-use App\Alma\AlmaUsers as AlmaConnector;
 use App\Item;
 use App\Rules\ConfirmationNeeded;
 use App\Rules\NotOnLoan;
@@ -12,13 +11,11 @@ use App\Rules\NotTrashed;
 use App\Rules\RequiresBarcode;
 use App\Rules\ThingExists;
 use App\Rules\UniqueAlmaUser;
-use App\Rules\UserBarcodeExists;
 use App\Rules\UserExists;
 use App\Thing;
 use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
-use Scriptotek\Alma\Bibs\Item as AlmaItem;
 use Scriptotek\Alma\Client as AlmaClient;
 
 class CheckoutRequest extends FormRequest
@@ -133,10 +130,7 @@ class CheckoutRequest extends FormRequest
                 $fullname = null;
 
                 // Try looking up local user by barcode
-                $user = User::where('barcode', '=', $userValue)
-                    ->orWhere('university_id', '=', $userValue)
-                    ->orWhere('alma_primary_id', '=', $userValue)
-                    ->first();
+                $user = User::fromIdentifier($userValue);
             }
 
             if (is_null($user)) {
