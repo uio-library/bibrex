@@ -32,6 +32,11 @@
                   Slett
               </a>
 
+              <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ItemsController@lost', $item->id) }}">
+                  <i class="far fa-trash"></i>
+                  Tapt
+              </a>
+
             @endif
 
         </div>

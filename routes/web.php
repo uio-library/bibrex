@@ -76,6 +76,7 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('/items/delete/{item}', 'ItemsController@deleteForm');
     Route::get('/items/delete/{item}', 'ItemsController@delete');
     Route::get('/items/restore/{item}', 'ItemsController@restore');
+    Route::get('/items/lost/{item}', 'ItemsController@lost');
 
     // --[[ THINGS ]]--
     Route::get('/things', 'ThingsController@index');

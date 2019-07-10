@@ -124,10 +124,13 @@ class ItemsController extends Controller
                 action('ItemsController@show', $item->id),
                 $item->barcode
             ), ['library' => \Auth::user()->name]);
-        }
 
-        return redirect()->action('ThingsController@show', $item->thing->id)
-            ->with('status', 'Eksemplaret ' . $item->barcode . ' ble lagret!');
+            return redirect()->action('ThingsController@show', $item->thing->id)
+                ->with('status', 'Eksemplaret ' . $item->barcode . ' ble lagret!');
+        } else {
+            return redirect()->action('ItemsController@show', $item->id)
+                ->with('status', 'Eksemplaret ' . $item->barcode . ' ble lagret!');
+        }
     }
 
     /**
@@ -150,7 +153,7 @@ class ItemsController extends Controller
     }
 
     /**
-     * Delte the specified resource from storage.
+     * Delete the specified resource from storage.
      *
      * @param Item $item
      * @return Response
@@ -172,6 +175,31 @@ class ItemsController extends Controller
 
         return redirect()->action('ItemsController@show', $item->id)
             ->with('status', 'Eksemplaret ble slettet!');
+    }
+
+    /**
+     * Mark specified resource as lost.
+     *
+     * @param Item $item
+     * @return Response
+     */
+    public function lost(Item $item)
+    {
+        \Log::info(sprintf(
+            'Markerte %s <a href="%s">%s</a> som tapt.',
+            $item->thing->properties->get('name_definite.nob'),
+            action('ItemsController@show', $item->id),
+            $item->barcode
+        ), ['library' => \Auth::user()->name]);
+
+        if ($item->loans()->count()) {
+            $item->loans->first()->lost();
+        } else {
+            $item->lost();
+        }
+
+        return redirect()->action('ItemsController@show', $item->id)
+            ->with('status', 'Eksemplaret ble merket som tapt!');
     }
 
     /**
