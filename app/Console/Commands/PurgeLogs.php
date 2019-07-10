@@ -37,7 +37,7 @@ class PurgeLogs extends Command
 
         $deleted = \DB::delete("DELETE FROM log WHERE time < now() - interval '$days day'");
         if ($deleted > 0) {
-            $this->logInfo("$deleted loggmeldinger ble slettet");
+            $this->logInfo("{$deleted} loggmeldinger eldre enn {$days} dager ble slettet automatisk.");
         } else {
             $this->info("Ingen loggmeldinger ble slettet");
         }
