@@ -18,7 +18,7 @@ class Library extends Authenticatable
 
     public function settings()
     {
-        return $this->hasMany(ThingSetting::class);
+        return $this->hasMany(ThingSettings::class);
     }
 
     public function loans()

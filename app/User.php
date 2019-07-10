@@ -3,7 +3,6 @@
 namespace App;
 
 use App\Alma\User as AlmaUser;
-use App\Rules\NotGuestLtid;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\MessageBag;
@@ -153,7 +152,6 @@ class User extends Authenticatable
 
         // Validate
         $errors = new MessageBag();
-        $barcode = $data['barcode'];
 
         // if (!empty($ltid) && !empty($user->ltid) && ($ltid != $user->ltid)) {
         //  $errors->add('ltid_conflict', "Kan ikke flette nytt LTID $ltid med eksisterende $user->ltid.");

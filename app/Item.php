@@ -88,7 +88,7 @@ class Item extends Model
 
     public function allLoans()
     {
-        $library_id = \Auth::user()->id;
+        $library_id = auth()->user()->id;
 
         return $this->hasMany(Loan::class)
             ->with('user')
