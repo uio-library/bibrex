@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Alma\AlmaUsers;
 use App\Alma\User as AlmaUser;
+use App\Alma\AlmaUsers as AlmaConnector;
 use App\Item;
 use App\Rules\ConfirmationNeeded;
 use App\Rules\NotOnLoan;
@@ -46,7 +48,11 @@ class CheckoutRequest extends FormRequest
 
         $input = $this->all();
 
+        /** @var AlmaClient $alma */
         $alma = app(AlmaClient::class);
+
+        /** @var AlmaUsers $almaUsers */
+        $almaUsers = app(AlmaUsers::class);
 
         // ======================== Lookup item and thing ========================
 
@@ -109,12 +115,9 @@ class CheckoutRequest extends FormRequest
             $user = User::find(Arr::get($input, 'user.id'));
         } elseif (Arr::get($input, 'user.id')) {
             // Import user from Alma by primary ID
-            $query = 'primary_id~' . Arr::get($input, 'user.id');
-            $users = $this->almaSearch($alma, $query);
-            if (count($users) == 1) {
-                $user = $this->importUser($users[0]);
-            } elseif (count($users) > 1) {
-                return ['user' => [new UniqueAlmaUser($query)]];
+            $almaUser = $almaUsers->findById(Arr::get($input, 'user.id'));
+            if (!is_null($almaUser)) {
+                $user = $almaUsers->updateOrCreateLocalUserFromAlmaUser($almaUser);
             }
         } else {
             $userValue = Arr::get($input, 'user.name');
@@ -136,21 +139,21 @@ class CheckoutRequest extends FormRequest
                     ->first();
             }
 
-
             if (is_null($user)) {
                 // If user was not found locally, try Alma.
                 // Check if the input value matches primary_id first,
                 // since there is less risk of matching multiple users.
-                $query = 'primary_id~' . $userValue;
-                $users = $this->almaSearch($alma, $query);
-                if (count($users) == 0) {
+                $almaUser = $almaUsers->findById($userValue);
+                if (!is_null($almaUser)) {
+                    $user = $almaUsers->updateOrCreateLocalUserFromAlmaUser($almaUser);
+                } else {
                     $query = 'ALL~' . $userValue;
-                    $users = $this->almaSearch($alma, $query);
-                }
-                if (count($users) == 1) {
-                    $user = $this->importUser($users[0]);
-                } elseif (count($users) > 1) {
-                    return ['user' => [new UniqueAlmaUser($query)]];
+                    $results = $this->almaSearch($alma, $query);
+                    if (count($results) == 1) {
+                        $user = $almaUsers->updateOrCreateLocalUserFromAlmaUser($results[0]);
+                    } elseif (count($results) > 1) {
+                        return ['user' => [new UniqueAlmaUser($query)]];
+                    }
                 }
             }
 
@@ -182,29 +185,6 @@ class CheckoutRequest extends FormRequest
             'user' => [new UserExists($user)],
             'thing' => [new ThingExists($item), new NotTrashed($item), new NotOnLoan($alma, $item)],
         ];
-    }
-
-    protected function importUser(AlmaUser $almaUser)
-    {
-        $barcode = $almaUser->getBarcode();
-        $univId = $almaUser->getUniversityId();
-        $user = User::where('barcode', '=', $barcode)
-            ->orWhere('university_id', '=', $univId)
-            ->orWhere('alma_primary_id', '=', $almaUser->primaryId)
-            ->first();
-
-        if (is_null($user)) {
-            $user = new User();
-        }
-        $user->mergeFromAlmaResponse($almaUser);
-        $user->save();
-
-        \Log::info(sprintf(
-            'Importerte en bruker fra Alma (<a href="%s">Detaljer</a>)',
-            action('UsersController@getShow', $user->id)
-        ));
-
-        return $user;
     }
 
     protected function almaSearch($alma, $query)

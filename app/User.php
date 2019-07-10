@@ -2,11 +2,9 @@
 
 namespace App;
 
-use App\Alma\User as AlmaUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\MessageBag;
-use Scriptotek\Alma\Client as AlmaClient;
 
 class User extends Authenticatable
 {
@@ -92,28 +90,6 @@ class User extends Authenticatable
         }
     }
 
-    /**
-     * Merge in UserResponse data
-     *
-     * @param AlmaUser $au
-     * @return void
-     */
-    public function mergeFromAlmaResponse(AlmaUser $au)
-    {
-        $this->in_alma = true;
-        $this->alma_primary_id = $au->primaryId;
-        $this->alma_user_group = $au->group;
-        $this->barcode = $au->getBarcode();
-        $this->university_id = $au->getUniversityId();
-        $this->lastname = $au->lastName;
-        $this->firstname = $au->firstName;
-        $this->email = $au->email;
-        $this->phone = $au->phone;
-        $this->lang = $au->lang;
-        $this->blocks = $au->blocks;
-        $this->fees = $au->getFees();
-    }
-
     protected function mergeAttribute($key, User $user)
     {
         return strlen($user->$key) > strlen($this->$key) ? $user->$key : $this->$key;
@@ -165,7 +141,7 @@ class User extends Authenticatable
             return $errors;
         }
 
-        \Log::info('Slo sammen to brukere (' . $user->id . ' og ' . $this->id . ')');
+        \Log::info('Slo sammen to brukere (ID ' . $user->id . ' og ' . $this->id . ')');
 
         foreach ($user->loans as $loan) {
             $loan->user_id = $this->id;
@@ -192,47 +168,41 @@ class User extends Authenticatable
     }
 
     /**
-     * Find the first Alma user matching a query.
-     * @param AlmaClient $alma
-     * @param array $queries
-     * @return AlmaUser|null
+     * Update unique value. If the value clashes with another user, delete the other user if it has no loans.
+     *
+     * @param string $key
+     * @param string $val
      */
-    protected function findAlmaUser(AlmaClient $alma, array $queries)
+    public function setUniqueValue(string $key, string $val)
     {
-        foreach ($queries as $query) {
-            if (!empty($query[1])) {
-                foreach ($alma->users->search($query[0] . '~' . $query[1], ['limit' => 1]) as $user) {
-                    return new AlmaUser($user);
+        // Check for uniqueness
+        if (is_null($this->id)) {
+            // Model not saved yet
+            $otherUser = User::where($key, '=', $val)->first();
+        } else {
+            $otherUser = User::where($key, '=', $val)->where('id', '!=', $this->id)->first();
+        }
+
+        if (!is_null($otherUser)) {
+            if (!$otherUser->loans->count()) {
+                if (!is_null($this->id)) {
+                    $localRef = "brukeren med ID {$this->id}";
+                } else {
+                    $localRef = "(ny bruker)";
                 }
+                \Log::warning(
+                    "Verdien '{$val}' i bruk som {$key} for flere brukere. " .
+                    "Sletter brukeren med ID {$otherUser->id} (som ikke hadde noen lån), beholder $localRef."
+                );
+                $otherUser->delete();
+            } else {
+                \Log::warning(
+                    "Verdien '{$val}' i bruk som {$key} for flere brukere, men ".
+                    "kan ikke slette brukeren {$otherUser->id}, fordi brukeren har lån."
+                );
             }
         }
 
-        return null;
-    }
-
-    /**
-     * Update the user object with fresh user data from Alma.
-     * Returns true if successful, false if the user could no longer be found in Alma.
-     *
-     * @param AlmaClient $alma
-     * @return bool
-     */
-    public function updateFromAlma(AlmaClient $alma)
-    {
-        $queries = [
-            ['identifiers', $this->university_id],
-            ['identifiers', $this->barcode],
-            ['ALL', $this->university_id],
-            ['ALL', $this->barcode],
-        ];
-
-        $almaUser = $this->findAlmaUser($alma, $queries);
-        if (is_null($almaUser)) {
-            $this->in_alma = false;
-            return false;
-        }
-
-        $this->mergeFromAlmaResponse($almaUser);
-        return true;
+        $this->{$key} = $val;
     }
 }

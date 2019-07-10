@@ -4,6 +4,7 @@ namespace App\Alma;
 
 use Scriptotek\Alma\Exception\RequestFailed;
 use Scriptotek\Alma\Client as AlmaClient;
+use Scriptotek\Alma\Exception\ResourceNotFound;
 use Scriptotek\Alma\Users\User as AlmaUser;
 
 class User
@@ -32,11 +33,13 @@ class User
      */
     public static function lookup(AlmaClient $alma, $identifier)
     {
+        if (empty($identifier)) {
+            return null;
+        }
         try {
-            return new self($alma->users->get($identifier));
-        } catch (RequestFailed $exception) {
-            $res = $alma->users->search('identifiers~' . $identifier, ['limit' => 1]);
-            return count($res) ? new self($res[0]) : null;
+            return new self($alma->users->get($identifier)->init());
+        } catch (ResourceNotFound $e) {
+            return null;
         }
     }
 

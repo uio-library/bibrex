@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Alma\AlmaUsers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -62,10 +63,11 @@ class WebhooksController extends Controller
      * Handler for the Alma user webhook.
      *
      * @param Client $almaClient
+     * @param AlmaUsers $almaUsers
      * @param Request $request
      * @return Response
      */
-    protected function handleUserUpdate(Client $almaClient, Request $request)
+    protected function handleUserUpdate(Client $almaClient, AlmaUsers $almaUsers, Request $request)
     {
         $data = $request->input('webhook_user');
         $primaryId = Arr::get($data, 'user.primary_id');
@@ -76,31 +78,19 @@ class WebhooksController extends Controller
 
             $almaUser = new \App\Alma\User($almaClientUser);
 
-            $localUser = User::where('alma_primary_id', '=', $primaryId)
-                ->first();
-
-            if (is_null($localUser) && !empty($almaUser->getUniversityId())) {
-                $localUser = User::where('university_id', '=', $almaUser->getUniversityId())
-                    ->first();
-            }
+            $localUser = $almaUsers->findLocalUserFromAlmaUser($almaUser);
 
             if (is_null($localUser)) {
                 \Log::debug('Ignorerer Alma-brukeroppdateringsvarsel for bruker som ikke er i Bibrex.');
             } else {
-                $localUser->mergeFromAlmaResponse($almaUser);
+                $almaUsers->updateLocalUserFromAlmaUser($localUser, $almaUser);
                 if ($localUser->isDirty()) {
                     $localUser->save();
                     \Log::info(sprintf(
-                        'Varsel fra Alma om at brukeren <a href="%s">%s</a> har blitt oppdatert.',
+                        'Oppdaterte brukeren <a href="%s">%s</a> fra Alma.',
                         action('UsersController@getShow', $localUser->id),
-                        $localUser->name,
-                        $data['cause'],
-                        $data['method']
+                        $localUser->name
                     ));
-                } else {
-                    \Log::debug(
-                        'Varsel fra Alma førte ikke til noen endringer på den tilknyttede Bibrex-brukeren.'
-                    );
                 }
             }
         } elseif ($data['method'] == 'DELETE') {
@@ -108,8 +98,8 @@ class WebhooksController extends Controller
             if (is_null($localUser)) {
                 \Log::debug('Ignorerer Alma-brukeroppdateringsvarsel for bruker som ikke er i Bibrex.');
             } else {
-                \Log::info(sprintf(
-                    'Varsel fra Alma om at brukeren <a href="%s">%s</a> har blitt slettet.',
+                \Log::warning(sprintf(
+                    'Tips fra Alma: Brukeren <a href="%s">%s</a> har blitt slettet i Alma. Hva gjør vi? Tja, vet ikke.',
                     action('UsersController@getShow', $localUser->id),
                     $localUser->name
                 ));
@@ -117,6 +107,6 @@ class WebhooksController extends Controller
         }
 
         // Say yo to Alma
-        return response('Yo!', 200);
+        return response('Yo Alma!', 200);
     }
 }

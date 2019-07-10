@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Alma\AlmaUsers;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Scriptotek\Alma\Client as AlmaClient;
 
@@ -21,8 +23,11 @@ class AlmaServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(AlmaClient::class, function ($app) {
+        $this->app->singleton(AlmaClient::class, function (Application $app) {
             return new AlmaClient(config('services.alma.key'), 'eu');
+        });
+        $this->app->singleton(AlmaUsers::class, function (Application $app) {
+            return new AlmaUsers($app->make(AlmaClient::class));
         });
     }
 
@@ -33,6 +38,9 @@ class AlmaServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [AlmaClient::class];
+        return [
+            AlmaClient::class,
+            AlmaUsers::class,
+        ];
     }
 }

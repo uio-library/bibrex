@@ -1,10 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Console\Commands;
 
 use App\User;
+use App\Alma\AlmaUsers as AlmaConnector;
 use Illuminate\Console\Command;
 
+use Illuminate\Database\Eloquent\Builder;
 use PDOException;
 use Scriptotek\Alma\Client as AlmaClient;
 use Scriptotek\Alma\Exception\RequestFailed;
@@ -28,15 +30,19 @@ class SyncUsers extends Command
     /** @var AlmaClient */
     protected $alma;
 
+    /** @var AlmaConnector */
+    protected $almaConnector;
+
     /**
      * Create a new command instance.
      *
      * @param AlmaClient $alma
      */
-    public function __construct(AlmaClient $alma)
+    public function __construct(AlmaClient $alma, AlmaConnector $almaConnector)
     {
         parent::__construct();
         $this->alma = $alma;
+        $this->almaConnector = $almaConnector;
     }
 
     /**
@@ -46,44 +52,35 @@ class SyncUsers extends Command
      */
     protected function processUser(User $user)
     {
-        echo " - $user->name: ";
-
         if ($user->in_alma) {
-            if ($user->updateFromAlma($this->alma)) {
+            // Låner er allerede koblet til Alma
+            if ($this->almaConnector->updateLocalUserFromAlmaUser($user)) {
                 if ($user->isDirty()) {
                     \Log::info(sprintf(
                         'Brukeren <a href="%s">%s</a> ble oppdatert fra Alma.',
                         action('UsersController@getShow', $user->id),
                         $user->name
                     ));
-
-                    $this->info('oppdatert');
-                } else {
-                    $this->line('ingen endringer');
                 }
             } else {
                 \Log::warning(sprintf(
-                    'Brukeren <a href="%s">%s</a> ble ikke lenger funnet i Alma!',
+                    'Brukeren <a href="%s">%s</a> finnes ikke lenger i Alma.',
                     action('UsersController@getShow', $user->id),
                     $user->name
                 ));
-
-                $this->warn('ikke i Alma lenger');
             }
+        } elseif ($this->almaConnector->updateLocalUserFromAlmaUser($user)) {
+            // Sjekk om låner kan kobles til Alma
+            \Log::info(sprintf(
+                'Brukeren <a href="%s">%s</a> ble koblet med en Alma-bruker.',
+                action('UsersController@getShow', $user->id),
+                $user->name
+            ));
+            $this->transferLoans($user);
         } else {
-            if ($user->updateFromAlma($this->alma)) {
-                \Log::info(sprintf(
-                    'Brukeren <a href="%s">%s</a> ble lenket til en Alma-bruker.',
-                    action('UsersController@getShow', $user->id),
-                    $user->name
-                ));
-
-                $this->info('lenket til Alma-bruker');
-                $this->transferLoans($user);
-            } else {
-                $this->line('ikke i Alma');
-            }
+            // Lokal bruker
         }
+
         try {
             $user->save();
         } catch (PDOException $e) {
@@ -100,7 +97,7 @@ class SyncUsers extends Command
         if ($user->in_alma) {
             // Check if user have loans of thing_id 1 and transfer them if so.
             // In case the user was manually synced during the day.
-            $tempLoans = $user->loans()->whereHas('item', function ($query) {
+            $tempLoans = $user->loans()->whereHas('item', function (Builder $query) {
                 $query->where('thing_id', 1);
             })->count();
 
@@ -117,9 +114,17 @@ class SyncUsers extends Command
      */
     public function handle()
     {
-        foreach (User::get() as $user) {
-            $this->processUser($user);
+        foreach (\DB::table('users')->get(['id']) as $row) {
+            $user = User::find($row->id);
+            // Users may be deleted during the sync process. Therefore we
+            // make sure the user still exists before processing it, to
+            // avoid re-creating a deleted user.p
+            if (!is_null($user)) {
+                $this->line("Checking user {$user->id}");
+                $this->processUser($user);
+            }
         }
+        $this->line("Done");
     }
 
     protected function transferLoans(User $localUser)
@@ -210,6 +215,5 @@ class SyncUsers extends Command
                 $n++;
             }
         }
-        $this->info(" > Overførte $n lån");
     }
 }

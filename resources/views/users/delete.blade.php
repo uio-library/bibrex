@@ -33,7 +33,7 @@
 
         <div class="card-footer">
             <a href="{{ URL::action('UsersController@getIndex') }}" class="btn btn-secondary">Nei, jeg angrer!</a>
-            {{ Form::submit('Ja, slett i vei!', array('class' => 'btn btn-danger')) }}
+            {{ Form::submit('Jada, slett i vei!', array('class' => 'btn btn-danger')) }}
         </div>
 
     </div>

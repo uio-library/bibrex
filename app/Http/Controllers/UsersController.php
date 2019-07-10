@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
+use App\Alma\AlmaUsers;
 use App\Alma\User as AlmaUser;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -129,19 +130,19 @@ class UsersController extends Controller
     /**
      * Connect local user to external user.
      *
-     * @param User $user
+     * @param AlmaUsers $almaUsers
      * @param Request $request
-     * @param AlmaClient $alma
+     * @param User $user
      * @return Response
      */
-    public function connect(User $user, Request $request, AlmaClient $alma)
+    public function connect(AlmaUsers $almaUsers, Request $request, User $user)
     {
         $barcode = $request->barcode;
         if (empty($barcode)) {
             return back()->with('error', 'Du må registrere låne-ID.');
         }
 
-        $almaUser = AlmaUser::lookup($alma, $barcode);
+        $almaUser = $almaUsers->findById($barcode);
 
         if (!$almaUser) {
             return back()->with('error', 'Fant ikke låne-ID-en ' . $barcode . ' i Alma 😭 ');
@@ -154,7 +155,7 @@ class UsersController extends Controller
                 '(' . $other->name . '). Du kan slå dem sammen fra brukeroversikten.');
         }
 
-        $user->mergeFromAlmaResponse($almaUser);
+        $almaUsers->updateLocalUserFromAlmaUser($user, $almaUser);
         $user->save();
 
         return redirect()->action('UsersController@getShow', $user->id)
@@ -164,16 +165,17 @@ class UsersController extends Controller
     /**
      * Import user data from Alma.
      *
-     * @param  int  $id
+     * @param AlmaUsers $almaUsers
+     * @param User $user
      * @return Response
      */
-    public function sync(AlmaClient $alma, User $user)
+    public function sync(AlmaUsers $almaUsers, User $user)
     {
         if (!$user->barcode) {
             return back()->with('error', 'Du må registrere låne-ID for brukeren før du kan importere.');
         }
 
-        if (!$user->updateFromAlma($alma)) {
+        if (!$almaUsers->updateLocalUserFromAlmaUser($user)) {
             $user->save();
 
             return back()->with('error', 'Fant ikke brukeren i Alma 😭');
@@ -210,8 +212,9 @@ class UsersController extends Controller
      * Update the specified resource in storage.
      *
      * @param User $user
-     * @param  Request $request
+     * @param Request $request
      * @return Response
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function upsert(User $user, Request $request)
     {
