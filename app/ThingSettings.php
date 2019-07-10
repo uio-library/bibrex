@@ -53,7 +53,7 @@ class ThingSettings extends Model
     public function setValue(string $key, $value)
     {
         $data = $this->data;
-        array_set($data, $key, $value);
+        Arr::set($data, $key, $value);
         $this->data = $data;
     }
 

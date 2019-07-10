@@ -40,8 +40,7 @@
                             ?>
                         </td>
                         <td style="white-space:nowrap; text-align: right; padding-right: 20px;">
-                                                        <small>{{ array_get($item->context, 'library') }}</small>
-
+                            <small>{{ \Illuminate\Support\Arr::get($item->context, 'library') }}</small>
                         </td>
                     </tr>
                 @endforeach

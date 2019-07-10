@@ -31,11 +31,11 @@
                 <ul>
                     @foreach ($user->blocks as $block)
                         <li>
-                            {{ array_get($block, 'block_description.desc') }}
+                            {{ \Illuminate\Support\Arr::get($block, 'block_description.desc') }}
                             @if (isset($block['block_note']))
-                              ({{ array_get($block, 'block_note') }})
+                              ({{ \Illuminate\Support\Arr::get($block, 'block_note') }})
                             @endif –
-                            {{ array_get($block, 'created_date') }}
+                            {{ \Illuminate\Support\Arr::get($block, 'created_date') }}
                         </li>
                     @endforeach
                 </ul>
