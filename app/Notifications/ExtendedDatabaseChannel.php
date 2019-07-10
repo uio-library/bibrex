@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Arr;
 
 class ExtendedDatabaseChannel extends DatabaseChannel
 {
@@ -22,9 +23,9 @@ class ExtendedDatabaseChannel extends DatabaseChannel
             'type' => get_class($notification),
             'read_at' => null,
 
-            'loan_id' => array_get($data, 'loan_id'),
+            'loan_id' => Arr::get($data, 'loan_id'),
             'data' => [
-                'email' => array_get($data, 'email'),
+                'email' => Arr::get($data, 'email'),
             ],
         ];
     }

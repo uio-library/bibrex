@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Scriptotek\Alma\Client;
 
 class WebhooksController extends Controller
@@ -67,7 +68,7 @@ class WebhooksController extends Controller
     protected function handleUserUpdate(Client $almaClient, Request $request)
     {
         $data = $request->input('webhook_user');
-        $primaryId = array_get($data, 'user.primary_id');
+        $primaryId = Arr::get($data, 'user.primary_id');
 
         if ($data['method'] == 'UPDATE') {
             $almaClientUser = \Scriptotek\Alma\Users\User::make($almaClient, $primaryId)

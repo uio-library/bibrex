@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Arr;
 use JsonSerializable;
 
 class ThingProperties implements JsonSerializable, Arrayable
@@ -34,12 +35,12 @@ class ThingProperties implements JsonSerializable, Arrayable
             switch ($options['type']) {
                 case 'multilingual':
                     foreach ($this->languages as $lang) {
-                        $this->data[$key][$lang] = array_get($data, "$key.$lang");
+                        $this->data[$key][$lang] = Arr::get($data, "$key.$lang");
                     }
                     break;
 
                 default:
-                    $this->data[$key] = array_get($data, $key, array_get($options, 'default'));
+                    $this->data[$key] = Arr::get($data, $key, Arr::get($options, 'default'));
             }
         }
     }
@@ -56,12 +57,12 @@ class ThingProperties implements JsonSerializable, Arrayable
 
     public function get($key, $default = null)
     {
-        return array_get($this->data, $key, $default);
+        return Arr::get($this->data, $key, $default);
     }
 
     public function set($key, $value)
     {
-        return array_set($this->data, $key, $value);
+        return Arr::set($this->data, $key, $value);
     }
 
     public function __get($key)

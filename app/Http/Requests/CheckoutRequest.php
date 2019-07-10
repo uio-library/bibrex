@@ -15,6 +15,7 @@ use App\Rules\UserExists;
 use App\Thing;
 use App\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Arr;
 use Scriptotek\Alma\Bibs\Item as AlmaItem;
 use Scriptotek\Alma\Client as AlmaClient;
 
@@ -52,27 +53,27 @@ class CheckoutRequest extends FormRequest
         $thing = null;
         $item = null;
 
-        if (empty(array_get($input, 'thing.name'))) {
+        if (empty(Arr::get($input, 'thing.name'))) {
             // No thing was entered
-        } elseif (!array_get($input, 'thing.type')) {
+        } elseif (!Arr::get($input, 'thing.type')) {
             // A thing was entered manually, not selected from the typeahead menu.
             // First check if the value matches a barcode.
-            $item = Item::withTrashed()->where('barcode', '=', array_get($input, 'thing.name'))->first();
+            $item = Item::withTrashed()->where('barcode', '=', Arr::get($input, 'thing.name'))->first();
 
             if (is_null($item)) {
                 // Next, check if it matches a thing name.
-                $thing = Thing::where('properties->name->nob', '=', array_get($input, 'thing.name'))->first();
+                $thing = Thing::where('properties->name->nob', '=', Arr::get($input, 'thing.name'))->first();
             }
 
             if (is_null($item) && !empty($library->library_code)) {
                 // Next, check if it can be found in Alma.
                 // If the library doesn't have a library code set, it means we should not check Alma.
-                $item = $alma->items->fromBarcode(array_get($input, 'thing.name'));
+                $item = $alma->items->fromBarcode(Arr::get($input, 'thing.name'));
             }
-        } elseif (array_get($input, 'thing.type') == 'item') {
-            $item = Item::withTrashed()->where('id', '=', array_get($input, 'thing.id'))->first();
-        } elseif (array_get($input, 'thing.type') == 'thing') {
-            $thing = Thing::where('id', '=', array_get($input, 'thing.id'))->first();
+        } elseif (Arr::get($input, 'thing.type') == 'item') {
+            $item = Item::withTrashed()->where('id', '=', Arr::get($input, 'thing.id'))->first();
+        } elseif (Arr::get($input, 'thing.type') == 'thing') {
+            $thing = Thing::where('id', '=', Arr::get($input, 'thing.id'))->first();
         }
 
         if (is_null($item) && !is_null($thing)) {
@@ -101,14 +102,14 @@ class CheckoutRequest extends FormRequest
 
         $user = null;
 
-        if (empty(array_get($input, 'user.name'))) {
+        if (empty(Arr::get($input, 'user.name'))) {
             // No user was entered
-        } elseif (array_get($input, 'user.type') == 'local') {
+        } elseif (Arr::get($input, 'user.type') == 'local') {
             // Lookup local user by id
-            $user = User::find(array_get($input, 'user.id'));
-        } elseif (array_get($input, 'user.id')) {
+            $user = User::find(Arr::get($input, 'user.id'));
+        } elseif (Arr::get($input, 'user.id')) {
             // Import user from Alma by primary ID
-            $query = 'primary_id~' . array_get($input, 'user.id');
+            $query = 'primary_id~' . Arr::get($input, 'user.id');
             $users = $this->almaSearch($alma, $query);
             if (count($users) == 1) {
                 $user = $this->importUser($users[0]);
@@ -116,7 +117,7 @@ class CheckoutRequest extends FormRequest
                 return ['user' => [new UniqueAlmaUser($query)]];
             }
         } else {
-            $userValue = array_get($input, 'user.name');
+            $userValue = Arr::get($input, 'user.name');
 
             if (strpos($userValue, ',') !== false) {
                 // Try looking up local user by name

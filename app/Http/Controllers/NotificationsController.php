@@ -8,6 +8,7 @@ use App\Notifications\FirstReminder;
 use App\Notifications\ManualReminder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 
 class NotificationsController extends Controller
 {
@@ -23,7 +24,7 @@ class NotificationsController extends Controller
         return response()->view('notifications.show', [
             'type' => $notification->humanReadableType(),
             'loan' => $notification->loan,
-            'email' => array_get($notification->data, 'email'),
+            'email' => Arr::get($notification->data, 'email'),
             'sent' => $notification->created_at,
         ]);
     }

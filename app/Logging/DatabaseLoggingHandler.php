@@ -3,6 +3,7 @@
 namespace App\Logging;
 
 use Illuminate\Database\Connection;
+use Illuminate\Support\Arr;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 
@@ -35,10 +36,10 @@ class DatabaseLoggingHandler extends AbstractProcessingHandler
     protected function write(array $record)
     {
         $data = [
-            'channel'    => array_get($record, 'channel'),
-            'message'    => array_get($record, 'message'),
-            'level'      => array_get($record, 'level'),
-            'level_name' => array_get($record, 'level_name'),
+            'channel'    => Arr::get($record, 'channel'),
+            'message'    => Arr::get($record, 'message'),
+            'level'      => Arr::get($record, 'level'),
+            'level_name' => Arr::get($record, 'level_name'),
             'context'    => json_encode($record['context']),
             // 'extra'      => json_encode($record['extra']),
             'time'   => $record['datetime']->format('Y-m-d G:i:s'),

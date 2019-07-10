@@ -4,6 +4,7 @@ namespace App\Rules;
 
 use App\User;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Arr;
 
 class ConfirmationNeeded implements Rule
 {
@@ -12,7 +13,7 @@ class ConfirmationNeeded implements Rule
     /**
      * Create a new rule instance.
      *
-     * @return void
+     * @param User|null $user
      */
     public function __construct(User $user = null)
     {
@@ -26,7 +27,7 @@ class ConfirmationNeeded implements Rule
         if (count($user->blocks)) {
             $msgs = array_values(array_map(
                 function ($b) {
-                    return array_get($b, 'block_description.desc');
+                    return Arr::get($b, 'block_description.desc');
                 },
                 $user->blocks
             ));

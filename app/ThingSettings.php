@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class ThingSettings extends Model
 {
@@ -64,7 +65,7 @@ class ThingSettings extends Model
      */
     public function getLoansWithoutBarcodeAttribute()
     {
-        return array_get($this->data, 'loans_without_barcode', false);
+        return Arr::get($this->data, 'loans_without_barcode', false);
     }
 
     /**
@@ -84,7 +85,7 @@ class ThingSettings extends Model
      */
     public function getRemindersAttribute()
     {
-        return array_get($this->data, 'reminders', true);
+        return Arr::get($this->data, 'reminders', true);
     }
 
     /**
@@ -104,7 +105,7 @@ class ThingSettings extends Model
      */
     public function getLoanTimeAttribute()
     {
-        return array_get($this->data, 'loan_time', 1);
+        return Arr::get($this->data, 'loan_time', 1);
     }
 
     /**
