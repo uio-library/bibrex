@@ -1,7 +1,7 @@
 <?php
 namespace Deployer;
 
-with(new \Dotenv\Dotenv(__DIR__))->load();
+with(\Dotenv\Dotenv::create(__DIR__))->load();
 
 # https://github.com/deployphp/deployer/blob/master/recipe/laravel.php
 require 'recipe/laravel.php';
