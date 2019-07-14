@@ -6,14 +6,29 @@
 
 Simple lending system for things that integrates with Alma.
 
-### Setup
+### Setup for development
 
-Requirements: PHP (see `composer.json` for required version),
+Requirements: Quite recent versions of PHP (see `composer.json` for required version),
 NodeJS and PostgresSQL.
-We do make use of some PostgresSQL-specific functionality (like the
-[ILIKE operator](https://www.postgresql.org/docs/8.3/functions-matching.html),
-but the coupling is quite weak, so it should be possible to
-switch to another database without too much effort.
+
+#### Database setup
+
+Is Postgres needed? Bibrex mostly make use of the database-agnostic layer provided by Laravel,
+but has a few couplings to PostgresSQL through the use of Postgres-specific functionality like
+the [CITEXT](https://www.postgresql.org/docs/9.1/citext.html) and
+[JSONB data types](https://www.postgresql.org/docs/9.4/datatype-json.html),
+and the [ILIKE operator](https://www.postgresql.org/docs/8.3/functions-matching.html).
+It shouldn't be too much effort to make it work with another databse if needed though.
+
+For a local setup, start by creating a Postgres user, and a database:
+
+    $ createuser --pwprompt bibrex_dev
+    $ createdb --owner=bibrex_dev --encoding=utf8 bibrex_dev
+    $ psql -d bibrex_dev -c 'CREATE EXTENSION citext;'
+
+Add the credentials to the `.env` file.
+
+#### Building the app
 
 1. `composer install` to fetch PHP dependencies.
 2. Add database setup etc. to the `.env` file.
@@ -28,17 +43,13 @@ PHP settings: You might want to increase `upload_max_filesize` to `10M` or to ta
 to allow users to upload larger images.
 Bibrex will make thumbnails for you, so larger files pose no problem really.
 
-### Development
-
 #### Running a development server
 
-PHP:
+* Run `php artisan serve` to start a dev server on localhost:8000,
+  or use [Valet](https://laravel.com/docs/5.8/valet).
 
-    php artisan serve
-
-NodeJS:
-
-    npm run watch
+* If you're working on frontend stuff (things in the `resources/assets` folder),
+  run `npm run watch` to re-build the JS/CSS.
 
 #### Update OpenAPI documentation for Swagger UI:
 
@@ -62,7 +73,7 @@ To run browser tests, download and start Selenium, then run `artisan dusk`
 
 	wget https://selenium-release.storage.googleapis.com/3.141/selenium-server-standalone-3.141.59.jar
 	java -jar selenium-server-standalone-3.141.59.jar &
-	TEST_BROWSER=chrome artisan dusk
+	TEST_BROWSER=chrome php artisan dusk
 
 Unfortunately, testing with Firefox doesn't work at the moment due to an incompability between Selenium and php-webdriver.
 See https://github.com/facebook/php-webdriver/issues/469.
@@ -70,14 +81,37 @@ See https://github.com/facebook/php-webdriver/issues/469.
 Continuous integration browser testing supported by <br>
 <a href="https://www.browserstack.com/"><img width="160" src="./doc/browserstack.svg" alt="BrowserStack"></a>
 
-### Anonymizing returned loans
+### Privacy
 
-	php artisan anonymize
+Bibrex includes a couple of Artisan commands to enhance users' privacy
+and support the [data minimisation principle](https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/principles/data-minimisation/):
 
-will anonymize all returned loans by moving them to an anonymous user.
+* `bibrex:anonymize` anonymizes all returned loans, by re-linking the
+  loans with a special system user, so that the link between loan and user
+  is lost. By default, Bibrex will run this every night.
+
+* `bibrex:purge-logs` deletes log entries older than the limit specified
+  in the `config/logging.php` config file. By default, Bibrex will keep
+  logs for 7 days.
+
+* `bibrex:purge-notifications` deletes notifications older than the limit
+  specified in the `config/bibrex.php` config file. By default, Bibrex will
+  keep notifications for 3 months.
+
+* `bibrex:purge-users` deletes inactive users. By default, Bibrex will keep
+  imported users for 3 months and local users for 3 years. Imported users can
+  be re-imported at any time, so in principle they could be kept even shorter,
+  but looking up a user and checking out an item will both be considerably
+  faster when we have a local copy, so some storage time makes sense.
+  For local users, the user information have to be manually entered again if
+  a user comes back after having been deleted, so a longer storage time makes
+  sense. It's advised to try to limit the number of local users.
 
 ### Større endringer
 
+* [2019-07-10](https://github.com/scriptotek/bibrex/commit/12989de79476134710324d54dfabbe87dc27f869) Støtte for flere identifikatorer per bruker, f.eks. flere lånekort.
+* [2019-02-06](https://github.com/scriptotek/bibrex/commit/28b56049f09c4cb07908bf4e850195c68797c24d) Lagt til et enkelt API.
+* [2019-01-14](https://github.com/scriptotek/bibrex/commit/3696480580898a5f2324cf2c7c85a86cdf3c8908) Automatisk sletting av inaktive brukere og gamle varsler.
 * [2018-02-12](https://github.com/scriptotek/bibrex/commit/c700caf4a9508679643f45b66af5cd5dd0e1c4b2) Påminnelser og Alma-import av brukerdata.
 * [2016-18-10](https://github.com/scriptotek/bibrex/commit/ae059198c7f0a59a94e1742914060d53f75efdaf) Anonymisering av utlån.
 * [2013-11-04](https://github.com/scriptotek/bibrex/commit/d8377cd1e2aa8feec105d2a106a0f172d7cba908) Institusjonsbasert pålogging, med mulighet for autopålogging fra bestemte IP-adresser.
