@@ -16,7 +16,6 @@ use Faker\Generator as Faker;
 $factory->define(App\User::class, function (Faker $faker) {
     $faker->addProvider(new \Tests\Faker\Library($faker));
     return [
-        'barcode' => $faker->userBarcode,
         'lastname' => $faker->lastName,
         'firstname' => $faker->firstName,
         'phone' => $faker->phoneNumber,

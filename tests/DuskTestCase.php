@@ -4,7 +4,6 @@ namespace Tests;
 
 use App\Library;
 use Closure;
-use http\Env\Request;
 use Laravel\Dusk\Browser;
 use Laravel\Dusk\TestCase as BaseTestCase;
 use Facebook\WebDriver\Chrome\ChromeOptions;
@@ -12,7 +11,6 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Runner\BaseTestRunner;
-use Throwable;
 
 abstract class DuskTestCase extends BaseTestCase
 {
@@ -68,7 +66,7 @@ abstract class DuskTestCase extends BaseTestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->sessionId = null;
@@ -83,7 +81,7 @@ abstract class DuskTestCase extends BaseTestCase
      *
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // Mark tests as passed or failed on BrowserStack
         // https://www.browserstack.com/automate/rest-api

@@ -13,7 +13,7 @@ class ThingsTest extends DuskTestCase
 {
     use DatabaseMigrations;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->faker = $this->app->make('Faker\Generator');
