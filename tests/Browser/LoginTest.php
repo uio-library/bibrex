@@ -28,7 +28,6 @@ class LoginTest extends DuskTestCase
             function (Browser $browser) use ($user) {
                 $browser->visit(new LoginPage)
                     ->waitForText('Logg inn')
-                    ->pause(500)
                     ->type('email', $user->email)
                     ->type('password', 'secret')
                     ->press('Logg inn')

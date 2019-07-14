@@ -71,7 +71,7 @@ input {
         <div id="loginBox" class="card card-body bg-light hidden">
             <i class="halflings-icon lock"></i>
             <p>
-                Bibrex kjenner ikke igjen maskinen din,
+                Hei! Bibrex kjenner ikke igjen maskinen din,
                 men du kan logge inn med brukernavn og passord.
             </p>
             @if (Session::has('loginfailed'))

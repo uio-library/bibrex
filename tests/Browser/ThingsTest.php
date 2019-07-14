@@ -30,7 +30,7 @@ class ThingsTest extends DuskTestCase
 
                 $browser->visit(new ThingsPage)
                     ->clickLink('Ny ting')
-                    ->pause(300)
+                    ->waitForText('Bokmål')
                     ->type('name.nob', $thingName)
                     ->type('name_indefinite.nob', $this->faker->sentence(3))
                     ->type('name_definite.nob', $this->faker->sentence(3))
@@ -41,7 +41,6 @@ class ThingsTest extends DuskTestCase
                     ->type('name_indefinite.eng', $this->faker->sentence(3))
                     ->type('name_definite.eng', $this->faker->sentence(3))
                     ->type('loan_time', $this->faker->randomDigitNotNull)
-                    ->pause(300)
                     ->press('Lagre')
                     ->waitForText('Tingen ble lagret')
                     ->waitForText($thingName);

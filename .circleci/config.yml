@@ -10,7 +10,7 @@ defaults: &defaults
   docker:
     # CircleCI maintains a library of pre-built images
     # See: https://circleci.com/docs/2.0/circleci-images/
-    - image: circleci/php:7.2-node-browsers
+    - image: circleci/php:7.3-node-browsers
     - image: circleci/postgres:9.6-alpine-ram
       environment:
         POSTGRES_USER: bibrex_test
@@ -46,8 +46,11 @@ test_base: &test_base
         command: |
           sudo apt-get update -y
           sudo mkdir -p /usr/share/man/man7/
-          sudo apt-get install -y postgresql-9.6 libpq-dev libpng-dev libjpeg-dev
+          sudo apt-get install -y postgresql-9.6 libpq-dev
           sudo docker-php-ext-install mbstring pdo_pgsql
+          sudo apt-get install -y imagemagick libmagickwand-dev
+          sudo sh -c 'yes "" | pecl install imagick'
+          sudo docker-php-ext-enable imagick
 
     - run:
         name: Install Dockerize
@@ -120,8 +123,12 @@ jobs:
           command: |
             sudo apt-get update -y
             sudo mkdir -p /usr/share/man/man7/
-            sudo apt-get install -y postgresql-9.6 libpq-dev libpng-dev libjpeg-dev
+            sudo apt-get install -y postgresql-9.6 libpq-dev
             sudo docker-php-ext-install mbstring pdo_pgsql
+            sudo apt-get install -y imagemagick libmagickwand-dev
+            sudo sh -c 'yes "" | pecl install imagick'
+            sudo docker-php-ext-enable imagick
+
 
       - run:
           name: Install Dockerize
@@ -205,26 +212,17 @@ jobs:
       - SELENIUM_PLATFORM: "Windows"
       - SELENIUM_BROWSER_NAME: "chrome"
 
-  test_win_ie11:
-    <<: *test_base
-    environment:
-      - SELENIUM_PLATFORM: "Windows"
-      - SELENIUM_BROWSER_NAME: "internet explorer"
-      - SELENIUM_BROWSER_VERSION: "11"
-
   test_win_firefox:
     <<: *test_base
     environment:
       - SELENIUM_PLATFORM: "Windows"
       - SELENIUM_BROWSER_NAME: "firefox"
-      - SELENIUM_BROWSER_VERSION: "61"
 
   test_win_edge:
     <<: *test_base
     environment:
       - SELENIUM_PLATFORM: "Windows"
       - SELENIUM_BROWSER_NAME: "edge"
-      - SELENIUM_BROWSER_VERSION: "17"
 
 workflows:
   version: 2
@@ -234,12 +232,9 @@ workflows:
       - test_win_chrome:
           requires:
             - build
-      - test_win_ie11:
+      - test_win_firefox:
           requires:
             - build
-      # - test_win_firefox:
-      #     requires:
-      #       - build
       - test_win_edge:
           requires:
             - build

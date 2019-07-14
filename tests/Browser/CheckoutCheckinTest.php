@@ -57,24 +57,34 @@ class CheckoutCheckinTest extends DuskTestCase
         });
     }
 
-    /**
-     * Test that we can checkout using one of the identifiers of a user.
-     */
-    public function testCheckoutUsingUserIdentifier()
+    protected function checkout($thing, $user)
     {
+        \Log::info(sprintf('Trying to checkout "%s" to "%s"', $thing, $user));
+
         $this->browse(
-            function (Browser $browser) {
+            function (Browser $browser) use ($thing, $user) {
                 $browser->loginAs('post@eksempelbiblioteket.no');
 
                 $browser->visit(new LoansPage)
                     ->waitForText('Til hvem?')
-                    ->type('user', $this->users[0]->identifiers[0]->value)
-                    ->type('thing', $this->items[0]->barcode)
+                    ->type('user', $user)
+                    ->type('thing', $thing)
                     ->clickLink('Lån ut', 'button')
                     ->waitForText('Lånte ut')
                     ->waitForText('nå nettopp');
             }
         );
+    }
+
+    /**
+     * Test that we can checkout using one of the identifiers of a user.
+     */
+    public function testCheckoutUsingUserIdentifier()
+    {
+        $thing = $this->items[0]->barcode;
+        $user = $this->users[0]->identifiers[0]->value;
+
+        $this->checkout($thing, $user);
     }
 
     /**
@@ -82,19 +92,10 @@ class CheckoutCheckinTest extends DuskTestCase
      */
     public function testCheckoutUsingAlmaPrimaryId()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs('post@eksempelbiblioteket.no');
+        $thing = $this->items[0]->barcode;
+        $user = $this->users[0]->alma_primary_id;
 
-                $browser->visit(new LoansPage)
-                    ->waitForText('Til hvem?')
-                    ->type('user', $this->users[0]->alma_primary_id)
-                    ->type('thing', $this->items[0]->barcode)
-                    ->clickLink('Lån ut', 'button')
-                    ->waitForText('Lånte ut')
-                    ->waitForText('nå nettopp');
-            }
-        );
+        $this->checkout($thing, $user);
     }
 
     /**
@@ -102,19 +103,10 @@ class CheckoutCheckinTest extends DuskTestCase
      */
     public function testCheckoutUsingNameOfUser()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs('post@eksempelbiblioteket.no');
+        $thing = $this->items[0]->barcode;
+        $user = $this->users[0]->name;
 
-                $browser->visit(new LoansPage)
-                    ->waitForText('Til hvem?')
-                    ->type('user', $this->users[0]->name)
-                    ->type('thing', $this->items[0]->barcode)
-                    ->clickLink('Lån ut', 'button')
-                    ->waitForText('Lånte ut')
-                    ->waitForText('nå nettopp');
-            }
-        );
+        $this->checkout($thing, $user);
     }
 
     /**
@@ -358,13 +350,16 @@ class CheckoutCheckinTest extends DuskTestCase
         );
     }
 
-    protected function type(Browser $browser, $keys)
+    protected function type(Browser $browser, $keys, $element = null)
     {
-        $browser->pause(300);  // To avoid Internet Explorer 11 from choking
-        $activeElement = $browser->driver->switchTo()->activeElement();
+        if (is_null($element)) {
+            $element = $browser->driver->switchTo()->activeElement();
+        } else {
+            $element = $browser->resolver->resolveForTyping($element);
+        }
 
-        // print("\nSending keys to " . $activeElement->getTagName() . ': ' . json_encode($keys) . "\n");
-        $activeElement->sendKeys($keys);
+        // print("\nSending keys to " . $element->getTagName() . ': ' . json_encode($keys) . "\n");
+        $element->sendKeys($keys);
     }
 
     protected function chromeOnly(Browser $browser)
