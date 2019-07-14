@@ -65,6 +65,9 @@ class User
         if (empty($identifier)) {
             return null;
         }
+        if (is_null($alma->key)) {
+            return null;
+        }
         try {
             return new self($alma->users->get($identifier)->init());
         } catch (ResourceNotFound $e) {

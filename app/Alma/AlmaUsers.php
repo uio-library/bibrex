@@ -22,6 +22,11 @@ class AlmaUsers
         $this->alma = $alma;
     }
 
+    public function hasKey()
+    {
+        return !is_null($this->alma->key);
+    }
+
     /**
      * Find Alma user by some ID.
      *

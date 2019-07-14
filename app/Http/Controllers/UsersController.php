@@ -121,8 +121,12 @@ class UsersController extends Controller
      * @param User $user
      * @return Response
      */
-    public function connectForm(User $user)
+    public function connectForm(AlmaUsers $almaUsers, User $user)
     {
+        if (!$almaUsers->hasKey()) {
+            return back()->with('error', 'Ingen API-nøkkel konfigurert, Bibrex kan ikke snakke med Alma.');
+        }
+
         $ident = $user->identifiers()->first();
         return response()->view('users.connect', [
             'user' => $user,
@@ -140,6 +144,10 @@ class UsersController extends Controller
      */
     public function connect(AlmaUsers $almaUsers, Request $request, User $user)
     {
+        if (!$almaUsers->hasKey()) {
+            return back()->with('error', 'Ingen API-nøkkel konfigurert, Bibrex kan ikke snakke med Alma.');
+        }
+
         $identifier = $request->identifier;
         if (empty($identifier)) {
             return back()->with('error', 'Du må registrere låne-ID.');
@@ -177,6 +185,10 @@ class UsersController extends Controller
      */
     public function sync(AlmaUsers $almaUsers, User $user)
     {
+        if (!$almaUsers->hasKey()) {
+            return back()->with('error', 'Ingen API-nøkkel konfigurert, Bibrex kan ikke snakke med Alma.');
+        }
+
         if (!$user->alma_primary_id && !$user->identifiers->count()) {
             return back()->with('error', 'Du må registrere minst én identifikator for brukeren før du kan importere.');
         }

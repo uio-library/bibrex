@@ -133,7 +133,7 @@ class CheckoutRequest extends FormRequest
                 $user = User::fromIdentifier($userValue);
             }
 
-            if (is_null($user)) {
+            if (is_null($user) && !is_null($alma->key)) {
                 // If user was not found locally, try Alma.
                 // Check if the input value matches primary_id first,
                 // since there is less risk of matching multiple users.
