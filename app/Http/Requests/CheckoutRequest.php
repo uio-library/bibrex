@@ -112,9 +112,12 @@ class CheckoutRequest extends FormRequest
             $user = User::find(Arr::get($input, 'user.id'));
         } elseif (Arr::get($input, 'user.id')) {
             // Import user from Alma by primary ID
-            $almaUser = $almaUsers->findById(Arr::get($input, 'user.id'));
-            if (!is_null($almaUser)) {
-                $user = $almaUsers->updateOrCreateLocalUserFromAlmaUser($almaUser);
+            $user = User::where('alma_primary_id', '=', Arr::get($input, 'user.id'))->first();
+            if (is_null($user)) {
+                $almaUser = $almaUsers->findById(Arr::get($input, 'user.id'));
+                if (!is_null($almaUser)) {
+                    $user = $almaUsers->updateOrCreateLocalUserFromAlmaUser($almaUser);
+                }
             }
         } else {
             $userValue = Arr::get($input, 'user.name');
