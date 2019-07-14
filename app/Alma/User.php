@@ -50,7 +50,10 @@ class User
         $this->primaryId = $user->primary_id;
         $this->group = $user->user_group->desc;
         $this->name = $this->lastName . ', ' . $this->firstName;
-        $this->blocks = $user->user_block ?: [];
+
+        $this->blocks = array_filter($user->user_block, function ($block) {
+            return $block->block_status == 'ACTIVE';
+        });
     }
 
     /**
