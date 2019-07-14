@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Alma\AlmaUsers;
 use App\Alma\User as AlmaUser;
+use App\Http\Requests\UserUpsertRequest;
 use App\User;
 use App\UserIdentifier;
 use Carbon\Carbon;
@@ -15,14 +16,6 @@ use Scriptotek\Alma\Client as AlmaClient;
 
 class UsersController extends Controller
 {
-
-    private $messages = [
-        'lastname.required' => 'Etternavn må fylles inn.',
-        'firstname.required' => 'Fornavn må fylles inn.',
-        'email.required_without' => 'Enten e-post eller telefonnummer må fylles inn.',
-        'lang.required' => 'Språk må fylles inn.'
-    ];
-
     /**
      * Display a listing of the resource.
      *
@@ -242,68 +235,27 @@ class UsersController extends Controller
      * Update the specified resource in storage.
      *
      * @param User $user
-     * @param Request $request
+     * @param UserUpsertRequest $request
      * @return Response
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function upsert(User $user, Request $request)
+    public function upsert(User $user, UserUpsertRequest $request)
     {
-        //  TODO: Move to a new UserUpsertRequest --------------------------------------------------------------------
+        $isNewUser = !$user->exists;
 
-        $validators = [
-            'lastname' => 'required',
-            'firstname' => 'required',
-            'email' => 'requiredWithout:phone',
-            'lang' => 'required',
-        ];
-
-        $identifiers = [];
-        $messages = $this->messages;
-        foreach ($request->all() as $key => $val) {
-            if (preg_match('/identifier_type_(new|[0-9]+)/', $key, $matches)) {
-                $identifierId = $matches[1];
-
-                if (empty($request->{"identifier_value_{$identifierId}"})) {
-                    continue;
-                }
-
-                $identifiers[] = [
-                    'type' => $request->{"identifier_type_{$identifierId}"},
-                    'value' => $request->{"identifier_value_{$identifierId}"},
-                ];
-
-                if (!empty($request->{"identifier_value_{$identifierId}"})) {
-                    $validators["identifier_value_{$identifierId}"] =
-                        'unique:user_identifiers,value' . ($identifierId == 'new' ? '' : ",$identifierId");
-                    $validators["identifier_type_{$identifierId}"] = 'in:barcode,university_id';
-                    $messages["identifier_value_{$identifierId}.unique"] =
-                        'Det finnes allerede en annen bruker med denne identifikatoren.';
-                    $messages["identifier_type_{$identifierId}.in"] = 'Identifikatoren har ugyldig type.';
-                }
-            }
-        }
-
-        \Validator::make($request->input(), $validators, $messages)->validate();
-
-        // ------------------------------------------------------------------------------------------------
-
-        $user->lastname = $request->input('lastname');
-        $user->firstname = $request->input('firstname');
-        $user->phone = $request->input('phone');
-        $user->email = $request->input('email');
-        $user->note = $request->input('note');
-        $user->lang = $request->input('lang');
+        $user->lastname = $request->lastname;
+        $user->firstname = $request->firstname;
+        $user->phone = $request->phone;
+        $user->email = $request->email;
+        $user->note = $request->note;
+        $user->lang = $request->lang;
         $user->last_loan_at = Carbon::now();
-        $newUser = !$user->exists;
         if (!$user->save()) {
             throw new \RuntimeException('Ukjent feil under lagring av bruker!');
         }
 
-        // Defer uniqueness check in case values are swapped
+        $user->setIdentifiers($request->identifiers);
 
-        $user->setIdentifiers($identifiers);
-
-        if ($newUser) {
+        if ($isNewUser) {
             return redirect()->action('LoansController@getIndex')
                 ->with('status', 'Brukeren ble opprettet.')
                 ->with('user', [
