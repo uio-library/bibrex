@@ -112,7 +112,7 @@
                   // prefetch: this.prefetch,
                   sufficient: 5,
                   indexRemote: false,
-                  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id', 'name'),
+                  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('id', 'name', 'identifiers'),
                   queryTokenizer: Bloodhound.tokenizers.whitespace,
                   identify: datum => datum.id,
                   prefetch: (this.prefetch ? {

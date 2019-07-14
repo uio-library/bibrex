@@ -63,7 +63,9 @@ class UsersController extends Controller
                 'type' => $user->alma_primary_id ? 'alma' : 'local',
                 'group' => $user->alma_user_group,
                 'name' => $user->lastname . ', ' . $user->firstname,
-                'identifiers' => $user->identifiers,
+                'identifiers' => $user->identifiers->map(function ($x) {
+                    return $x->value;
+                }),
             ];
         }
 
