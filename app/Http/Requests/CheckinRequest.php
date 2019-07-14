@@ -63,12 +63,18 @@ class CheckinRequest extends FormRequest
 
         $item = Item::withTrashed()->where('barcode', '=', $barcode)->first();
 
-        if (is_null($item) && !empty($library->library_code)) {
+        if (is_null($item)) {
             // Item doesn't exist locally, but perhaps in Alma?
-            // If the library doesn't have a library code set, it means we should not check Alma.
+            if (empty($library->library_code) || is_null($alma->key)) {
+                // Alma integration is not configured. Bail out.
+                return [
+                    'barcode' => [new ThingExists()],
+                ];
+            }
+
             $almaItem = $alma->items->fromBarcode($barcode);
             if (is_null($almaItem)) {
-                // Bail out, this thing really does not exist!
+                // Nope, not in Alma either. Bail out.
                 return [
                     'barcode' => [new ThingExists()],
                 ];
