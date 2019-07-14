@@ -60,11 +60,10 @@ class UsersController extends Controller
         foreach (User::with('identifiers')->get() as $user) {
             $users[] = [
                 'id' => $user->alma_primary_id ?? $user->id,
-                // 'primaryId' => $user->alma_primary_id,
+                'type' => $user->alma_primary_id ? 'alma' : 'local',
                 'group' => $user->alma_user_group,
                 'name' => $user->lastname . ', ' . $user->firstname,
                 'identifiers' => $user->identifiers,
-                'type' => 'local',
             ];
         }
 
@@ -87,6 +86,7 @@ class UsersController extends Controller
         $query = 'ALL~' . $request->input('query');
         $users = collect($alma->users->search($query, ['limit' => 5]))->map(function ($result) {
             return [
+                'type' => 'alma',
                 'id' => $result->primary_id,
                 'name' => "{$result->last_name}, {$result->first_name}",
             ];
