@@ -83,7 +83,7 @@ class Item extends Model
      */
     public function getAvailableAttribute()
     {
-        return is_null($this->attributes['available'] = $this->loans()->first());
+        return !count($this->loans);
     }
 
     public function allLoans()
