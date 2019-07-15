@@ -71,7 +71,8 @@ input {
         <div id="loginBox" class="card card-body bg-light hidden">
             <i class="halflings-icon lock"></i>
             <p>
-              Logg inn for å bruke BIBREX.
+                Bibrex kjenner ikke igjen maskinen din,
+                men du kan logge inn med brukernavn og passord.
             </p>
             @if (Session::has('loginfailed'))
             <p style="color:red;">
@@ -96,21 +97,21 @@ input {
 
 <script type="text/javascript">
 
-  if (window.location.search == '?logged_in=1') {
+  if (window.location.search.match(/logged_in=1/)) {
     // The last attempt of logging in returned a success response,
     // so we reloaded the page, but got back here. That's weird,
     // but do not attempt again to avoid an infinite loop.
   } else {
-
-    var xhr = new XMLHttpRequest();
-    xhr.addEventListener('readystatechange', function (response) {
-      if (this.readyState == 4) {
-        if (this.status == 204) {
+    const xhr = new XMLHttpRequest();
+    xhr.addEventListener('readystatechange', function () {
+      if (this.readyState === 4) {
+        if (this.status === 204) {
           window.location.replace('/libraries/login?logged_in=1')
-        } else if (this.status == 401) {
+        } else if (this.status === 401) {
           document.getElementById('loginBox').classList.remove('hidden');
         } else {
           document.getElementById('error').classList.remove('hidden');
+          console.error('Login check failed with status ' + this.status);
         }
       }
     });
