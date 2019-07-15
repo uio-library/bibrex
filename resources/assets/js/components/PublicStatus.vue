@@ -109,6 +109,7 @@
                 axios.get('/api/things?' + params)
                     .then(response => {
                         this.loading = false;
+                        this.err = false;
                         this.updatedAt = (new Date).toLocaleString();
                         this.libraries = {};
                         this.things = response.data.data.map(thing => {
@@ -133,7 +134,7 @@
                     .catch(error => {
                         console.error(error);
                         this.loading = false;
-                        this.err = true
+                        this.err = true;
                         setTimeout(() => this.load(), this.updateFreq * 1000);
                     });
             },
