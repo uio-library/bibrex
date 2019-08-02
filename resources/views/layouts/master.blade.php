@@ -60,8 +60,8 @@
 
         <ul class="navbar-nav ml-auto">
 
-          <li class="nav-item {{ strpos($_SERVER['REQUEST_URI'], '/about') === 0 ? ' active':'' }}">
-           <a class="nav-link" href="/about">
+          <li class="nav-item {{ strpos($_SERVER['REQUEST_URI'], '/help') === 0 ? ' active':'' }}">
+           <a class="nav-link" href="/help">
             <em class="far fa-question-circle"></em> Hjelp
           </a>
          </li>

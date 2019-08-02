@@ -14,7 +14,7 @@
 Route::permanentRedirect('/', '/loans');
 Route::permanentRedirect('/loans/index', '/loans');
 
-Route::view('/about', 'about');
+Route::view('/help', 'help');
 Route::view('/status', 'status')->name('status');
 
 Route::middleware(['guest'])->group(function () {
