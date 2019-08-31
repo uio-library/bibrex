@@ -17,8 +17,7 @@ class CreateDatabaseLogger
     {
         $logger = new Logger('bibrex');
         $logger->pushProcessor(new IntrospectionProcessor());
-        $conn = \DB::connection();
-        $logger->pushHandler(new DatabaseLoggingHandler($conn));
+        $logger->pushHandler(new DatabaseLoggingHandler());
 
         return $logger;
     }

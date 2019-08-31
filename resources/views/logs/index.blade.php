@@ -18,29 +18,39 @@
                 Loggmeldinger oppbevares i {{ config('logging.channels.postgres.days') }} dager før de slettes.
             </p>
         </div>
-            <table class="table table-striped table-sm">
-                @foreach ($items as $item)
+            <table class="table table-striped table-sm" style="font-size: 85%">
+                @foreach ($entries as $entry)
                     <tr>
                         <td valign="top" style="white-space:nowrap; padding-left: 20px">
-                            <small style="white-space:nowrap">{{ $item->time }}</small>
+                            <samp style="white-space:nowrap">{{ $entry->time }}</samp>
                         </td>
                         <td valign="top" style="white-space:nowrap">
-                            <span class="badge badge-{{ strtolower($item->level_name) != 'error' ? strtolower($item->level_name) : 'danger' }}">{{ $item->level_name }}</span>
+                            <span class="badge badge-{{ strtolower($entry->level_name) != 'error' ? strtolower($entry->level_name) : 'danger' }}">{{ $entry->level_name }}</span>
                         </td>
                         <td>
-                            <?php
-                            if (strpos($item->message, PHP_EOL) !== false) {
-                                $spl = explode(PHP_EOL, htmlspecialchars($item->message));
-                                $i0 = array_shift($spl);
-                                echo '<div><a href="#" onclick="$(this).parent().next(\'.message-collapsed\').toggle(); return false;">' . $i0 . '</a></div>';
-                                echo '<div class="message-collapsed" style="display:none;">' . implode('<br>', $spl) . '</div>';
-                            } else {
-                                echo $item->message;
-                            }
-                            ?>
+                            @if (count($entry->lines) == 1)
+                                <samp>{!! $entry->lines[0] !!}</samp>
+                            @else
+                                <div>
+                                    <a href="#" onclick="$(this).parent().next('.message-collapsed').toggle(); return false;">
+                                        <samp>{{ $entry->lines[0] }}</samp>
+                                    </a>
+                                </div>
+                                <div class="message-collapsed" style="display: none;">
+                                    <samp>
+                                        @foreach (array_slice($entry->lines, 1) as $line)
+                                            {{ $line }}<br>
+                                        @endforeach
+                                    </samp>
+                                </div>
+                            @endif
                         </td>
                         <td style="white-space:nowrap; text-align: right; padding-right: 20px;">
-                            <small>{{ \Illuminate\Support\Arr::get($item->context, 'library') }}</small>
+                            @if (\Illuminate\Support\Arr::has($entry->context, 'library'))
+                                <a href="{{ action('LogEntryController@index', ['library' => \Illuminate\Support\Arr::get($entry->context, 'library')]) }} " class="badge badge-warning">
+                                    {{ \Illuminate\Support\Arr::get($entry->context, 'library') }}
+                                </a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
@@ -49,25 +59,3 @@
 
 @stop
 
-
-@section('scripts')
-
-<script type="text/javascript">
-
-    $('.del-link').on('click', function(e) {
-        e.preventDefault();
-        var url = "{{ action('LogsController@postDestroy') }}";
-        var data = $(e.target).closest('tr').data('content');
-        $.post(url, { content: data })
-        .done(function(response) {
-            if (response.success) {
-                $(e.target).closest('tr').remove();
-            } else {
-                alert('Oi, det oppsto en feil');
-            }
-        });
-    });
-
-</script>
-
-@stop

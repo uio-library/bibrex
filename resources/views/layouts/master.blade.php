@@ -54,7 +54,7 @@
           </li>
 
           <li class="nav-item {{ strpos($_SERVER['REQUEST_URI'], '/logs') === 0 ? ' active':'' }}">
-            <a class="nav-link" href="{{ URL::action('LogsController@getIndex') }}">Logg</a>
+            <a class="nav-link" href="{{ URL::action('LogEntryController@index') }}">Logg</a>
           </li>
         </ul>
 

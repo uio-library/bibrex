@@ -25,7 +25,7 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', 'LibrariesController@getLogout');
-    Route::resource('logs', 'LogsController')->only(['index']);  // 'destroy';
+    Route::resource('logs', 'LogEntryController')->only(['index']);  // 'destroy';
 
     // --[[ LIBRARY ]]--
     Route::get('/libraries', 'LibrariesController@getIndex');
@@ -97,6 +97,5 @@ Route::middleware(['auth'])->group(function () {
 
 
     // --[[ LOG ]]--
-    Route::get('/logs', 'LogsController@getIndex');
-    Route::post('/logs/destroy', 'LogsController@postDestroy');
+    Route::get('/logs', 'LogEntryController@index');
 });
