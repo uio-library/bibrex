@@ -24,7 +24,6 @@
         "pusher/pusher-php-server": "~4.0",
         "scriptotek/alma-client": "dev-master",
         "sentry/sentry-laravel": "^1.1",
-        "shiftonelabs/laravel-nomad": "^1.0",
         "zircote/swagger-php": "^3.0"
     },
     "require-dev": {

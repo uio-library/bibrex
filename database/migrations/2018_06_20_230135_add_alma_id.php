@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use App\Database\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class AddAlmaId extends Migration
@@ -14,8 +14,8 @@ class AddAlmaId extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->passthru('citext', 'alma_primary_id')->nullable();
-            $table->passthru('citext', 'alma_user_group')->nullable();
+            $table->citext('alma_primary_id')->nullable();
+            $table->citext('alma_user_group')->nullable();
         });
     }
 

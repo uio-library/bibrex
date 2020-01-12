@@ -3,7 +3,7 @@
 use App\User;
 use App\UserIdentifier;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use App\Database\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateUserIdentifiers extends Migration
@@ -18,7 +18,7 @@ class CreateUserIdentifiers extends Migration
         Schema::create('user_identifiers', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->passthru('citext', 'value')->unique();
+            $table->citext('value')->unique();
             $table->string('type');
 
             $table->foreign('user_id')
@@ -55,8 +55,8 @@ class CreateUserIdentifiers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->passthru('citext', 'barcode')->unique()->nullable();
-            $table->passthru('citext', 'university_id')->unique()->nullable();
+            $table->citext('barcode')->unique()->nullable();
+            $table->citext('university_id')->unique()->nullable();
         });
 
         foreach (UserIdentifier::get() as $userIdentifier) {
