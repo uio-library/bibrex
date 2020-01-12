@@ -2,7 +2,7 @@ import './bootstrap';
 import Vue from 'vue'
 import VueShortkey from 'vue-shortkey'
 import ToggleButton from 'vue-js-toggle-button';
-import { Tooltip } from 'bootstrap-vue/es/directives';
+import { VBTooltipPlugin } from 'bootstrap-vue';
 
 import Datepicker from 'vuejs-datepicker';
 import { nbNO } from 'vuejs-datepicker/dist/locale'
@@ -23,7 +23,7 @@ import UsersTableComponent from './components/UsersTable.vue';
 import PublicStatusComponent from './components/PublicStatus.vue';
 
 Vue.use(VueI18n);
-Vue.use(Tooltip);
+Vue.use(VBTooltipPlugin);
 Vue.use(VueShortkey);
 Vue.use(ToggleButton);
 

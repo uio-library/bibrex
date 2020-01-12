@@ -180,7 +180,7 @@
 import { get } from 'lodash/object';
 import axios from 'axios';
 import platform from 'platform';
-import bPopover from 'bootstrap-vue/es/components/popover/popover';
+import { BPopover } from 'bootstrap-vue/esm/components/popover';
 import Typeahead from './Typeahead';
 import SpinButton from './SpinButton';
 
@@ -417,7 +417,7 @@ export default {
         this.checkIdleTime();
     },
     components: {
-        'b-popover': bPopover,
+        'b-popover': BPopover,
         'typeahead': Typeahead,
         'spin-button': SpinButton,
     }

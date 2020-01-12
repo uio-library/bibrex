@@ -2,7 +2,8 @@
 @import "variables";
 
 // Bootstrap
-@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap';
+@import '~bootstrap-vue';
 
 // Font awesome
 @import "~@fortawesome/fontawesome-pro/scss/fontawesome";

@@ -58,13 +58,13 @@
 <script>
     import axios from 'axios';
     import { cloneDeep } from 'lodash/lang';
-    import bFormFile from 'bootstrap-vue/es/components/form-file/form-file';
+    import { BFormFile } from 'bootstrap-vue/esm/components/form-file';
 
     const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
     export default {
         components: {
-            'b-form-file': bFormFile,
+            'b-form-file': BFormFile,
         },
         props: {
             thingId: Number,
