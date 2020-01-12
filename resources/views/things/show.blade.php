@@ -9,7 +9,7 @@
   @endif
 
   @if ($thing->id)
-  <thing-settings-editor :thing-id="{{ $thing->id }}" :data="{{ json_encode($thing->image) }}"></thing-settings-editor>
+        <thing-settings-editor :thing-id="{{ $thing->id }}" :data="{{ json_encode($thing->library_settings) }}"></thing-settings-editor>
   @endif
 
  @if($thing->id)
@@ -25,7 +25,7 @@
                     <i class="far fa-question-circle"></i>
                     Hjelp
                 </a>
-                <a href="{{ action('ItemsController@editForm', ['id' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
+                <a href="{{ action('ItemsController@editForm', ['item' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
                     <i class="far fa-plus-hexagon"></i>
                     Nytt eksemplar
                 </a>
