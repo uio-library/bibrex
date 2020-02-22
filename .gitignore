@@ -28,3 +28,4 @@ current_domain
 *.jar
 .circleci/*.sh
 public/storage
+.phpunit.result.cache
