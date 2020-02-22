@@ -121,8 +121,16 @@
             <li>
                 Systemlogger trengst for å kunne identifisera og retta opp eventuelle feil i systemet.
                 Desse lagrast lokalt i {{ config('logging.channels.postgres.days') }} dagar.
-                Reine feilmeldingar lagrast i tillegg i tenesta <a href="https://sentry.io/">Sentry</a>
+                Feilmeldingar lagrast i tillegg i tenesta <a href="https://sentry.io/">Sentry</a>
                 inntil den aktuelle feilen har vorte retta opp og maks 90 dagar.
+            </li>
+            <li>
+                Bibrex nyttar <a href="https://pusher.com/">Pusher</a> for å sende pushvarsel
+                til andre Bibrex-maskinar etter eit utlån eller ein retur, for å signalisere
+                at lista over utlån må oppdaterast.
+                Av personvernomsyn blir ingen informasjon om brukare eller lån sendt via Pusher,
+                kun generiske meldingar om at «lista over utlån treng oppdatering».
+                Mottakarmaskinen må så sjølv hente inn oppdaterte data.
             </li>
         </ul>
     </div>
