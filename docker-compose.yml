@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  db:
+    container_name: bibrex-postgres
+    # build: docker/db
+    image: postgres:11.4
+    environment:
+      POSTGRES_USER: bibrex_test
+      POSTGRES_DB: bibrex_test
+    ports:
+     - 5432:5432
+  # You can uncomment the line below to have a local volume bound onto the container, or
+  # visit https://hub.docker.com/r/stain/jena-fuseki/ for other alternatives
+  # volumes:
+  #  - ${PWD}/fuseki:/fuseki
+  app:
+    container_name: bibrex
+    build: .
+    # volumes:
+    #  - .:/www
+    links:
+      - db
+    ports:
+      - 8000:80
+    depends_on:
+      - db
+
+# once the environment has been created:
+# 1. create dataset
+# >curl -I -u admin:admin -XPOST --data "dbName=skosmos&dbType=tdb" -G http://localhost:3030/$/datasets/
+# 2. load example vocabulary
+# >curl -I -X POST -H Content-Type:text/turtle -T yso.ttl -G http://localhost:3030/skosmos/data
