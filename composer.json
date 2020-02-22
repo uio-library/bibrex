@@ -33,7 +33,7 @@
         "barryvdh/laravel-ide-helper": "^2.6",
         "deployer/deployer": "^6.2",
         "deployer/recipes": "^6.1",
-        "filp/whoops": "^2.0",
+        "facade/ignition": "^1.4",
         "fzaninotto/faker": "^1.4",
         "laravel/dusk": "^5.0",
         "laravel/tinker": "^2.0",
