@@ -92,7 +92,7 @@ class ItemsController extends Controller
         }
         return response()->view('items.edit', array(
             'item' => $item,
-            'things' => Thing::get(),
+            'things' => Thing::orderBy('properties->name->nob')->get(),
         ));
     }
 
