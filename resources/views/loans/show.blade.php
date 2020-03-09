@@ -129,7 +129,7 @@
                     @endif
                     @if (!$loan->trashed())
                         <div>
-                          <a class="btn btn-primary" href="{{ URL::action('NotificationsController@create', ['loan_id' => $loan->id]) }}">
+                          <a class="btn btn-primary" href="{{ URL::action('NotificationsController@create', ['loan' => $loan->id]) }}">
                             Send manuell påminnelse
                           </a>
                         </div>
