@@ -150,6 +150,10 @@ jobs:
             - composer-cache
 
       - run:
+          name: Remove composer.lock
+          command: rm composer.lock
+
+      - run:
           name: Installing Composer dependencies
           command: composer install -n --prefer-dist
 
