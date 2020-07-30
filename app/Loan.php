@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Notifications\ExtendedDatabaseNotification;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
@@ -38,6 +39,17 @@ class Loan extends Model
      * @var array
      */
     protected $appends = ['url', 'created_at_relative', 'days_left'];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
 
     public function user()
     {

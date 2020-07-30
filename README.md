@@ -71,9 +71,9 @@ This contains all the information needed to deploy the app.
 
 To run browser tests, download and start Selenium, then run `artisan dusk`
 
-	wget https://selenium-release.storage.googleapis.com/3.141/selenium-server-standalone-3.141.59.jar
-	java -jar selenium-server-standalone-3.141.59.jar &
-	TEST_BROWSER=chrome php artisan dusk
+    wget https://selenium-release.storage.googleapis.com/3.141/selenium-server-standalone-3.141.59.jar
+    java -jar selenium-server-standalone-3.141.59.jar &
+    TEST_BROWSER=chrome php artisan dusk
 
 Unfortunately, testing with Firefox doesn't work at the moment due to an incompability between Selenium and php-webdriver.
 See https://github.com/facebook/php-webdriver/issues/469.
