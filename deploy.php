@@ -1,7 +1,10 @@
 <?php
 namespace Deployer;
 
-with(\Dotenv\Dotenv::create(__DIR__))->load();
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 # https://github.com/deployphp/deployer/blob/master/recipe/laravel.php
 require 'recipe/laravel.php';
