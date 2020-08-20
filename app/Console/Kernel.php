@@ -30,8 +30,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command(SendReminders::class)
-        //     ->dailyAt('12:00');
+        $schedule->command(SendReminders::class)
+            ->dailyAt('12:00');
 
         $schedule->command(Anonymize::class)
             ->dailyAt('04:00')

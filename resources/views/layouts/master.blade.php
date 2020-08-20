@@ -91,10 +91,6 @@
 
   @show
 
-  <alert variant="danger">
-    Påminnelser er deaktivert på grunn av stengte bibliotek. Ingen påminnelser sendes ut fra Bibrex.
-  </alert>
-
   @if (Session::has('status'))
     <alert variant="success" v-cloak>
       {!! Session::get('status') !!}
