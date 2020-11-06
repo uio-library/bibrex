@@ -9,7 +9,7 @@ $dotenv->load();
 # https://github.com/deployphp/deployer/blob/master/recipe/laravel.php
 require 'recipe/laravel.php';
 require 'recipe/sentry.php';
-require 'vendor/deployer/recipes/recipe/slack.php';
+require 'recipe/slack.php';
 
 task('npm:install', 'npm install');
 task('npm:build', 'npm run production');
