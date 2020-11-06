@@ -25,9 +25,9 @@ class LoansController extends Controller
      * @static array
      */
     protected $messages = [
-        'user.required' => 'Trenger enten navn eller låne-ID.',
-        'user.id.required_without' => 'Trenger enten navn eller låne-ID.',
-        'user.name.required_without' => 'Trenger enten navn eller låne-ID.',
+        'user.required' => 'Trenger enten navn eller lånekortnummer.',
+        'user.id.required_without' => 'Trenger enten navn eller lånekortnummer.',
+        'user.name.required_without' => 'Trenger enten navn eller lånekortnummer.',
         'thing.required' => 'Uten ting blir det bare ingenting.',
     ];
 

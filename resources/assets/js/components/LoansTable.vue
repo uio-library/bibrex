@@ -40,11 +40,11 @@
                           <a v-else-if="loan.user.identifiers.length"
                               :href="loan.user.url + '/sync'"
                               v-b-tooltip.hover
-                              title="Lokal bruker med låne-ID. Prøv å importere brukeropplysninger fra Alma"
+                              title="Lokal bruker med lånekortnummer. Prøv å importere brukeropplysninger fra Alma"
                           >
                               <i class="far fa-user text-warning"></i>
                           </a>
-                          <i v-else class="far far fa-user text-danger" v-b-tooltip.hover title="Lokal bruker uten låne-ID"></i>
+                          <i v-else class="far far fa-user text-danger" v-b-tooltip.hover title="Lokal bruker uten lånekortnummer"></i>
                           <a :href="loan.user.url">{{ loan.user.name }}</a>
                       </td>
 
@@ -63,7 +63,7 @@
                           <div v-if="!loan.user.in_alma && !loan.user.identifiers.length">
                               <a :href="loan.user.url + '/edit'" class="text-danger">
                                   <em class="far fa-exclamation-triangle"></em>
-                                  Bruker mangler låne-ID!
+                                  Bruker mangler lånekortnummer!
                               </a>
                           </div>
 

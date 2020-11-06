@@ -89,7 +89,7 @@
                 Fyrste gong ein brukar låner noko blir fylgjande importert frå Alma:
                 <ul>
                     <li>
-                        Låne-ID og Feide-ID for å kunne identifisere brukaren. Låne-ID trengs for å kunne scanne lånekortet,
+                        Lånekortnummer og Feide-ID for å kunne identifisere brukaren. Lånekortnummer trengs for å kunne scanne lånekortet,
                         medan Feide-ID trengs som stabil identifikator hvis brukaren får nytt kort.
                     </li>
                     <li>

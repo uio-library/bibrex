@@ -54,7 +54,7 @@
                     @foreach ($user->identifiers as $idx => $identifier)
                         <div class="row px-3">
                             <select name="identifier_type_{{ $idx }}" class="form-control col-sm-4"{{ $user->in_alma ? ' disabled="disabled"' : '' }}>
-                                <option value="barcode"{{ old('identifier_type_' . $idx, $identifier->type) == 'barcode' ? ' selected="selected"' : '' }}>Låne-ID / barcode</option>
+                                <option value="barcode"{{ old('identifier_type_' . $idx, $identifier->type) == 'barcode' ? ' selected="selected"' : '' }}>Lånekortnummer / barcode</option>
                                 <option value="university_id"{{ old('identifier_type_' . $idx, $identifier->type) == 'university_id' ? ' selected="selected"' : '' }}>Feide-ID / university ID</option>
                             </select>
                             <input type="text" name="identifier_value_{{ $idx }}"
@@ -65,7 +65,7 @@
                     @if (!$user->in_alma)
                         <div class="row px-3">
                             <select name="identifier_type_new" class="form-control col-sm-4"{{ $user->in_alma ? ' disabled="disabled"' : '' }}>
-                                <option value="barcode"{{ old('identifier_type_new') == 'barcode' ? ' selected="selected"' : '' }}>Låne-ID / barcode</option>
+                                <option value="barcode"{{ old('identifier_type_new') == 'barcode' ? ' selected="selected"' : '' }}>Lånekortnummer / barcode</option>
                                 <option value="university_id"{{ old('identifier_type_new') == 'university_id' ? ' selected="selected"' : '' }}>Feide-ID / university ID</option>
                             </select>
                             <input type="text" name="identifier_value_new"
@@ -75,7 +75,7 @@
                     @endif
 
                     <small class="form-text text-muted">
-                        Låne-ID (Strekkoden fra lånekortet) eller Feide-ID (brukernavn@uio.no). <em>Kan</em> stå blankt, men <em>helst</em> ikke.
+                        Lånekortnummer (Strekkoden fra lånekortet) eller Feide-ID (brukernavn@uio.no). <em>Kan</em> stå blankt, men <em>helst</em> ikke.
                     </small>
                 </div>
             </div>

@@ -27,7 +27,7 @@
                                  title="Bruker">
                             <ul>
                                 <li>
-                                    Her leser du vanligvis inn <a href="https://www.ub.uio.no/bruk/alt-om-lan/finn-lanenummer.html" target="_blank">låne-ID</a>, men du kan også skrive inn
+                                    Her leser du vanligvis inn <a href="https://www.ub.uio.no/bruk/alt-om-lan/finn-lanenummer.html" target="_blank">lånekortnummer</a>, men du kan også skrive inn
                                     personens navn.
                                 </li>
                                 <li>
@@ -52,12 +52,12 @@
                             @input="setCurrentUser($event)"
                             prefetch="/users.json"
                             remote="/users/search-alma"
-                            placeholder="Navn eller låne-ID"
+                            placeholder="Navn eller lånekortnummer"
                             :min-length="4"
                             :alma="true"
                         ></typeahead>
                         <!--<small class="form-text text-muted" v-show="!errors.user">
-                            Navn eller låne-ID
+                            Navn eller lånekortnummer
                         </small>-->
                         <div class="text-danger" v-show="errors.user" v-html="errors.user"></div>
                     </div>

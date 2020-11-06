@@ -145,12 +145,12 @@ class UsersController extends Controller
 
         $identifier = $request->identifier;
         if (empty($identifier)) {
-            return back()->with('error', 'Du må registrere låne-ID.');
+            return back()->with('error', 'Du må registrere lånekortnummer.');
         }
 
         $other = User::fromIdentifier($identifier);
         if (!is_null($other) && $other->id != $user->id) {
-            return back()->with('error', 'Låne-ID-en er allerede koblet til en annen Bibrex-bruker ' .
+            return back()->with('error', 'Lånekortnummeret er allerede koblet til en annen Bibrex-bruker ' .
                 '(' . $other->name . '). Du kan slå dem sammen fra brukeroversikten.');
         }
 

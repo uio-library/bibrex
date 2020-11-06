@@ -57,7 +57,7 @@
               <tr>
                 <td>
                   <select name="identifier_type_{{ $idx }}">
-                    <option value="barcode"{{ $identifier->type == 'barcode' ? ' selected="selected' : '' }}>Låne-ID</option>
+                    <option value="barcode"{{ $identifier->type == 'barcode' ? ' selected="selected' : '' }}>Lånekortnummer</option>
                     <option value="university_id"{{ $identifier->type == 'university_id' ? ' selected="selected' : '' }}>Feide-ID</option>
                   </select>
                 </td>

@@ -62,7 +62,7 @@
 
         <li class="list-group-item">
             <div class="form-group row">
-                <label for="temporary_barcode" class="col-sm-2 col-form-label">Midlertidig lånekort (låne-ID):</label>
+                <label for="temporary_barcode" class="col-sm-2 col-form-label">Midlertidig lånekort (lånekortnummer):</label>
                 <div class="col-sm-10">
                     @component('components.text', ['name' => 'temporary_barcode', 'value' => $library->temporary_barcode])
                     @endcomponent
