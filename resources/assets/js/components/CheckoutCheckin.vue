@@ -32,7 +32,7 @@
                                 </li>
                                 <li>
                                     <strong>Hvis personen ikke blir funnet</strong>:
-                                    Bibrex søker i sanntid mot Alma. Hvis en person ikke finnes der kan du skynde deg og registrere hen i <a href="https://bim.bibsys.no/" target="_blank">BIM</a> (<a href="https://www.uio.no/for-ansatte/enhetssider/ub/aktuelt/aktuelle-saker/2016/bim-bruksanvisning.pdf" target="_blank">bruksanvisning</a>).
+                                    Bibrex søker i sanntid mot Alma. Hvis en person ikke finnes der, se <a href="https://www.uio.no/for-ansatte/enhetssider/ub/publikumsarbeid/brukerhandtering-i-alma.html"> Brukerhåndtering i Alma </a> for informasjon om hvordan du legger til brukere i Alma.
                                     I spesielle tilfeller, som når en student har fått et kort som ikke har blitt importert enda, kan du i stedet <a href="/users/_new/edit">opprette</a> en lokal bruker i Bibrex.
                                 </li>
                                 <li>
