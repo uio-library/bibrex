@@ -14,7 +14,9 @@ require 'recipe/slack.php';
 task('npm:install', 'npm install');
 task('npm:build', 'npm run production');
 task('bibrex:version-notify', 'php artisan bibrex:version-notify');
-task('self-diagnosis', 'php artisan self-diagnosis');
+
+# 2020-11-07 Disable until https://github.com/beyondcode/laravel-self-diagnosis/pull/102 is merged
+# task('self-diagnosis', 'php artisan self-diagnosis');
 
 // Hosts
 inventory('hosts.yml');
@@ -57,7 +59,7 @@ before('deploy:symlink', 'artisan:migrate');
 before('deploy:symlink', 'artisan:route:cache');
 
 after('deploy:symlink', 'artisan:queue:restart');
-after('deploy:symlink', 'self-diagnosis');
+# after('deploy:symlink', 'self-diagnosis');
 
 after('deploy:failed', 'slack:notify:failure');
 after('success', 'slack:notify:success');
