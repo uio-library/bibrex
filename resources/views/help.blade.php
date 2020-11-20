@@ -40,7 +40,7 @@
                 Ei lånetid på 1 dag inneber dermed at tingen kan lånast ut dagen.
             </li>
             <li>
-                Neste morgon blir første påminning sendt.
+                Første påminning blir sendt klokka 12.00 påfølgjande dag, om tingen fortsatt ikkje har vorte levert.
             </li>
             <li>
                 Det blir ikkje sendt fleire påminningar automatisk, så blir ikkje tingen levert må ein følje opp manuelt
