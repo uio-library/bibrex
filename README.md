@@ -4,7 +4,25 @@
 
 ## BIBREX
 
-Simple lending system for things that integrates with Alma.
+Bibrex is a simple system to manage and circulate things that are not well fit for bibliographic description and inclusion in the library catalogue, such as extension coords and other cables, computers, cameras, calculators and so on.
+Users can be created locally, but also imported from Alma.
+The system is created for use by librarians, not end users.
+
+![](doc/bibrex-checkout.png)
+
+Functionality:
+
+- Two-level data model based on Things and Items, where the Thing is the generalization and the Item is a concrete physical item with a barcode/RFID tag.
+- Alma user integration
+- Loan time can be customized per thing and per loan.
+- Reminders sent in the user's preferred language (currently support for Bokmål, Nynorsk or English)
+- GDPR friendly. See section on privacy below.
+
+Missing functionality:
+
+- Reservations
+- Discovery/search for end users. We have a very simple public status display.
+- No support for kits with multiple parts with their own barcode/RFID tag.
 
 ### Setup for development
 
@@ -13,12 +31,13 @@ NodeJS and PostgresSQL.
 
 #### Database setup
 
-Is Postgres needed? Bibrex mostly make use of the database-agnostic layer provided by Laravel,
+Bibrex mostly make use of the database-agnostic layer provided by Laravel,
 but has a few couplings to PostgresSQL through the use of Postgres-specific functionality like
 the [CITEXT](https://www.postgresql.org/docs/9.1/citext.html) and
 [JSONB data types](https://www.postgresql.org/docs/9.4/datatype-json.html),
 and the [ILIKE operator](https://www.postgresql.org/docs/8.3/functions-matching.html).
-It shouldn't be too much effort to make it work with another databse if needed though.
+It shouldn't be too much effort to make it work with another databse if needed,
+but it's definitely easier to get started with Postgres.
 
 For a local setup, start by creating a Postgres user, and a database:
 
