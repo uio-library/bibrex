@@ -23,7 +23,7 @@
 	  </div>
 
     <div class="form-group row">
-        <label for="name" class="col-sm-2 control-label">Engelsk navn</label>
+        <label for="name_eng" class="col-sm-2 control-label">Engelsk navn</label>
         <div class="col-sm-10">
             @component('components.text', ['name' => 'name_eng', 'value' => old('name_eng')])
             @endcomponent
