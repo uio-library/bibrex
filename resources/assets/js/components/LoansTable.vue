@@ -34,7 +34,7 @@
                       </td>
 
                       <td :data-order="loan.user.name">
-                          <i v-if="loan.user.in_alma" class="far fa-user-check text-success" v-b-tooltip.hover title="Importert fra Alma"></i>
+                          <i v-if="loan.user.in_alma" class="fas fa-user-check text-success" v-b-tooltip.hover title="Importert fra Alma"></i>
                           <a v-else-if="loan.user.identifiers.length"
                               :href="loan.user.url + '/sync'"
                               v-b-tooltip.hover
