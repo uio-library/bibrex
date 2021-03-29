@@ -46,7 +46,7 @@ test_base: &test_base
         command: |
           sudo apt-get update -y
           sudo mkdir -p /usr/share/man/man7/
-          sudo apt-get install -y postgresql-9.6 libpq-dev
+          sudo apt-get install -y postgresql-9.6 libpq-dev libonig-dev
           sudo docker-php-ext-install mbstring pdo_pgsql
           sudo apt-get install -y imagemagick libmagickwand-dev
           sudo sh -c 'yes "" | pecl install imagick'
@@ -123,7 +123,7 @@ jobs:
           command: |
             sudo apt-get update -y
             sudo mkdir -p /usr/share/man/man7/
-            sudo apt-get install -y postgresql-9.6 libpq-dev
+            sudo apt-get install -y postgresql-9.6 libpq-dev libonig-dev
             sudo docker-php-ext-install mbstring pdo_pgsql
             sudo apt-get install -y imagemagick libmagickwand-dev
             sudo sh -c 'yes "" | pecl install imagick'
