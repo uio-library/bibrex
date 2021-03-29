@@ -88,11 +88,24 @@ This contains all the information needed to deploy the app.
 
 ### Tests
 
-To run browser tests, download and start Selenium, then run `artisan dusk`
+Start by routing `bibrex.test` to localhost by adding an entry to `/etc/hosts`:
 
-    wget https://selenium-release.storage.googleapis.com/3.141/selenium-server-standalone-3.141.59.jar
-    java -jar selenium-server-standalone-3.141.59.jar &
-    TEST_BROWSER=chrome php artisan dusk
+    127.0.0.1 bibrex.test
+
+Then start a development server:
+
+    php artisan serve --host=bibrex.test --no-interaction
+
+In a new terminal, install/update/start Selenium using `webdriver-manager`:
+
+    npm i -g webdriver-manager
+    webdriver-manager clean
+    webdriver-manager update
+    webdriver-manager start
+
+In a third terminal, run the tests:
+
+    SELENIUM_BROWSER_NAME=chrome php artisan dusk
 
 Unfortunately, testing with Firefox doesn't work at the moment due to an incompability between Selenium and php-webdriver.
 See https://github.com/facebook/php-webdriver/issues/469.
