@@ -24,11 +24,9 @@
                       <td>
                           <a :href="loan.url">
                             <span v-if="loan.item.thing.id == 1">
-                              <em class="far fa-book"></em>
                               {{ loan.item.note }}
                             </span>
                             <span v-else>
-                              <em class="far fa-hexagon"></em>
                               {{ loan.item.thing.properties.name.nob }}
                               <span v-if="loan.item.note">({{ loan.item.note }})</span>
                             </span>
@@ -55,35 +53,35 @@
                       <td :data-order="loan.due_at">
                           <a :class="loan.dueDateClass" title="Rediger forfallsdato" :href="loan.url + '/edit'">
                               {{ loan.dueDateText }}
-                              <i class="far fa-pencil"></i>
+                              <i class="fas fa-pencil-alt"></i>
                           </a>
                       </td>
 
                       <td>
                           <div v-if="!loan.user.in_alma && !loan.user.identifiers.length">
                               <a :href="loan.user.url + '/edit'" class="text-danger">
-                                  <em class="far fa-exclamation-triangle"></em>
+                                  <em class="fas fa-exclamation-triangle"></em>
                                   Bruker mangler lånekortnummer!
                               </a>
                           </div>
 
                           <div v-for="blocknote in loan.user.blocks">
                               <span class="text-danger" v-b-tooltip.hover title="Blokkeringsmelding i Alma">
-                                  <em class="far fa-exclamation-triangle"></em>
+                                  <em class="fas fa-exclamation-triangle"></em>
                                   {{ blocknote.block_description.desc }}
                               </span>
                           </div>
 
                           <div v-if="loan.user.fees != 0">
                               <span class="text-danger" v-b-tooltip.hover title="Utestående gebyr i Alma">
-                                  <em class="far fa-exclamation-triangle"></em>
+                                  <em class="fas fa-exclamation-triangle"></em>
                                   Bruker har {{ loan.user.fees }},- i utestående gebyr i Alma.
                               </span>
                           </div>
 
                           <div v-if="!loan.user.email" class="text-danger">
                               <a :href="loan.user.url + '/edit'" class="text-danger">
-                                  <em class="far fa-exclamation-triangle"></em>
+                                  <em class="fas fa-exclamation-triangle"></em>
                                   Bruker mangler e-postadresse!
                               </a>
                           </div>

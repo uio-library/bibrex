@@ -31,7 +31,7 @@
                         <a href="{{ URL::action('ItemsController@show', $loan->item->id) }}"><samp>{{ $loan->item->barcode }}</samp></a>
                         @if ($loan->item->trashed())
                             <span class="text-danger">
-                                <i class="far fa-exclamation-triangle"></i>
+                                <i class="fas fa-exclamation-triangle"></i>
                                 Eksemplaret er slettet
                             </span>
                         @endif
@@ -146,7 +146,7 @@
                 <div class="col">
                     @if ($loan->is_lost)
                         <span class="text-danger">
-                            <i class="far fa-exclamation-triangle"></i>
+                            <i class="fas fa-exclamation-triangle"></i>
                             Markert som tapt
                             {{ $loan->deleted_at }}
                         </span>

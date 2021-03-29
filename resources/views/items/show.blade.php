@@ -10,11 +10,11 @@
             @if ($item->trashed())
 
               <h5 class="col mb-0 text-danger">
-                <i class="far fa-trash-alt"></i> <s>Eksemplar #{{ $item->id }}</s> ( Dette eksemplaret er slettet)
+                <i class="fas fa-trash"></i> <s>Eksemplar #{{ $item->id }}</s> ( Dette eksemplaret er slettet)
               </h5>
 
               <a class="btn btn-warning col col-auto mx-1" href="{{ URL::action('ItemsController@restore', $item->id) }}">
-                <i class="far fa-undo"></i>
+                <i class="fas fa-undo"></i>
                 Gjenopprett
               </a>
 
@@ -23,18 +23,18 @@
               <h5 class="col mb-0">Eksemplar #{{ $item->id }}</h5>
 
               <a href="{{ URL::action('ItemsController@editForm', $item->id) }}" class="col col-auto mx-2 btn btn-primary">
-                  <i class="far fa-pencil-alt"></i>
+                  <i class="fas fa-pencil-alt"></i>
                   Rediger
               </a>
 
-              <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ItemsController@delete', $item->id) }}">
-                  <i class="far fa-trash"></i>
-                  Slett
+              <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ItemsController@lost', $item->id) }}">
+                  <i class="fas fa-skull-crossbones"></i>
+                  Merk som tapt
               </a>
 
-              <a class="btn btn-warning col-auto mx-1" href="{{ URL::action('ItemsController@lost', $item->id) }}">
-                  <i class="far fa-trash"></i>
-                  Tapt
+              <a class="btn btn-danger col-auto mx-1" href="{{ URL::action('ItemsController@delete', $item->id) }}">
+                  <i class="fas fa-trash"></i>
+                  Slett
               </a>
 
             @endif
@@ -107,7 +107,7 @@
                   <div class="col">
                       @if ($item->is_lost)
                           <span class="text-danger">
-                            <i class="far fa-exclamation-triangle"></i>
+                            <i class="fas fa-exclamation-triangle"></i>
                             Dette eksemplaret er tapt.
                           </span>
                       @else
@@ -150,7 +150,7 @@
                 @if ($lastLoan->trashed())
                     @if ($lastLoan->is_lost)
                       <span class="text-danger">
-                        <i class="far fa-exclamation-triangle"></i>
+                        <i class="fas fa-exclamation-triangle"></i>
                         Markert som tapt
                         {{ $lastLoan->deleted_at }}
                       </span>

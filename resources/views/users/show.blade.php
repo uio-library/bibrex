@@ -12,12 +12,12 @@
             </h5>
 
             <a href="{{ URL::action('UsersController@getEdit', $user->id) }}" class="col col-auto mx-1 btn btn-primary">
-                <i class="far fa-pencil-alt"></i>
+                <i class="fas fa-pencil-alt"></i>
                 Rediger
             </a>
 
               <a class="btn btn-warning col-auto mx-1 mr-3" href="{{ URL::action('UsersController@deleteForm', $user->id) }}">
-                  <i class="far fa-trash"></i>
+                  <i class="fas fa-trash"></i>
                   Slett
               </a>
         </div>
@@ -66,13 +66,13 @@
             @if ($user->in_alma)
               Alma-bruker
                 <a href="{{ URL::action('UsersController@sync', $user->id) }}" class="col col-auto mx-1 btn link-btn">
-                    <i class="far fa-sync-alt"></i>
+                    <i class="fas fa-sync-alt"></i>
                     Hent oppdaterte data fra Alma
                 </a>
             @else
               Lokal bruker
                 <a href="{{ URL::action('UsersController@connectForm', $user->id) }}" class="col col-auto mx-1 btn btn-primary">
-                    <i class="far fa-link"></i>
+                    <i class="fas fa-link"></i>
                     Koble med Alma-bruker
                 </a>
             @endif
@@ -95,7 +95,7 @@
               @endforeach
             @if (!count($user->getAllIdentifierValues()))
               <span class="text-danger">
-                <em class="far fa-exclamation-triangle"></em>
+                <em class="fas fa-exclamation-triangle"></em>
                 Ingen identifikatorer registrert!
               </span>
             @endif

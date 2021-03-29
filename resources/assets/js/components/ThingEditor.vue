@@ -24,25 +24,24 @@
                     </h5>
                     <div v-if="editMode">
                         <button type="button" class="btn btn-warning col-auto mx-1" @click="reset()" v-if="!isNew">
-                            <i class="far fa-pencil"></i>
                             Avbryt
                         </button>
                         <button type="submit" class="btn btn-success col-auto mx-1">
-                            <i class="far fa-pencil"></i>
+                            <i class="fas fa-check"></i>
                             Lagre
                         </button>
                     </div>
                     <div v-else>
                         <button type="button" v-if="current.deleted_at" class="btn btn-warning col col-auto mx-1" @click="restore()">
-                            <i class="far fa-box-full"></i>
+                            <i class="fas fa-trash-restore"></i>
                             Gjenopprett
                         </button>
                         <button type="button" v-else class="btn btn-danger col-auto mx-1" @click="trash()">
-                            <i class="far fa-trash"></i>
+                            <i class="fas fa-trash"></i>
                             Slett
                         </button>
                         <button type="button" class="btn btn-primary col-auto mx-1" @click="edit()">
-                            <i class="far fa-pencil"></i>
+                            <i class="fas fa-pencil-alt"></i>
                             Rediger
                         </button>
                     </div>

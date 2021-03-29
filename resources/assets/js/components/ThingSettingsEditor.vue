@@ -8,17 +8,16 @@
                     </h5>
                     <div v-if="editMode">
                         <button type="button" class="btn btn-warning col-auto mx-1" @click="cancel()">
-                            <i class="far fa-pencil"></i>
                             Avbryt
                         </button>
                         <button type="submit" class="btn btn-success col-auto mx-1">
-                            <i class="far fa-pencil"></i>
+                            <i class="fas fa-check"></i>
                             Lagre
                         </button>
                     </div>
                     <div v-else>
                         <button type="button" class="btn btn-primary col-auto mx-1" @click="editMode=!editMode">
-                            <i class="far fa-pencil"></i>
+                            <i class="fas fa-pencil-alt"></i>
                             Rediger
                         </button>
                     </div>

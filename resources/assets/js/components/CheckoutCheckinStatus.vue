@@ -5,7 +5,7 @@
         <div v-if="status.message">
             <alert variant="success" @close="status={}">
                 <div v-html="status.message"></div>
-                <button v-if="status.undoLink" class="btn alert-link" @click="undo"><i class="far fa-undo"></i> Angre</button>
+                <button v-if="status.undoLink" class="btn alert-link" @click="undo"><i class="fas fa-undo"></i> Angre</button>
             </alert>
         </div>
 

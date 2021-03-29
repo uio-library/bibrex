@@ -26,7 +26,6 @@
     <div class="container">
 
       <a class="navbar-brand" href="/" title="Spiser alle tingene dine.">
-        <em class="far fa-heart-rate"></em>
         BIBREX
       </a>
 
@@ -68,7 +67,7 @@
 
          <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <em class="far fa-university"></em>
+            <em class="fas fa-university"></em>
             {{ Auth::user()->name }}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">

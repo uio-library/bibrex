@@ -3,12 +3,12 @@ table.dataTable td.select-checkbox, table.dataTable th.select-checkbox {
   padding-right: 0;
 }
 table.dataTable tbody td.select-checkbox:before {
-  font-family: 'Font Awesome 5 Pro';
+  font-family: 'Font Awesome 5 Free';
   content: "\f0c8";
   font-weight: 100;
 }
 table.dataTable tbody tr.selected td.select-checkbox:before {
-  font-family: 'Font Awesome 5 Pro';
+  font-family: 'Font Awesome 5 Free';
   content: "\f14a";
   font-weight: 100;
 }

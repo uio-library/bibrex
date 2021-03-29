@@ -6,7 +6,7 @@
 
     <div style="float:left; margin-top: 10px;" class="col col-auto" v-b-tooltip.hover title="Merk to brukere som du ønsker å slå sammen." v-b-tooltip.hover>
         <button id="flett" class="btn btn-success" @click="merge" style="width:100%;" :disabled="selection.length != 2">
-            <i class="far fa-compress-alt"></i>
+            <i class="fas fa-compress-alt"></i>
             Slå sammen to brukere
         </button>
     </div>
@@ -25,8 +25,8 @@
         <tr v-for="user in users" :id="'user_' + user.id">
           <td></td>
           <td>
-            <i v-if="user.in_alma" class="far fa-user-check text-success" v-b-tooltip.hover title="Importert fra Alma"></i>
-            <i v-else class="far fa-user text-warning" v-b-tooltip.hover title="Lokal bruker"></i>
+            <i v-if="user.in_alma" class="fas fa-user-check text-success" v-b-tooltip.hover title="Importert fra Alma"></i>
+            <i v-else class="fas fa-user text-warning" v-b-tooltip.hover title="Lokal bruker"></i>
             <a :href="'/users/' + user.id">{{ user.name }}</a>
           </td>
           <td>
@@ -37,7 +37,7 @@
                 </span>
             </span>
             <span v-else class="text-danger">
-              <em class="far fa-exclamation-triangle"></em>
+              <em class="fas fa-exclamation-triangle"></em>
               Mangler identifikatorer
             </span>
           </td>
@@ -45,12 +45,12 @@
               {{ user.note }}
 
               <div v-if="user.blocks.length" class="text-danger">
-                  <em class="far fa-exclamation-triangle"></em>
+                  <em class="fas fa-exclamation-triangle"></em>
                   Blokkeringsmerknader i Alma
               </div>
 
               <div v-if="user.fees != 0" class="text-danger">
-                  <em class="far fa-exclamation-triangle"></em>
+                  <em class="fas fa-exclamation-triangle"></em>
                   {{ user.fees }},- i utestående gebyr i Alma
               </div>
 

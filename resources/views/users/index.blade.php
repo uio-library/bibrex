@@ -11,7 +11,7 @@
             </h5>
 
             <a href="{{ URL::action('UsersController@getEdit', '_new') }}" class="col col-auto mx-1 btn btn-success">
-                <i class="far fa-user-plus"></i>
+                <i class="fas fa-user-plus"></i>
                 Ny bruker
             </a>
         </div>

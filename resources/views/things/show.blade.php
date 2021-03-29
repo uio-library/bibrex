@@ -26,7 +26,7 @@
                     Hjelp
                 </a>
                 <a href="{{ action('ItemsController@editForm', ['item' => '_new', 'thing' => $thing]) }}" class="btn btn-success col col-auto mx-1">
-                    <i class="far fa-plus-hexagon"></i>
+                    <i class="far fa-plus-square"></i>
                     Nytt eksemplar
                 </a>
             @endif

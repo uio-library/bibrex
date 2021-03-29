@@ -10,7 +10,7 @@
               Eksemplarer ({{ count($items) }})
             </h5>
             <a href="{{ URL::action('ItemsController@editForm', '_new') }}" class="col col-auto mr-2 btn btn-success">
-                <i class="far fa-plus-hexagon"></i>
+                <i class="far fa-plus-square"></i>
                 Nytt eksemplar
             </a>
         </div>

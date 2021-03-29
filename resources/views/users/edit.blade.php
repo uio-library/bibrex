@@ -16,10 +16,10 @@
 
     <h5 class="card-header">
         @if ($user->id)
-            <em class="far fa-user-edit"></em>
+            <em class="fas fa-user-edit"></em>
             Rediger bruker #{{ $user->id }}
         @else
-            <em class="far fa-user-plus"></em>
+            <em class="fas fa-user-plus"></em>
             Opprett lokal bruker
         @endif
     </h5>

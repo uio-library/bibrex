@@ -11,7 +11,7 @@
     },
     "devDependencies": {
         "@babel/polyfill": "^7.10.4",
-        "@fortawesome/fontawesome-pro": "^5.14.0",
+        "@fortawesome/fontawesome-free": "^5.15.3",
         "@kazupon/vue-i18n-loader": "^0.5.0",
         "axios": "^0.19.2",
         "bootstrap": "^4.5.0",

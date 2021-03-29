@@ -10,7 +10,7 @@
               Ting ({{ count($things) }})
             </h5>
             <a href="{{ URL::action('ThingsController@show', '_new') }}" class="col col-auto mr-2 btn btn-success">
-                <i class="far fa-plus-hexagon"></i>
+                <i class="far fa-plus-square"></i>
                 Ny ting
             </a>
         </div>
