@@ -131,6 +131,9 @@ abstract class DuskTestCase extends BaseTestCase
         Browser::$waitSeconds = 15;
 
         $caps = config('testing.caps');
+        if (is_null($caps['browserVersion'])) {
+            unset($caps['browserVersion']);
+        }
 
         if ($caps['browserName'] == 'chrome') {
             $caps['chromeOptions'] = (new ChromeOptions)->addArguments([
