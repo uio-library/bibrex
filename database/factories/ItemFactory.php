@@ -1,9 +1,28 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(App\Item::class, function (Faker $faker) {
-    return [
-        'barcode' => $faker->ean13,
-    ];
-});
+use App\Item;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class ItemFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Item::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'barcode' => $this->faker->ean13,
+        ];
+    }
+}

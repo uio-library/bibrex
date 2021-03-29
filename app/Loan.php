@@ -4,6 +4,7 @@ namespace App;
 
 use App\Notifications\ExtendedDatabaseNotification;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
@@ -12,7 +13,7 @@ use Illuminate\Support\MessageBag;
 
 class Loan extends Model
 {
-
+    use HasFactory;
     use SoftDeletes;
 
     protected $guarded = array();

@@ -1,27 +1,46 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(App\Thing::class, function (Faker $faker) {
-    return [
-        'image' => [
-        ],
-        'properties' => [
-            'name' => [
-                'nob' => $faker->words(3, true),
-                'nno' => $faker->words(3, true),
-                'eng' => $faker->words(3, true),
+use App\Thing;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class ThingFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Thing::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'image' => [
             ],
-            'name_definite' => [
-                'nob' => $faker->words(3, true),
-                'nno' => $faker->words(3, true),
-                'eng' => $faker->words(3, true),
-            ],
-            'name_indefinite' => [
-                'nob' => $faker->words(3, true),
-                'nno' => $faker->words(3, true),
-                'eng' => $faker->words(3, true),
-            ],
-        ]
-    ];
-});
+            'properties' => [
+                'name' => [
+                    'nob' => $this->faker->words(3, true),
+                    'nno' => $this->faker->words(3, true),
+                    'eng' => $this->faker->words(3, true),
+                ],
+                'name_definite' => [
+                    'nob' => $this->faker->words(3, true),
+                    'nno' => $this->faker->words(3, true),
+                    'eng' => $this->faker->words(3, true),
+                ],
+                'name_indefinite' => [
+                    'nob' => $this->faker->words(3, true),
+                    'nno' => $this->faker->words(3, true),
+                    'eng' => $this->faker->words(3, true),
+                ],
+            ]
+        ];
+    }
+}

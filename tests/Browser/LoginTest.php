@@ -22,7 +22,7 @@ class LoginTest extends DuskTestCase
 
     public function testLogin()
     {
-        $user = factory(Library::class)->create();
+        $user = Library::factory()->create();
 
         $this->browse(
             function (Browser $browser) use ($user) {

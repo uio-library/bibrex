@@ -1,6 +1,9 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ThingsTableSeeder extends Seeder
 {
@@ -13,8 +16,8 @@ class ThingsTableSeeder extends Seeder
     {
         DB::table('things')->insert([
             [
-                'created_at' => new DateTime,
-                'updated_at' => new DateTime,
+                'created_at' => new \DateTime,
+                'updated_at' => new \DateTime,
                 'properties' => json_encode([
                     'loan_time' => 30,
                     'name' => [
@@ -35,8 +38,8 @@ class ThingsTableSeeder extends Seeder
                 ]),
             ],
             [
-                'created_at' => new DateTime,
-                'updated_at' => new DateTime,
+                'created_at' => new \DateTime,
+                'updated_at' => new \DateTime,
                 'properties' => json_encode([
                     'loan_time' => 1,
                     'name' => [

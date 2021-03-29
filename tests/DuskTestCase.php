@@ -71,7 +71,7 @@ abstract class DuskTestCase extends BaseTestCase
         parent::setUp();
         $this->sessionId = null;
 
-        $this->currentLibrary = factory(Library::class)->create([
+        $this->currentLibrary = Library::factory()->create([
             'email' => 'post@eksempelbiblioteket.no',
         ]);
     }

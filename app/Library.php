@@ -2,13 +2,14 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\MessageBag;
 
 class Library extends Authenticatable
 {
-
+    use HasFactory;
     use Notifiable;
 
     public function ips()

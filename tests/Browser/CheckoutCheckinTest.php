@@ -40,20 +40,20 @@ class CheckoutCheckinTest extends DuskTestCase
         $faker->seed(1234);
 
         // Make a few things
-        $this->things = factory(Thing::class, 5)->create();
+        $this->things = Thing::factory(5)->create();
 
         // And a few items
         $this->items = $this->things->flatMap(
             function (Thing $thing) {
-                $items = factory(Item::class, 3)->make();
+                $items = Item::factory(3)->make();
                 $thing->items()->saveMany($items);
                 return $items;
             }
         );
 
         // And a few patrons
-        $this->users = factory(User::class, 10)->create()->each(function (User $user) {
-            $user->identifiers()->save(factory(UserIdentifier::class)->make());
+        $this->users = User::factory(10)->create()->each(function (User $user) {
+            $user->identifiers()->save(UserIdentifier::factory()->make());
         });
     }
 
@@ -230,7 +230,7 @@ class CheckoutCheckinTest extends DuskTestCase
         $user = $this->users[0];
 
         $item->loans()->save(
-            factory(Loan::class)->make([
+            Loan::factory()->make([
                 'user_id' => $user->id,
                 'library_id' => $this->currentLibrary->id,
                 'as_guest' => false,
@@ -314,7 +314,7 @@ class CheckoutCheckinTest extends DuskTestCase
         $user = $this->users[0];
 
         $item->loans()->save(
-            factory(Loan::class)->make([
+            Loan::factory()->make([
                 'user_id' => $user->id,
                 'library_id' => $this->currentLibrary->id,
                 'as_guest' => false,

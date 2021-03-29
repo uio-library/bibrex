@@ -1,13 +1,33 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(App\Library::class, function (Faker $faker) {
-    return [
-        'name' => $faker->company,
-        'name_eng' => $faker->company,
-        'email' => $faker->unique()->safeEmail,
-        'password' => Hash::make('secret'), // '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
-        'remember_token' => str_random(10),
-    ];
-});
+use App\Library;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+
+class LibraryFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Library::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->company,
+            'name_eng' => $this->faker->company,
+            'email' => $this->faker->unique()->safeEmail,
+            'password' => Hash::make('secret'),
+            'remember_token' => str_random(10),
+        ];
+    }
+}
