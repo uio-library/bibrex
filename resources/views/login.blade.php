@@ -71,8 +71,10 @@ input {
         <div id="loginBox" class="card card-body bg-light hidden">
             <i class="halflings-icon lock"></i>
             <p>
-                Hei! Bibrex kjenner ikke igjen maskinen din,
-                men du kan logge inn med brukernavn og passord.
+                Hei! Bibrex kjenner ikke igjen maskinen din (IP {{ $_SERVER['REMOTE_ADDR'] }}).
+                Du kan enten be om at IP-en legges til for autopålogging,
+                eller du kan logge inn med brukernavn og passord
+                (fellesbruker for Bibrex, ikke ditt UiO-brukernavn).
             </p>
             @if (Session::has('loginfailed'))
             <p style="color:red;">
