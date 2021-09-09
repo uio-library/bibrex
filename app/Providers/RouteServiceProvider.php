@@ -44,10 +44,13 @@ class RouteServiceProvider extends ServiceProvider
         Route::bind('thing', function ($value) {
             return $value == '_new'
                 ? new Thing(['properties' => []])
-                : Thing::withTrashed()
-                    ->with('items.loans')
-                    ->with('items.allLoans')
-                    ->find($value) ?? abort(404);
+                : (auth()->user() ?
+                    Thing::withTrashed()
+                        ->with('items.loans')
+                        ->with('items.allLoans')
+                        ->find($value) ?? abort(404)
+                    : Thing::withTrashed()
+                        ->find($value) ?? abort(404));
         });
 
         Route::bind('item', function ($value) {
