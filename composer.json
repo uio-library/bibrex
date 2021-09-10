@@ -30,7 +30,6 @@
     "require-dev": {
         "balping/artisan-bash-completion": "^1.0",
         "barryvdh/laravel-debugbar": "^3.2",
-        "barryvdh/laravel-ide-helper": "^2.6",
         "deployer/deployer": "^6.8",
         "deployer/recipes": "^6.2",
         "facade/ignition": "^2.0",
