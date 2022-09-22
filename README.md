@@ -2,7 +2,7 @@
 [![BrowserStack Status](https://automate.browserstack.com/badge.svg?badge_key=SlNaWGIyWFFSMGxzK3JKbm1xaE1ZZS8rSjhmbzlhRkc5Zi9na1JwSUFiVT0tLVpubDl1TW1pYW1wSDJZbk1LaHdKUmc9PQ==--4a3f4eaad4dc05575e883ca155ed76931beff6c4)](https://automate.browserstack.com/public-build/SlNaWGIyWFFSMGxzK3JKbm1xaE1ZZS8rSjhmbzlhRkc5Zi9na1JwSUFiVT0tLVpubDl1TW1pYW1wSDJZbk1LaHdKUmc9PQ==--4a3f4eaad4dc05575e883ca155ed76931beff6c4)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/scriptotek/bibrex/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/scriptotek/bibrex/?branch=master)
 
-## BIBREX
+# BIBREX
 
 Bibrex is a simple system to manage and circulate things that are not well fit for bibliographic description and inclusion in the library catalogue, such as extension coords and other cables, computers, cameras, calculators and so on.
 Users can be created locally, but also imported from Alma.
@@ -24,12 +24,12 @@ Missing functionality:
 - Discovery/search for end users. We have a very simple public status display.
 - No support for kits with multiple parts with their own barcode/RFID tag.
 
-### Setup for development
+## Setup for development
 
 Requirements: Quite recent versions of PHP (see `composer.json` for required version),
 NodeJS and PostgresSQL.
 
-#### Database setup
+### Database setup
 
 Bibrex mostly make use of the database-agnostic layer provided by Laravel,
 but has a few couplings to PostgresSQL through the use of Postgres-specific functionality like
@@ -77,7 +77,7 @@ Store the secret you created as `ALMA_WEBHOOK_SECRET` in the `.env` file. This i
 
 ![](doc/bibrex-alma-integration.png)
 
-#### Building the app
+### Building the app
 
 1. `composer install` to fetch PHP dependencies.
 2. Add database setup etc. to the `.env` file.
@@ -92,7 +92,7 @@ PHP settings: You might want to increase `upload_max_filesize` to `10M` or to ta
 to allow users to upload larger images.
 Bibrex will make thumbnails for you, so larger files pose no problem really.
 
-#### Running a development server
+### Running a development server
 
 * Run `php artisan serve` to start a dev server on localhost:8000,
   or use [Valet](https://laravel.com/docs/5.8/valet).
@@ -100,17 +100,17 @@ Bibrex will make thumbnails for you, so larger files pose no problem really.
 * If you're working on frontend stuff (things in the `resources/assets` folder),
   run `npm run watch` to re-build the JS/CSS.
 
-#### Update OpenAPI documentation for Swagger UI:
+### Update OpenAPI documentation for Swagger UI:
 
     ./vendor/bin/openapi app -o public/openapi.json
 
-#### Refreshing the database
+### Refreshing the database
 
 Disable logging to database when refreshing the database:
 
     LOG_CHANNEL=single php artisan migrate:refresh
 
-### Production
+## Production
 
 A `deploy.php` file is included for deploying the app with
 [Deployer](https://deployer.org/).
@@ -143,7 +143,7 @@ See https://github.com/facebook/php-webdriver/issues/469.
 Continuous integration browser testing supported by <br>
 <a href="https://www.browserstack.com/"><img width="160" src="./doc/browserstack.svg" alt="BrowserStack"></a>
 
-### Privacy
+## Privacy
 
 Bibrex includes a couple of Artisan commands to enhance users' privacy
 and support the [data minimisation principle](https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/principles/data-minimisation/):
@@ -169,7 +169,7 @@ and support the [data minimisation principle](https://ico.org.uk/for-organisatio
   a user comes back after having been deleted, so a longer storage time makes
   sense. It's advised to try to limit the number of local users.
 
-### Større endringer
+## Større endringer
 
 * [2019-07-10](https://github.com/scriptotek/bibrex/commit/12989de79476134710324d54dfabbe87dc27f869) Støtte for flere identifikatorer per bruker, f.eks. flere lånekort.
 * [2019-02-06](https://github.com/scriptotek/bibrex/commit/28b56049f09c4cb07908bf4e850195c68797c24d) Lagt til et enkelt API.
