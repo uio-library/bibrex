@@ -50,7 +50,9 @@ Add the credentials to the `.env` file.
 ### Alma integration
 
 To setup Alma integration, you need to create (1) an API key in Alma Developers Network and (2)
-a webhook integration in Alma.
+a webhook integration in Alma. 
+The API key is used to search for users and optionally to check out items in Alma.
+The webhook integration is used to receive updates about users from Alma, so data in Bibrex always reflect the latest changes in Alma.
 
 #### API key
 
