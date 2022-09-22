@@ -51,7 +51,7 @@ Add the credentials to the `.env` file.
 
 To setup Alma integration, you need to create (1) an API key in Alma Developers Network and (2)
 a webhook integration in Alma. 
-The API key is used to search for users and optionally to check out items in Alma.
+The API key is used to search for users and optionally to check out items in Alma (while Bibrex is mostly used to check out items from its own database of things, it *can* also be used to check out items from Alma if so desired).
 The webhook integration is used to receive updates about users from Alma, so data in Bibrex always reflect the latest changes in Alma.
 
 #### API key
@@ -59,7 +59,7 @@ The webhook integration is used to receive updates about users from Alma, so dat
 * Login to [Ex Libris Developer Network](https://developers.exlibrisgroup.com/account/) using your institutional account.
 * Go to "Manage API Keys" under "Build / My APIs".
 * Add a new API key, give it a descriptive name and add the following permissions:
-  * Bibs - Production - Read/write (necessary to administrate loans)
+  * Bibs - Production - Read/write (necessary to administrate loans in Alma, optional)
   * Users - Production - Read-only
   * Configuration - Production - Read-only
 
