@@ -47,6 +47,36 @@ For a local setup, start by creating a Postgres user, and a database:
 
 Add the credentials to the `.env` file.
 
+### Alma integration
+
+To setup Alma integration, you need to create (1) an API key in Alma Developers Network and (2)
+a webhook integration in Alma.
+
+#### API key
+
+* Login to [Ex Libris Developer Network](https://developers.exlibrisgroup.com/account/) using your institutional account.
+* Go to "Manage API Keys" under "Build / My APIs".
+* Add a new API key, give it a descriptive name and add the following permissions:
+  * Bibs - Production - Read/write (necessary to administrate loans)
+  * Users - Production - Read-only
+  * Configuration - Production - Read-only
+
+Store the generated API key as `ALMA_KEY` in the `.env` file.
+
+#### Webhook integration
+
+* In Alma, go to `Configuration Menu` > `General` > `External Systems` > `Integration Profiles` and 
+  select "Add Integration Profile".
+* Enter a Code and Name (both fields are purely descriptive), select "Webhooks" as Integration Type and press "Next"
+* Set "Webhook listener url" to `https://your-domain.com/webhooks/alma` where `your-domain.com` is the domain Bibrex is hosted at.
+* "Secret" should be a long, random string (preferably > 30 characters, something like a "fort knox password" from https://randomkeygen.com/)
+* Check the "Users" checkbox.
+* Click Activate to activate the profile and then Save to save it.
+
+Store the secret you created as `ALMA_WEBHOOK_SECRET` in the `.env` file. This is used to verify that messages from Alma are indeed coming from Alma.
+
+![](doc/bibrex-alma-integration.png)
+
 #### Building the app
 
 1. `composer install` to fetch PHP dependencies.
