@@ -29,6 +29,10 @@ Missing functionality:
 Requirements: Quite recent versions of PHP (see `composer.json` for required version),
 NodeJS and PostgresSQL.
 
+### The `.env` file
+
+Settings are generally stored in an `.env` file. The repo comes with an [example file](https://github.com/scriptotek/bibrex/blob/master/.env.example) that you can copy and modify to your setup.
+
 ### Database setup
 
 Bibrex mostly make use of the database-agnostic layer provided by Laravel,
@@ -50,7 +54,8 @@ Add the credentials to the `.env` file.
 ### Alma integration
 
 To setup Alma integration, you need to create (1) an API key in Alma Developers Network and (2)
-a webhook integration in Alma. 
+a webhook integration in Alma. Both are stored in the `.env` file.
+
 The API key is used to search for users and optionally to check out items in Alma (while Bibrex is mostly used to check out items from its own database of things, it *can* also be used to check out items from Alma if so desired).
 The webhook integration is used to receive updates about users from Alma, so data in Bibrex always reflect the latest changes in Alma.
 
@@ -78,6 +83,21 @@ Store the generated API key as `ALMA_KEY` in the `.env` file.
 Store the secret you created as `ALMA_WEBHOOK_SECRET` in the `.env` file. This is used to verify that messages from Alma are indeed coming from Alma.
 
 ![](doc/bibrex-alma-integration.png)
+
+### Pusher integration (optional, for live updates)
+
+If you use Bibrex on more than one computer in the same library desk, Bibrex can use [Pusher](https://pusher.com/) 
+to communicate updates about loans between them, to avoid the situation where an item is checked in on computer A,
+but the change is not reflected on computer B before Bibrex is reloaded.
+No personal information is sent over Pusher, it's only used to communicate to other clients that they should update their state.
+
+The free sandbox plan includes 100 clients and 200,000 messages per day, which should be more than enough for most Bibrex users.
+At the University of Oslo, we use < 10 clients and ~100 messages per day.
+
+* To activate the integration, sign up for Pusher, go to Channels and "Create app". 
+* Give it a name and select the "eu" cluster. The other options are optional, but multiple environments can be handy if you wan to test Pusher on a test server separate from the production server.
+* Go to "App Keys"
+* Copy the app id, key, secret and cluster and paste the values into the `.env` file as `PUSHER_APP_ID`, `MIX_PUSHER_APP_KEY`, `PUSHER_APP_SECRET` and `MIX_PUSHER_APP_CLUSTER`, respectively.
 
 ### Building the app
 
