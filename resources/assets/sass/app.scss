@@ -212,11 +212,6 @@ a:hover *, a:focus * {
 .checkout {
   display: block;
   width: 100%;
-  disabled: true;
-}
-
-.checkout::after {
-  content: " (deaktivert)";
 }
 
 .lds-ellipsis {
