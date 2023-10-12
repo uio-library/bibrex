@@ -84,7 +84,6 @@
     </div>
   </div>
 </nav>
-    <div style="background:red;width:100%;height:25px;text-align:center;color:white;">Utlånsfunksjonaliteten i BIBREX er nede. Du kan fortsatt returnere ting.</div>
 @endif
 
 <div class="container" id="app">
